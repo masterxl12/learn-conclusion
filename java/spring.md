@@ -573,7 +573,7 @@ public class AccountServiceImpl3 implements AccountService {
 
 ##### 4.1.1 用于创建对象：
 
-@Component： 用于把当前类对象存入spring容器中
+**@Component**： 用于把当前类对象存入spring容器中
 
 @Service:   用于业务层
 
@@ -597,7 +597,7 @@ public class AccountServiceImpl3 implements AccountService {
 
 ##### 4.1.2 用于注入数据的
 
-@Autowired : 只要容器中有唯一的一个bean对象类型和要注入的便利类型匹配，就可注入成功
+**@Autowired :** 只要容器中有唯一的一个bean对象类型和要注入的变量类型匹配，就可注入成功
 
 @Qualifier：在按照类中注入的基础之上在按照名称注入，一般结合@Autowired使用
 
@@ -656,3 +656,678 @@ public class AccountServiceImpl3 implements AccountService {
 
 #### 4.2 使用spring的IOC实现用户crud
 
+##### 4.2.1 业务层、持久层代码实现
+
+###### 4.2.1.1 service业务层
+
+业务层接口com.huayun.service.IAccountService
+
+```java
+package com.huayun.service;
+
+import com.huayun.domain.Account;
+
+import java.util.List;
+
+/**
+ * 账户的业务层接口
+ */
+public interface IAccountService {
+    /**
+     * 查询所有
+     * @return
+     */
+    List<Account> findAllAccount();
+
+    /**
+     * 查询一个
+     * @param accountId
+     * @return
+     */
+    Account findAccountById(Integer accountId);
+
+    /**
+     * 保存用户
+     */
+    void saveAccount(Account account);
+
+    /**
+     * 更新用户
+     * @param account
+     * @return
+     */
+    void updateAccount(Account account);
+
+    /**
+     * 删除用户
+     * @param accountId
+     */
+    void deleteAccount(Integer accountId);
+
+}
+```
+
+业务层接口实现类com.huayun.service.impl.AccountServiceImpl
+
+```java
+package com.huayun.service.impl;
+
+import com.huayun.dao.IAccountDao;
+import com.huayun.domain.Account;
+import com.huayun.service.IAccountService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+/**
+ * 账户的业务层实现类
+ */
+@Service("accountService")
+public class AccountServiceImpl implements IAccountService {
+    //    业务层带调用持久层
+    @Autowired
+    private IAccountDao accountDao;
+
+    public List<Account> findAllAccount() {
+        return accountDao.findAllAccount();
+    }
+
+    public Account findAccountById(Integer accountId) {
+        return accountDao.findAccountById(accountId);
+    }
+
+    public void saveAccount(Account account) {
+        accountDao.saveAccount(account);
+    }
+
+    public void updateAccount(Account account) {
+        accountDao.updateAccount(account);
+    }
+
+    public void deleteAccount(Integer accountId) {
+        accountDao.deleteAccount(accountId);
+    }
+}
+```
+
+###### 4.2.1.2 dao持久层
+
+持久层接口com.huayun.dao.IAccountDao
+
+```java
+package com.huayun.dao;
+
+import com.huayun.domain.Account;
+
+import java.util.List;
+
+/**
+ * 账户的持久层接口
+ */
+public interface IAccountDao {
+    /**
+     * 查询所有
+     * @return
+     */
+    List<Account> findAllAccount();
+
+    /**
+     * 查询一个
+     * @param accountId
+     * @return
+     */
+    Account findAccountById(Integer accountId);
+
+    /**
+     * 保存用户
+     */
+    void saveAccount(Account account);
+
+    /**
+     * 更新用户
+     * @param account
+     * @return
+     */
+    void updateAccount(Account account);
+
+    /**
+     * 删除用户
+     * @param accountId
+     */
+    void deleteAccount(Integer accountId);
+}
+
+```
+
+持久层接口实现类com.huayun.dao.impl.AccountDaoImpl
+
+```java
+package com.huayun.dao.impl;
+
+import com.huayun.dao.IAccountDao;
+import com.huayun.domain.Account;
+import org.apache.commons.dbutils.QueryRunner;
+import org.apache.commons.dbutils.handlers.BeanHandler;
+import org.apache.commons.dbutils.handlers.BeanListHandler;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+
+import java.sql.SQLException;
+import java.util.List;
+
+@Repository("accountDao")
+public class AccountDaoImpl implements IAccountDao {
+    @Autowired
+    private QueryRunner runner;
+
+    public List<Account> findAllAccount() {
+        try {
+            return runner.query("select * from account", new BeanListHandler<Account>(Account.class));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public Account findAccountById(Integer accountId) {
+        try {
+            return runner.query("select * from account where id = ? ", new BeanHandler<Account>(Account.class), accountId);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void saveAccount(Account account) {
+        try {
+            runner.update("insert into account(name,money) values(?,?)", account.getName(), account.getMoney());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void updateAccount(Account account) {
+        try {
+            runner.update("update account set name=?,money=? where id = ?", account.getName(), account.getMoney(), account.getId());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void deleteAccount(Integer accountId) {
+        try {
+            runner.update("delete from account where id = ?", accountId);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+
+```
+
+###### 4.2.1.3 账户实体层
+
+```java
+package com.huayun.domain;
+
+public class Account {
+    private Integer id;
+    private String name;
+    private Float money;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Float getMoney() {
+        return money;
+    }
+
+    public void setMoney(Float money) {
+        this.money = money;
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", money=" + money +
+                '}';
+    }
+}
+
+```
+
+##### 4.2.2 bean.xml配置文件
+
+```java
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!--配置service-->
+    <bean id="accountService" class="com.huayun.service.impl.AccountServiceImpl">
+        <!--注入dao对象-->
+        <property name="accountDao" ref="accountDao"></property>
+    </bean>
+    <!--配置Dao对象-->
+    <bean id="accountDao" class="com.huayun.dao.impl.AccountDaoImpl">
+        <!--注入QueryRunner对象-->
+        <property name="runner" ref="runner"></property>
+    </bean>
+    <!--配置QueryRunner对象-->
+    <bean id="runner" class="org.apache.commons.dbutils.QueryRunner" scope="prototype">
+        <!--注入数据源-->
+        <constructor-arg name="ds" ref="dataSource"></constructor-arg>
+    </bean>
+
+    <!--配置数据源-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <!--连接数据库的必备信息-->
+        <property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/user"></property>
+        <property name="user" value="root"></property>
+        <property name="password" value="123456"></property>
+    </bean>
+</beans>
+```
+
+##### 4.2.3 AccountServiceTest测试类
+
+```java
+package com.huayun.test;
+
+import com.huayun.domain.Account;
+import com.huayun.service.IAccountService;
+import org.junit.Test;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.util.List;
+
+/**
+ * 使用junit对配置进行单元测试
+ */
+
+public class AccountServiceTest {
+    @Test
+    public void testFindAll() {
+        // 1. 获取
+        ApplicationContext ac = new ClassPathXmlApplicationContext("bean.xml");
+        // 2. 得到业务层对象
+        IAccountService as = ac.getBean("accountService", IAccountService.class);
+        // 3. 执行方法
+        List<Account> accounts = as.findAllAccount();
+        for (Account account : accounts) {
+            System.out.println(account);
+        }
+    }
+
+    @Test
+    public void testFindOne() {
+        // 1. 获取
+        ApplicationContext ac = new ClassPathXmlApplicationContext("bean.xml");
+        // 2. 得到业务层对象
+        IAccountService as = ac.getBean("accountService", IAccountService.class);
+        Account account = as.findAccountById(1);
+        System.out.println(account);
+    }
+
+    @Test
+    public void testSaveAccount() {
+        ApplicationContext ac = new ClassPathXmlApplicationContext("bean.xml");
+        IAccountService as = ac.getBean("accountService", IAccountService.class);
+        Account account = new Account();
+        account.setName("zs");
+        account.setMoney(12345f);
+        as.saveAccount(account);
+    }
+
+    @Test
+    public void testUpdateAccount() {
+        ApplicationContext ac = new ClassPathXmlApplicationContext("bean.xml");
+        IAccountService as = ac.getBean("accountService", IAccountService.class);
+        Account account = as.findAccountById(4);
+        account.setName("xl");
+        account.setMoney(23456f);
+        as.updateAccount(account);
+    }
+
+    @Test
+    public void testDeleteAccount() {
+        ApplicationContext ac = new ClassPathXmlApplicationContext("bean.xml");
+        IAccountService as = ac.getBean("accountService", IAccountService.class);
+        as.deleteAccount(4);
+    }
+}
+
+```
+
+##### 4.2.4 连接数据库测试联调
+
+输出结果：
+
+testFindAll
+
+```java
+Account{id=1, name='aaa', money=1000.0}
+Account{id=2, name='bbb', money=1000.0}
+Account{id=3, name='ccc', money=1000.0}
+Account{id=5, name='zs', money=12345.0}
+Account{id=6, name='test anno', money=32345.0}
+```
+
+#### 4.3 使用注解实现crud(去除bean.xml文件)
+
+##### 4.3.1 新注解
+
+###### 4.3.1.1 @Configuration
+
+作用：指定当前类是一个配置类
+
+细节：当配置类作为AnnotationConfigApplicationContext对象创建的参数时，该注解可以不写。
+
+```java
+ApplicationContext as = new AnnotationConfigApplicationContext(SpringConfiguration.class);
+```
+
+###### 4.3.1.2 @ComponentScan
+
+作用：用于通过注解指定spring在创建容器时要扫描的包
+
+属性：
+
+​	value：它和basePackages的作用是一样的，都是用于指定创建容器时==**要扫描的包**。==
+
+ *                 我们使用此注解就等同于在xml中配置了:
+ *                      <context:component-scan base-package="com.alibaba"></context:component-scan>
+
+```java
+@ComponentScan("com.huayun")
+```
+
+###### 4.3.1.3 @Bean
+
+作用：用于把当前方法的返回值作为bean对象存入spring的ioc容器中
+
+属性:
+		name:用于指定bean的id。当不写时，默认值是当前方法的名称
+		细节：
+				当我们使用注解配置方法时，如果方法有参数，spring框架会去容器中查找有没有可用的bean对象。查找的方式和Autowired注解的作用是一样的
+
+```java
+		@Scope("prototype")
+    @Bean(name = "runner")
+    public QueryRunner createQueryRunner(DataSource dataSource) {
+        return new QueryRunner(dataSource);
+    }
+
+    @Bean(name = "dataSource")
+    public DataSource createDataSource() {
+
+        ComboPooledDataSource ds = new ComboPooledDataSource();
+        try {
+            ds.setDriverClass(driverClass);
+            ds.setJdbcUrl(url);
+            ds.setUser(userName);
+            ds.setPassword(passWord);
+            return ds;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+```
+
+###### 4.3.1.4 @Import
+
+作用：用于导入其他的配置类
+
+value：用于指定其他配置类的字节码。
+
+​			当我们使用Import的注解之后，有Import注解的类就父配置类，而导入的都是子配置类
+
+###### 4.3.1.5 @PropertySource
+
+作用：用于指定properties文件的位置
+
+属性：
+
+​	 value：指定文件的名称和路径。
+
+​	关键字：classpath，表示类路径下       
+
+```java
+@PropertySource("classpath:Jdbc.properties")
+```
+
+##### 4.3.2 Jdbc.properties—公用变量抽离(一般结合@PropertySource注解使用)
+
+放便导入统一使用
+
+```java
+jdbc.driverClass=com.mysql.jdbc.Driver
+jdbc.url=jdbc:mysql://localhost:3306/user
+jdbc.userName=root
+jdbc.passWord=123456
+```
+
+使用@PropertySource注解导入配置文件
+
+```java
+@PropertySource("classpath:Jdbc.properties")
+```
+
+##### 4.3.3 spring容器配置文件
+
+完整的config.SpringConfiguration配置类文件代码
+
+```java
+package config;
+
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+import org.apache.commons.dbutils.QueryRunner;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.*;
+
+import javax.sql.DataSource;
+
+@Configuration
+@ComponentScan("com.huayun")
+@PropertySource("classpath:Jdbc.properties")
+public class SpringConfiguration {
+
+    @Value("${jdbc.driverClass}")
+    private String driverClass;
+
+    @Value("${jdbc.url}")
+    private String url;
+
+    @Value("${jdbc.userName}")
+    private String userName;
+
+    @Value("${jdbc.passWord}")
+    private String passWord;
+
+    @Scope("prototype")
+    @Bean(name = "runner")
+    public QueryRunner createQueryRunner(DataSource dataSource) {
+        return new QueryRunner(dataSource);
+    }
+
+    @Bean(name = "dataSource")
+    public DataSource createDataSource() {
+
+        ComboPooledDataSource ds = new ComboPooledDataSource();
+        try {
+            ds.setDriverClass(driverClass);
+            ds.setJdbcUrl(url);
+            ds.setUser(userName);
+            ds.setPassword(passWord);
+            return ds;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+}
+
+```
+
+
+
+#### 4.4 spring整合Junit
+
+##### 4.4.1 问题分析：
+
+com.huayun.test.AccountServiceTest测试类
+
+```java
+package com.huayun.test;
+
+import com.huayun.domain.Account;
+import com.huayun.service.IAccountService;
+import org.junit.Test;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import java.util.List;
+
+/**
+ * 使用junit对配置进行单元测试
+ */
+
+public class AccountServiceTest {
+    @Test
+    public void testFindAll() {
+        // 1. 获取
+        ApplicationContext ac = new ClassPathXmlApplicationContext("bean.xml");
+        // 2. 得到业务层对象
+        IAccountService as = ac.getBean("accountService", IAccountService.class);
+        // 3. 执行方法
+        List<Account> accounts = as.findAllAccount();
+        for (Account account : accounts) {
+            System.out.println(account);
+        }
+    }
+
+    @Test
+    public void testFindOne() {
+        // 1. 获取
+        ApplicationContext ac = new ClassPathXmlApplicationContext("bean.xml");
+        // 2. 得到业务层对象
+        IAccountService as = ac.getBean("accountService", IAccountService.class);
+        Account account = as.findAccountById(1);
+        System.out.println(account);
+    }
+
+    @Test
+    public void testSaveAccount() {
+        ApplicationContext ac = new ClassPathXmlApplicationContext("bean.xml");
+        IAccountService as = ac.getBean("accountService", IAccountService.class);
+        Account account = new Account();
+        account.setName("zs");
+        account.setMoney(12345f);
+        as.saveAccount(account);
+    }
+
+    @Test
+    public void testUpdateAccount() {
+        ApplicationContext ac = new ClassPathXmlApplicationContext("bean.xml");
+        IAccountService as = ac.getBean("accountService", IAccountService.class);
+        Account account = as.findAccountById(4);
+        account.setName("xl");
+        account.setMoney(23456f);
+        as.updateAccount(account);
+    }
+
+    @Test
+    public void testDeleteAccount() {
+        ApplicationContext ac = new ClassPathXmlApplicationContext("bean.xml");
+        IAccountService as = ac.getBean("accountService", IAccountService.class);
+        as.deleteAccount(4);
+    }
+}
+
+```
+
+**<font color=red>从测试类中发现可知存在重复代码</font>**
+
+```java
+        ApplicationContext ac = new ClassPathXmlApplicationContext("bean.xml");
+        IAccountService as = ac.getBean("accountService", IAccountService.class);
+```
+
+##### 4.4.2 解决思路分析
+
+###### 1. junit单元测试中，没有main方法也能执行
+
+- junit集成了一个main方法
+- 该方法就会判断当前测试类中哪些方法有@Test注解
+- junit让有Test 注解的方法执行    
+
+###### 2. junit不会判断是否采用的是spring框架
+
+- 在执行方法是，junit根本不知道采用的是否是spring框架
+- 因此也就不会为我们读取配置文件/配置类创建sping核心容器
+
+**==由以上两点可知：当测试方法执行时，没有IOC容器，即使写了AutoWired注解，也无法实现注入==**
+
+**<font color=red>我们需要程序能自动创建容器。一旦程序能自动创建spring容器，开发时也就无须手动创建。</font>**
+
+##### 4.4.3 配置步骤
+
+###### 1. 整合junit的必备jar包到lib目录
+
+pom.xml 
+
+```java
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>5.2.4.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+        </dependency>
+```
+
+###### 2. 使用@RunWith注解替换原有运行器
+
+```java
+@RunWith(SpringJUnit4ClassRunner.class)
+```
+
+###### 3. 告知spring的运行器，spring和ioc创建是基于xml还是注解的，并且说明位置
+
+如果是基于注解配置，如下配置：
+
+```java
+@ContextConfiguration(classes = SpringConfiguration.class)
+```
+
+如果是基于xml配置，则参考如下：
+
+```java
+@ContextConfiguration(locations= {"classpath:bean.xml"})
+```
+
+ locations：指定xml文件的位置，加上classpath关键字，表示在类路径下
+
+classes：指定注解类所在地位置
+
+**【注】：当我们使用spring 5.x版本的时候，要求junit的jar必须是4.12及以上**
