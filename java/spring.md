@@ -1331,3 +1331,70 @@ pom.xml
 classes：指定注解类所在地位置
 
 **【注】：当我们使用spring 5.x版本的时候，要求junit的jar必须是4.12及以上**
+
+###### 4. 使用junit对测试类进行重构
+
+```java
+package com.huayun.test;
+
+import com.huayun.domain.Account;
+import com.huayun.service.IAccountService;
+import config.SpringConfiguration;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.List;
+
+/**
+ * 使用junit对配置进行单元测试
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = SpringConfiguration.class)
+public class AccountServiceTest {
+    @Autowired
+    private IAccountService as;
+
+    @Test
+    public void testFindAll() {
+        // 3. 执行方法
+        List<Account> accounts = as.findAllAccount();
+        for (Account account : accounts) {
+            System.out.println(account);
+        }
+    }
+
+    @Test
+    public void testFindOne() {
+        Account account = as.findAccountById(1);
+        System.out.println(account);
+    }
+
+    @Test
+    public void testSaveAccount() {
+        Account account = new Account();
+        account.setName("test ");
+        account.setMoney(32345f);
+        as.saveAccount(account);
+    }
+
+    @Test
+    public void testUpdateAccount() {
+        Account account = as.findAccountById(4);
+        account.setName("xl");
+        account.setMoney(23456f);
+        as.updateAccount(account);
+    }
+
+    @Test
+    public void testDeleteAccount() {
+        as.deleteAccount(4);
+    }
+}
+```
+
