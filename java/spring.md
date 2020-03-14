@@ -1063,12 +1063,12 @@ ApplicationContext as = new AnnotationConfigApplicationContext(SpringConfigurati
 
 ###### ==4.3.1.3 @Bean==
 
-作用：用于把当前方法的返回值作为bean对象存入spring的ioc容器中
+**作用：用于把当前方法的返回值作为bean对象存入spring的ioc容器中**
 
 属性:
 		name:用于指定bean的id。当不写时，默认值是当前方法的名称
 		细节：
-				当我们使用注解配置方法时，如果方法有参数，spring框架会去容器中查找有没有可用的bean对象。查找的方式和Autowired注解的作用是一样的
+				当我们==使用注解配置方法时，如果方法有参数==，spring框架会<u>去容器中</u>查找**有没有可用的bean对象**。查找的方式和Autowired注解的作用是一样的
 
 ```java
 		@Scope("prototype")
@@ -1100,7 +1100,7 @@ ApplicationContext as = new AnnotationConfigApplicationContext(SpringConfigurati
 
 value：用于指定其他配置类的字节码。
 
-​			当我们使用Import的注解之后，有Import注解的类就父配置类，而导入的都是子配置类
+​			==当我们使用Import的注解之后，有Import注解的类就父配置类，而导入的都是子配置类==
 
 ###### ==4.3.1.5 @PropertySource==
 
@@ -1400,4 +1400,467 @@ public class AccountServiceTest {
     }
 }
 ```
+
+### 五、AOP面向切面编程
+
+#### 5.1 AOP作用及概念
+
+​		**AOP—把程序重复的代码抽取出来，在需要执行的时候，使用动态代理的技术，在不修改源码的基础上，对我们的已有方法进行增强。**
+
+**作用：** 
+
+在程序运行期间，不修改源码对已有方法进行增强。 
+
+**优势：** 
+
+- ​	减少重复代码 
+
+- ​	提高开发效率 
+
+- ​	维护方便
+
+**实现方式：**
+
+**使用动态代理技术**
+
+### 六、JdbcTemplate
+
+#### 6.1 JdbcTemplate概述
+
+JdbcTemplate—spring框架中提供的一个对象，是对原始Jdbc API对象的简单封装。
+
+spring框架为我们提供了很多的操作模板类。 
+
+1、操作关系型数据的： 
+
+- JdbcTemplate 
+
+- HibernateTemplate 
+
+2、操作nosql数据库的： 
+
+- RedisTemplate 
+
+3、操作消息队列的：
+
+-  JmsTemplate
+
+#### 6.2 JdbcTemplate对象的创建
+
+##### 6.2.1 源码: 一窥究竟
+
+```java
+    public JdbcTemplate() {
+    }
+
+    public JdbcTemplate(DataSource dataSource) {
+        this.setDataSource(dataSource);
+        this.afterPropertiesSet();
+    }
+
+    public JdbcTemplate(DataSource dataSource, boolean lazyInit) {
+        this.setDataSource(dataSource);
+        this.setLazyInit(lazyInit);
+        this.afterPropertiesSet();
+    }
+```
+
+构造方法中需要添加数据源：dataSource
+
+##### 6.2.2 完整创建JdbcTemplate对象的代码：
+
+```java
+        DriverManagerDataSource ds = new DriverManagerDataSource();
+        ds.setDriverClassName("com.mysql.jdbc.Driver");
+        ds.setUrl("jdbc:mysql://localhost:3306/user");
+        ds.setUsername("root");
+        ds.setPassword("123456");
+
+
+        JdbcTemplate jt = new JdbcTemplate();
+        jt.setDataSource(ds);
+```
+
+#### 6.3 JdbcTemplate配置数据源
+
+##### 6.3.1 配置spring内置数据源
+
+在bean.xml中添加：
+
+```java
+    <bean id="dataSorce" 			class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+        <property name="url" value="jdbc:mysql://localhost:3306/user"></property>
+        <property name="username" value="root"></property>
+        <property name="password" value="123456"></property>
+    </bean>
+```
+
+#### 6.4 JdbcTemplate的CRUD
+
+##### 6.4.1 创建数据表
+
+```java
+create table account( 
+  	id int primary key auto_increment, 
+  	name varchar(40), 
+  	money float 
+)character set utf8 collate utf8_general_ci;
+```
+
+##### 6.4.2 在spring配置文件中配置
+
+```java
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- 配置一个数据库的操作模板：JdbcTemplate -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSorce"></property>
+    </bean>
+    <!--配置数据源-->
+    <bean id="dataSorce" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+        <property name="url" value="jdbc:mysql://localhost:3306/user"></property>
+        <property name="username" value="root"></property>
+        <property name="password" value="123456"></property>
+    </bean>
+</beans>
+```
+
+##### 6.4.3 业务层对数据库crud操作
+
+###### 6.4.3.1 从spring配置文件获取bean对象
+
+```java
+        // 1 获取spring容器对象
+        ApplicationContext ac = new ClassPathXmlApplicationContext("bean.xml");
+
+        // 2 根据id获取bean对象
+        JdbcTemplate jt = ac.getBean("jdbcTemplate", JdbcTemplate.class);
+```
+
+###### 6.4.3.2 保存操作(insert)
+
+```java
+        // 4 保存操作
+         jt.update("insert into account(name,money)values (?,?)", "test", 34562f);
+```
+
+###### 6.4.3.3 更新操作(update)
+
+```java
+        // 5 更新操作
+         jt.update("update account set name=?,money=? where id=?", "wsn", 30000f, 6);
+```
+
+###### 6.4.3.4 删除操作(delete)
+
+```java
+        // 6 删除操作
+        jt.update("delete from account where id= ? ", 7);
+```
+
+###### 6.4.3.5 查询所有(findAll)
+
+```java
+        // 7 查询所有
+        List<Account> accounts = jt.query("select * from account where money > ?", new BeanPropertyRowMapper<Account>(Account.class), 1000f);
+        for (Account account : accounts) {
+            System.out.println(account);
+        }
+```
+
+###### 6.4.3.6 查询一个(findOne)
+
+```java
+        // 8 查询一个
+        List<Account> accouts1 = jt.query("select * from account where id = ?", new BeanPropertyRowMapper<Account>(Account.class), 5);
+        System.out.println(accouts1.isEmpty() ? "没有内容" : accounts.get(0));
+```
+
+###### 6.4.3.7 查询一行一列
+
+```java
+        // 9 查询返回一行一列（使用聚合函数，但不加group by子句）
+        Long count = jt.queryForObject("select count(*) from account where money> ?", Long.class, 10000f);
+        System.out.println("查询数量为：" + count);
+```
+
+#### 6.5 JdbcTemplate在Dao中使用
+
+##### 6.5.1 账户实体类
+
+com.huayun.domain.Account
+
+```java
+package com.huayun.domain;
+
+import java.io.Serializable;
+
+/**
+ * 账户的实体类
+ */
+public class Account implements Serializable {
+    private Integer id;
+    private String name;
+    private Float money;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Float getMoney() {
+        return money;
+    }
+
+    public void setMoney(Float money) {
+        this.money = money;
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", money=" + money +
+                '}';
+    }
+}
+
+```
+
+##### 6.5.2 在dao中定义JdbcTemplate
+
+###### 6.5.2.1 在dao中定义账户接口
+
+```java
+package com.huayun.dao;
+
+import com.huayun.domain.Account;
+
+public interface IAccountDao {
+    public Account findById(int accountId);
+
+    public Account findByName(String accountName);
+
+    public void updateAccount(Account account);
+}
+
+```
+
+###### 6.5.2.1 在账户接口持久层实现类
+
+```java
+package com.huayun.dao.impl;
+
+import com.huayun.dao.IAccountDao;
+import com.huayun.domain.Account;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.util.List;
+
+public class AccountDaoImpl implements IAccountDao {
+    private JdbcTemplate jdbcTemplate;
+
+    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public Account findById(int accountId) {
+        List<Account> accounts = jdbcTemplate.query("select * from account where id=?", new BeanPropertyRowMapper<Account>(Account.class), accountId);
+        if (accounts.isEmpty()) return null;
+        return accounts.get(0);
+    }
+
+    public Account findByName(String accountName) {
+
+        List<Account> accounts = jdbcTemplate.query("select * from account where name=?", new BeanPropertyRowMapper<Account>(Account.class), accountName);
+        if (accounts.isEmpty()) return null;
+        if (accounts.size() > 1) throw new RuntimeException("返回结果不唯一");
+        return accounts.get(0);
+    }
+
+    public void updateAccount(Account account) {
+        jdbcTemplate.update("update account set name = ?,money=? where id=?", account.getName(), account.getMoney(), account.getId());
+    }
+}
+```
+
+###### 6.5.2.3 配置文件中配置dao的bean对象
+
+```java
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!--配置一个dao-->
+    <bean id="accountDao" class="com.huayun.dao.impl.AccountDaoImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"></property>
+    </bean>
+
+    <!-- 配置一个数据库的操作模板：JdbcTemplate -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSorce"></property>
+    </bean>
+    <!--配置数据源-->
+    <bean id="dataSorce" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+        <property name="url" value="jdbc:mysql://localhost:3306/user"></property>
+        <property name="username" value="root"></property>
+        <property name="password" value="123456"></property>
+    </bean>
+</beans>
+```
+
+##### 6.5.3 问题—关于dao层持久类过多引起代码重复
+
+开发 中dao有很多时，每个dao都有一些重复性的代码 
+
+```java
+    private JdbcTemplate jdbcTemplate;
+
+    public void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+```
+
+##### 6.5.4 解决途径—dao继承JdbcDaoSupport
+
+JdbcDaoSupport是spring框架为我们提供的一个类，该类中定义了一个JdbcTemplate对象，我们可以直接获取使用，但是要想创建该对象，需要为其提供一个数据源
+
+###### 6.5.4.1 JdbcDaoSupport源码
+
+要想创建JdbcDaoSupport对象，需要为其提供一个dataSource数据源
+
+```java
+public abstract class JdbcDaoSupport extends DaoSupport {
+    private JdbcTemplate jdbcTemplate;
+
+    public JdbcDaoSupport() {
+    }
+	//set方法注入数据源，判断是否注入了，注入了就创建JdbcTemplate
+    public final void setDataSource(DataSource dataSource) {
+        if (this.jdbcTemplate == null || dataSource != this.jdbcTemplate.getDataSource()) {
+          //如果提供了数据源就创建JdbcTemplate
+            this.jdbcTemplate = this.createJdbcTemplate(dataSource);
+            this.initTemplateConfig();
+        }
+
+    }
+		//使用数据源创建JdcbTemplate
+    protected JdbcTemplate createJdbcTemplate(DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
+    }
+
+    public final DataSource getDataSource() {
+        return this.jdbcTemplate != null ? this.jdbcTemplate.getDataSource() : null;
+    }
+
+  	//当然，我们也可以通过注入JdbcTemplate对象
+    public final void setJdbcTemplate(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+        this.initTemplateConfig();
+    }
+		//使用getJdbcTmeplate方法获取操作模板对象
+    public final JdbcTemplate getJdbcTemplate() {
+        return this.jdbcTemplate;
+    }
+}
+```
+
+###### 6.5.4.2 使用JdbcDaoSupport改写账户的持久层实现类
+
+```java
+package com.huayun.dao.impl;
+
+import com.huayun.dao.IAccountDao;
+import com.huayun.domain.Account;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.support.JdbcDaoSupport;
+
+import java.util.List;
+
+public class AccountDaoImpl2 extends JdbcDaoSupport implements IAccountDao {
+    public Account findById(int accountId) {
+        List<Account> accounts = getJdbcTemplate().query("select * from account where id=?", new BeanPropertyRowMapper<Account>(Account.class), accountId);
+        if (accounts.isEmpty()) return null;
+        return accounts.get(0);
+    }
+
+    public Account findByName(String accountName) {
+
+        List<Account> accounts = getJdbcTemplate().query("select * from account where name=?", new BeanPropertyRowMapper<Account>(Account.class), accountName);
+        if (accounts.isEmpty()) return null;
+        if (accounts.size() > 1) throw new RuntimeException("返回结果不唯一");
+        return accounts.get(0);
+    }
+
+    public void updateAccount(Account account) {
+        getJdbcTemplate().update("update account set name = ?,money=? where id=?", account.getName(), account.getMoney(), account.getId());
+    }
+}
+```
+
+###### 6.5.4.3 修改配置文件为dao对象注入数据源
+
+```java
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+    <!--配置一个dao-->
+    <bean id="accountDao" class="com.huayun.dao.impl.AccountDaoImpl">
+        <property name="jdbcTemplate" ref="jdbcTemplate"></property>
+    </bean>
+
+    <!--使用JdbcSupportDao配置-->
+    
+    <bean id="accountDao2" class="com.huayun.dao.impl.AccountDaoImpl2">
+        <!--<property name="jdbcTemplate" ref="jdbcTemplate"></property>-->
+      <!--关键代码start-->
+        <!--注入数据源dataSource-->
+        <property name="dataSource" ref="dataSource"></property>
+      <!--关键代码end-->
+    </bean>
+
+    <!-- 配置一个数据库的操作模板：JdbcTemplate -->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+    <!--配置数据源-->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+        <property name="url" value="jdbc:mysql://localhost:3306/user"></property>
+        <property name="username" value="root"></property>
+        <property name="password" value="123456"></property>
+    </bean>
+</beans>
+```
+
+###### 6.5.4.4 两版Dao的区别
+
+<font color=red>第一种在Dao类中定义JdbcTemplate的方式，适用于所有配置方式（xml和注解都可以） </font>
+
+<font color=red>第二种让Dao继承JdbcDaoSupport的方式，只能用于基于XML的方式，注解用不了。</font>
+
+原因：
+
+使用继承方式继承Spring内置jar包提供的JdbcDaoSupport是只读属性，不可以修改和注入。
 
