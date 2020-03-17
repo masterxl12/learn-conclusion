@@ -78,6 +78,382 @@
 
 #### 2.1 反射
 
+##### 2.1.1 反射机制及作用
+
+**反射机制：将类的各个组成部分封装为其他对象，反射机制**
+
+- ​	成员变量 —> Filed[ ]
+- ​    构造方法 —> Constructor [ ]
+- ​    成员方法 —> Method[ ]
+
+![image-20200317135953410](/Users/masterxl/Library/Application Support/typora-user-images/image-20200317135953410.png)
+
+作用：
+
+- 可以在程序运行中，操作这些对象
+- 可以解耦，提高程序的扩展性
+
+##### 2.1.2 获取Class对象的方式
+
+ 	1. Class.forName("全类名")：将字节码文件加载进内存，返回Class对象
+     - ==使用场景：多用于配置文件，将类名定义在配置文件中，读取配置文件，加载类==
+ 	2. 类名.Class:  通过类名的属性Class获取
+     - ==使用场景：多用于参数的传递==
+ 	3. 对象.getClass( ): 对象实例被创建后调用  getClass( )方法在Object类中定义
+     - ==使用场景：多用于对象的获取字节码的方式==
+
+```java
+package com.huayun.java_demo.reflect;
+
+import com.huayun.java_demo.domain.Person;
+
+public class ReflectClass {
+    public static void main(String[] args) throws Exception {
+        // JVM查找并加载指定的类,并返回与该类相关的Class对象三种方法
+        // 1. 使用new关键字获取全限定类名
+        Person p = new Person();
+        Class p1 = p.getClass();
+        System.out.println(p1);
+
+        // 2. 使用"类名.class"获取全限定类名
+        Class<Person> p2 = Person.class;
+        System.out.println(p2);
+
+        // 3. 使用Class.forName("全限定类名")，传入的参数就是类的全限定名
+        Class p3 = Class.forName("com.huayun.java_demo.domain.Person");
+        System.out.println(p3);
+
+        System.out.println(p1 == p2);
+        System.out.println(p1 == p3);
+    }
+}
+
+```
+
+[Out]
+
+```java
+class com.huayun.java_demo.domain.Person
+class com.huayun.java_demo.domain.Person
+class com.huayun.java_demo.domain.Person
+true
+true
+```
+
+【结论】同一个字节码文件(*.class)在一次程序运行过程中，只会被加载一次，不论通过哪一种方式获取的Class对象都是同一个。
+
+##### 2.1.3 Class对象功能
+
+获取功能
+
+###### 2.1.3.1 获取成员变量们
+
+| `Field[]` | `getFields()`   获取所有public修饰的成员变量               |
+| --------- | ---------------------------------------------------------- |
+| `Field`   | `getField(String name)` 获取指定名称的public修饰的成员变量 |
+| `Field[]` | `getDeclaredFields()` 获取所有的成员变量，==不考虑修饰符== |
+| `Field`   | `getDeclaredField(String name)`                            |
+
+- Field：成员变量
+  - 操作
+    - 设置值
+      - void set(Object obj,Object value )
+    - 获取值
+      - get(Object obj)
+    - 忽略访问权限修饰符的安全检查
+      - setAccessible(true):暴力反射
+
+###### 2.1.3.2 获取构造方法们
+
+| `Constructor[]` | `getConstructors()`                            |
+| --------------- | ---------------------------------------------- |
+| `Constructor`   | `getConstructor(类... parameterTypes)`         |
+| `Constructor`   | `getDeclaredConstructor(类... parameterTypes)` |
+| `Constructor[]` | `getDeclaredConstructors()`                    |
+
+```java
+package com.huayun.java_demo.reflect;
+
+import com.huayun.java_demo.domain.Person;
+
+import java.lang.reflect.Constructor;
+
+public class ReflectDemo {
+    public static void main(String[] args) throws Exception {
+
+        Class<Person> personClass = Person.class;
+        // 1 有参数构造
+        Constructor<Person> constructor = personClass.getConstructor(String.class, int.class);
+
+        Person p = constructor.newInstance("kobe", 40);
+        System.out.println(p);
+
+        // 2 无参数构造
+        Constructor<Person> constructor1 = personClass.getConstructor();
+        Person p2 = constructor1.newInstance();
+        System.out.println(p2);
+
+        // 3 无参数构造的简便写法  
+        Person p3 = personClass.newInstance();
+        System.out.println(p3);
+
+        System.out.println(p2 == p3);  // false
+
+    }
+}
+
+```
+
+【output】
+
+```java
+Person{name='kobe', gender='null', age=40}
+Person{name='null', gender='null', age=0}
+Person{name='null', gender='null', age=0}
+false
+
+```
+
+- Constructor: 构造方法
+  - 创建对象：
+    - `T`  `newInstance(Object... initargs)`
+    - 如果使用空参数构造方法创建对象，操作可以简化：Class对象的`newInstance()`方法
+
+###### 2.1.3.3 获取成员方法们
+
+| `Method []` | `getMethods()`                                         |
+| ----------- | ------------------------------------------------------ |
+| `Method`    | `getMethod(String name, 类... parameterTypes)`         |
+| `Method []` | `getDeclaredMethods()`                                 |
+| `Method`    | `getDeclaredMethod(String name, 类... parameterTypes)` |
+
+```java
+package com.huayun.java_demo.reflect;
+
+import com.huayun.java_demo.domain.Person;
+
+import java.lang.reflect.Method;
+
+public class ReflectMethod {
+    public static void main(String[] args) throws Exception {
+        Class<Person> personClass = Person.class;
+
+        // 无参成员方法
+        Method method = personClass.getMethod("eat");
+        Person person = new Person();
+        method.invoke(person);
+        // 有参数的成员方法调用
+        Method eatMethod = personClass.getMethod("eat", String.class);
+        eatMethod.invoke(person, "apple");
+
+        // 遍历输出方法名
+        for (Method methodItem : personClass.getMethods()) {
+            System.out.println(methodItem);
+            System.out.println(methodItem.getName());
+            System.out.println("------------------");
+        }
+    }
+}
+```
+
+[outPut]
+
+```java
+eat....
+eat...apple
+public static void com.huayun.java_demo.domain.Person.main(java.lang.String[])
+main
+------------------
+public java.lang.String com.huayun.java_demo.domain.Person.toString()
+toString
+------------------
+public java.lang.String com.huayun.java_demo.domain.Person.getName()
+getName
+------------------
+public void com.huayun.java_demo.domain.Person.setName(java.lang.String)
+setName
+------------------
+public void com.huayun.java_demo.domain.Person.eat(java.lang.String)
+eat
+------------------
+public void com.huayun.java_demo.domain.Person.eat()
+eat
+------------------
+public java.lang.String com.huayun.java_demo.domain.Person.getGender()
+getGender
+------------------
+public int com.huayun.java_demo.domain.Person.getAge()
+getAge
+------------------
+public void com.huayun.java_demo.domain.Person.setAge(int)
+setAge
+------------------
+public void com.huayun.java_demo.domain.Person.setGender(java.lang.String)
+setGender
+------------------
+public final void java.lang.Object.wait(long,int) throws java.lang.InterruptedException
+wait
+------------------
+public final native void java.lang.Object.wait(long) throws java.lang.InterruptedException
+wait
+------------------
+public final void java.lang.Object.wait() throws java.lang.InterruptedException
+wait
+------------------
+public boolean java.lang.Object.equals(java.lang.Object)
+equals
+------------------
+public native int java.lang.Object.hashCode()
+hashCode
+------------------
+public final native java.lang.Class java.lang.Object.getClass()
+getClass
+------------------
+public final native void java.lang.Object.notify()
+notify
+------------------
+public final native void java.lang.Object.notifyAll()
+notifyAll
+------------------
+```
+
+- Method: 方法对象
+  - 执行方法
+    - `Object`  `invoke(Object obj, Object... args)`
+  - 获取方法名称
+    - `String`  `getName()`
+
+###### 2.1.3.4 获取类名
+
+`String`           `getName()`
+
+```java
+Person.class.getName()
+```
+
+##### 2.1.4 使用反射的综合案例
+
+**com.huayun.java_demo.domain.Person**
+
+```java
+package com.huayun.java_demo.domain;
+
+public class Person {
+    private String name;
+    private String gender;
+    private int age;
+
+    public Person() {
+    }
+
+    public Person(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "name='" + name + '\'' +
+                ", gender='" + gender + '\'' +
+                ", age=" + age +
+                '}';
+    }
+
+    public void eat() {
+        System.out.println("eat....");
+    }
+
+    public void eat(String food) {
+        System.out.println("eat...." + food);
+    }
+
+    public static void main(String[] args) {
+        Person p = new Person();
+    }
+}
+
+```
+
+**com.huayun.java_demo.reflect.ReflectCase**
+
+```java
+package com.huayun.java_demo.reflect;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Method;
+import java.util.Properties;
+
+public class ReflectCase {
+    public static void main(String[] args) throws Exception {
+        // 1.加载配置文件
+        // 1.1 创建Properties对象
+        Properties pro = new Properties();
+        // 1.2 加载配置文件，转换为一个集合
+        ClassLoader classLoader = ReflectCase.class.getClassLoader();
+        // 1.2.1 获取class目录下的配置文件
+        InputStream stream = classLoader.getResourceAsStream("pro.properties");
+        // System.out.println(stream);
+        pro.load(stream);
+        // 2. 获取配置文件中定义的数据
+        // System.out.println(pro);
+        String className = pro.getProperty("className");
+        String methodName = pro.getProperty("methodName");
+
+        // 3. 加载该类进内存
+        Class cls = Class.forName(className);
+        // 4. 创建对象
+        Object obj = cls.newInstance();
+        // 5.  执行方法
+        // 5.1 执行无参的方法
+        Method method = cls.getMethod(methodName);
+        method.invoke(obj);
+        // 5.2 执行有参的方法
+        Method paramMethod = cls.getMethod(methodName, String.class);
+        paramMethod.invoke(obj, "apple");
+    }
+}
+```
+
+**/Users/masterxl/Desktop/myCode/java/javaLearn/src/main/resources/pro.properties**
+
+```java
+className=com.huayun.java_demo.domain.Person
+methodName=eat
+```
+
+[outPut]
+
+```java
+eat....
+eat....apple
+```
+
 #### 2.2 注解
 
 ##### 2.2.1 概念描述
