@@ -268,6 +268,211 @@ public class UserController {
 
 ```
 
+### 四、拦截器
 
+#### 4.1 概述
+
+​		Spring MVC 的处理器拦截器类似于Servlet开发中的过滤器Filter，用于对处理器进行预处理和后处理。 用户可以自己定义一些拦截器来实现特定的功能。 谈到拦截器，还要向大家提一个词——拦截器链（Interceptor Chain）。<font color=red>拦截器链就是将拦截器按一定的顺序联结成一条链。在访问被拦截的方法或字段时，拦截器链中的拦截器就会按其之前定义的顺序被调用。</font> 
+
+拦截器与过滤器区别： 
+
+- 过滤器是servlet规范中的一部分，任何java web工程都可以使用。
+
+-  拦截器是SpringMVC框架自己的，只有使用了SpringMVC框架的工程才能用。 
+
+- 过滤器在url-pattern中配置了/*之后，可以对所有要访问的资源拦截。
+
+-  拦截器它是只会==拦截访问的控制器方法==，如果访问的是jsp，html,css,image或者js是不会进行拦截的。
+
+ ==它也是AOP思想的具体应用==。 我们要想自定义拦截器， 要求必须实现：HandlerInterceptor接口。
+
+#### 4.2 自定义拦截器的步骤
+
+##### 4.2.1 编写拦截器类，实现HandlerInterceptor接口
+
+`com.huayun.interceptor.MyInterceptor`
+
+```java
+package com.huayun.interceptor;
+
+import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class MyInterceptor implements HandlerInterceptor {
+    /**
+     * 预处理，controller方法执行前
+     * return true 放行，执行下一个拦截器，如果没有，执行controller中的方法
+     * return false 不放行
+     * @param request
+     * @param response
+     * @param handler
+     * @return
+     * @throws Exception
+     */
+    @Override
+    public boolean preHandle(HttpServletRequest request, 
+                             HttpServletResponse response, Object handler) throws Exception {
+        System.out.println("preHandle: MyInterceptor执行。。。");
+        return true;
+    }
+
+    /**
+     * 后处理方法，controller方法执行后，success.jsp执行前
+     * @param request
+     * @param response
+     * @param handler
+     * @param modelAndView
+     * @throws Exception
+     */
+    @Override
+    public void postHandle(HttpServletRequest request, 
+                           HttpServletResponse response, 
+                           Object handler, ModelAndView modelAndView) throws Exception {
+        System.out.println("postHandle: MyInterceptor执行后。。。");
+        // postHandle指定页面跳转
+        // request.getRequestDispatcher("/WEB-INF/pages/error.jsp").forward(request,response);
+    }
+
+    /**
+     * success.jsp页面执行后，该方法会执行
+     * @param request
+     * @param response
+     * @param handler
+     * @param ex
+     * @throws Exception
+     */
+    @Override
+    public void afterCompletion(HttpServletRequest request, 
+                                HttpServletResponse response, 
+                                Object handler, Exception ex) throws Exception {
+        System.out.println("afterCompletion： success.jsp页面执行之后。。。");
+    }
+}
+
+```
+
+`com.huayun.controller.UserController`
+
+```java
+package com.huayun.controller;
+
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/api")
+public class UserController {
+    @RequestMapping("/testInterceptor")
+    public String testInterceptor() {
+        System.out.println("Controller: testInterceptor...");
+        return "success";
+    }
+}
+```
+
+`WEB-INF/pages/success.jsp`
+
+```jsp
+<%--
+  Created by IntelliJ IDEA.
+  User: masterxl
+  Date: 2020-03-21
+  Time: 12:41
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>success</title>
+</head>
+<body>
+    <h3>success,   welcome!!!</h3>
+<% System.out.println("success.jsp执行了。。。"); %>
+</body>
+</html>
+
+```
+
+##### 4.2.2 配置拦截器springmvc.xml
+
+`springmvc.xml`
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!-- 开启注解扫描 -->
+    <context:component-scan base-package="com.huayun"/>
+
+    <!-- 视图解析器对象 -->
+    <bean id="internalResourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/pages/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!--前端控制器，哪些静态资源不拦截-->
+    <mvc:resources location="/css/" mapping="/css/**"/>
+    <mvc:resources location="/images/" mapping="/images/**"/>
+    <mvc:resources location="/js/" mapping="/js/**"/>
+
+    <!--配置拦截器-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!--要拦截的具体的方法-->
+            <mvc:mapping path="/api/*"></mvc:mapping>
+            <!--不要拦截的方法
+                <mvc:exclude-mapping path=""/>-->
+            <!--配置拦截器对象-->
+            <bean class="com.huayun.interceptor.MyInterceptor"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+    <!--配置第二个拦截器-->
+    <!--不要拦截的方法
+    <mvc:exclude-mapping path=""/>
+    -->
+    <!--配置拦截器对象-->
+
+    <!-- 开启SpringMVC框架注解的支持 -->
+    <mvc:annotation-driven/>
+
+</beans>
+```
+
+[Output]
+
+```java
+preHandle: MyInterceptor执行。。。
+Controller: testInterceptor...
+postHandle: MyInterceptor执行后。。。
+success.jsp执行了。。。
+afterCompletion： success.jsp页面执行之后。。。
+```
+
+#### 4.3 拦截器的作用路径
+
+```xml
+作用路径可以通过在配置文件中配置。
+<!-- 配置拦截器的作用范围 --> 
+<mvc:interceptors> 
+		<mvc:interceptor> <mvc:mapping path="/**" /><!-- 用于指定对拦截的url --> 
+		<mvc:exclude-mapping path=""/>              <!-- 用于指定排除的url--> 
+    <bean class="com.huayun.interceptor.MyInterceptor"></bean>
+		</mvc:interceptor> 
+</mvc:interceptors>
+```
 
 ​	
