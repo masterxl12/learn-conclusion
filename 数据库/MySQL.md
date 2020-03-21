@@ -612,9 +612,32 @@ group by
 
 - 聚合查询也可以添加`WHERE`条件。
 
-#### 4.7 多表查询
+#### 4.7 多表查询(笛卡尔查询)
 
 4.7.1 基本语法
+
+​		查询多张表的语法是：`SELECT * FROM <表1> <表2>`。
+
+```sql
+SELECT * FROM students, classes;
+```
+
+​		这种一次查询两个表的数据，查询的结果也是一个二维表，它是`students`表和`classes`表的“乘积”，即`students`表的每一行与`classes`表的每一行都两两拼在一起返回。结果集的列数是`students`表和`classes`表的列数之和，行数是`students`表和`classes`表的行数之积。
+
+```sql
+select 
+		alias1.id sid,
+		alias1.name sname,
+		alias1.a,
+		alias1.b,
+		alias1.c,
+		alias2.id cid,
+		alias2.name cname
+from
+		 <表1> <alias1>,<表2> <alias2>
+where 
+		alias1.xxx = xxx and alias2.yyy = yyy ;
+```
 
 ​		注意到`FROM`子句给表设置别名的语法是`FROM <表名1> <别名1>, <表名2> <别名2>`。这样我们用别名`s`和`c`分别表示`students`表和`classes`表。
 
@@ -632,9 +655,7 @@ where
 		s.gender = "M" and c.id = 1;
 ```
 
-这个查询的结果集每行记录都满足条件`s.gender = 'M'`和`c.id = 1`。添加`WHERE`条件后结果集的数量大大减少了。
-
-多表查询也是可以添加`WHERE`条件的
+这个查询的结果集每行记录都满足条件`s.gender = 'M'`和`c.id = 1`。添加`WHERE`条件后结果集的数量大大减少
 
 ##### 4.7.2 小结
 
@@ -642,4 +663,140 @@ where
 
 - 多表查询的结果集可能非常巨大，要小心使用。
 
-4.8 
+#### 4.8 连接查询(join)
+
+​		连接查询是另一种类型的多表查询。连接查询对多个表进行JOIN运算，简单地说，就是先确定一个主表作为结果集，然后，把其他表的行有选择性地“连接”在主表结果集上。
+
+##### 4.8.1 基本用法
+
+###### 4.8.1.1 INNER JOIN查询
+
+==选出两张表都存在的记录：==
+
+```sql
+select 
+		s.id,s.name,s.class_id,c.name class_name,s.gender,s.score
+from
+		students s
+inner join classes c
+on s.class_id = c.id
+```
+
+1. 先确定主表，仍然使用`FROM <表1>`的语法；
+2. 再确定需要连接的表，使用`INNER JOIN <表2>`的语法；
+3. 然后确定连接条件，使用`ON <条件...>`，这里的条件是`s.class_id = c.id`，表示`students`表的`class_id`列与`classes`表的`id`列相同的行需要连接；
+4. 可选：加上`WHERE`子句、`ORDER BY`等子句。
+
+查询结果
+
+| id   | name | class_id | class_name | gender | score |
+| :--- | :--- | :------- | :--------- | :----- | :---- |
+| 1    | 小明 | 1        | 一班       | M      | 90    |
+| 2    | 小红 | 1        | 一班       | F      | 95    |
+| 3    | 小军 | 1        | 一班       | M      | 88    |
+| 4    | 小米 | 1        | 一班       | F      | 73    |
+| 5    | 小白 | 2        | 二班       | F      | 81    |
+| 6    | 小兵 | 2        | 二班       | M      | 55    |
+| 7    | 小林 | 2        | 二班       | M      | 85    |
+| 8    | 小新 | 3        | 三班       | F      | 91    |
+| 9    | 小王 | 3        | 三班       | M      | 89    |
+| 10   | 小丽 | 3        | 三班       | F      | 88    |
+
+###### 4.8.1.2 RIGHT OUTER JOIN查询
+
+```sql
+select
+		s.id,s.name,s.class_id,c.name class_name,s.gender,s.score
+from 
+		students s
+right outer join
+		classes c
+on s.class_id = c.id
+```
+
+==RIGHT OUTER JOIN返回右表都存在的行==。如果某一行仅在右表存在，那么结果集就会以`NULL`填充剩下的字段。
+
+| id   | name | class_id | class_name | gender | score |
+| :--- | :--- | :------- | :--------- | :----- | :---- |
+| 1    | 小明 | 1        | 一班       | M      | 90    |
+| 2    | 小红 | 1        | 一班       | F      | 95    |
+| 3    | 小军 | 1        | 一班       | M      | 88    |
+| 4    | 小米 | 1        | 一班       | F      | 73    |
+| 5    | 小白 | 2        | 二班       | F      | 81    |
+| 6    | 小兵 | 2        | 二班       | M      | 55    |
+| 7    | 小林 | 2        | 二班       | M      | 85    |
+| 8    | 小新 | 3        | 三班       | F      | 91    |
+| 9    | 小王 | 3        | 三班       | M      | 89    |
+| 10   | 小丽 | 3        | 三班       | F      | 88    |
+| NULL | NULL | NULL     | 四班       | NULL   | NULL  |
+
+###### 4.8.1.3 LEFT OUTER JOIN查询
+
+==LEFT OUTER JOIN则返回左表都存在的行==。如果我们给students表增加一行，并添加class_id=5，由于classes表并不存在id=5的行，所以，LEFT OUTER JOIN的结果会增加一行，对应的`class_name`是`NULL`：
+
+```sql
+select
+		s.id,s.name,s.class_id,c.name class_name,s.gender,s.score
+from 
+		students s
+left outer join
+		classes c
+on s.class_id = c.id
+```
+
+| id   | name | class_id | class_name | gender | score |
+| :--- | :--- | :------- | :--------- | :----- | :---- |
+| 1    | 小明 | 1        | 一班       | M      | 90    |
+| 2    | 小红 | 1        | 一班       | F      | 95    |
+| 3    | 小军 | 1        | 一班       | M      | 88    |
+| 4    | 小米 | 1        | 一班       | F      | 73    |
+| 5    | 小白 | 2        | 二班       | F      | 81    |
+| 6    | 小兵 | 2        | 二班       | M      | 55    |
+| 7    | 小林 | 2        | 二班       | M      | 85    |
+| 8    | 小新 | 3        | 三班       | F      | 91    |
+| 9    | 小王 | 3        | 三班       | M      | 89    |
+| 10   | 小丽 | 3        | 三班       | F      | 88    |
+| 11   | 新生 | 5        | NULL       | M      | 88    |
+
+###### 4.8.1.4 FULL OUTER JOIN查询
+
+==FULL OUTER JOIN，它会把两张表的所有记录全部选择出来==，并且，自动把对方不存在的列填充为NULL：
+
+```sql
+select
+		s.id,s.name,s.class_id,c.name class_name,s.gender,s.score
+from 
+		students s
+full outer join
+		classes c
+on s.class_id = c.id
+```
+
+| id   | name | class_id | class_name | gender | score |
+| :--- | :--- | :------- | :--------- | :----- | :---- |
+| 1    | 小明 | 1        | 一班       | M      | 90    |
+| 2    | 小红 | 1        | 一班       | F      | 95    |
+| 3    | 小军 | 1        | 一班       | M      | 88    |
+| 4    | 小米 | 1        | 一班       | F      | 73    |
+| 5    | 小白 | 2        | 二班       | F      | 81    |
+| 6    | 小兵 | 2        | 二班       | M      | 55    |
+| 7    | 小林 | 2        | 二班       | M      | 85    |
+| 8    | 小新 | 3        | 三班       | F      | 91    |
+| 9    | 小王 | 3        | 三班       | M      | 89    |
+| 10   | 小丽 | 3        | 三班       | F      | 88    |
+| 11   | 新生 | 5        | NULL       | M      | 88    |
+| NULL | NULL | NULL     | 四班       | NULL   | NULL  |
+
+##### 4.8.2 连接查询模型
+
+<img src="/Users/masterxl/Library/Application Support/typora-user-images/image-20200321174852841.png" alt="image-20200321174852841" style="zoom:55%;" />
+
+##### 4.8.3 小结
+
+- JOIN查询需要先确定主表，然后把另一个表的数据“附加”到结果集上；
+
+- INNER JOIN是最常用的一种JOIN查询，它的语法是`SELECT ... FROM <表1> INNER JOIN <表2> ON <条件...>`；
+
+- JOIN查询仍然可以使用`WHERE`条件和`ORDER BY`排序。
+
+### 五、修改数据
