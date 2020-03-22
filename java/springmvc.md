@@ -870,15 +870,15 @@ public class AccountController {
 }
 ```
 
-#### 5.2 整合步骤
+#### 5.2 保证Spring框架在web中独立运行
 
 思路：确保每一个环节都能独立运作后，再整合
 
 ==**整合原则：表现层调用业务层，业务层调用持久层**==
 
-##### 5.2.1 确保Spring框架在web中独立运行
+##### 5.2.1 编写spring配置文件并导入约束
 
-###### 5.2.1.1 编写spring配置文件并导入约束
+`applicationContext.xml`
 
 ```java
 <?xml version="1.0" encoding="UTF-8"?>
@@ -942,9 +942,9 @@ public class AccountController {
 </beans>
 ```
 
-###### 5.2.1.2 使用注解配置业务层和持久层
+##### 5.2.2 使用注解配置业务层和持久层
 
-`业务层实现类`
+`业务层实现类` AccountServiceImpl
 
 ```java
 package com.huayun.service.impl;
@@ -974,7 +974,7 @@ public class AccountServiceImpl implements AccountService {
 
 ```
 
-`持久层`
+`持久层` dao
 
 ```java
 package com.huayun.dao;
@@ -1010,7 +1010,7 @@ public interface AccountDao {
 
 ```
 
-###### 5.2.1.3 测试spring能否独立运行
+##### 5.2.3 测试spring能否独立运行
 
 `com.huayun.test.TestSpring`
 
@@ -1037,9 +1037,9 @@ public class TestSpring {
 
 ```
 
-##### 5.2.2 保证SpringMVC在web工程中独立运行
+#### 5.3 保证SpringMVC在web工程中独立运行
 
-###### 5.2.2.1 在web.xml中配置核心控制器（DispatcherServlet）
+##### 5.3.1 在`web.xml`中配置核心控制器（DispatcherServlet）
 
 ```java
 <!DOCTYPE web-app PUBLIC
@@ -1093,7 +1093,9 @@ public class TestSpring {
 </web-app>
 ```
 
-###### 5.2.2.2 编写SpringMVC的配置文件
+##### 5.3.2 编写SpringMVC的配置文件
+
+`springmvc.xml`
 
 ```java
 <?xml version="1.0" encoding="UTF-8"?>
@@ -1130,7 +1132,7 @@ public class TestSpring {
 </beans>
 ```
 
-###### 5.2.2.3 编写Controller和jsp页面
+##### 5.3.3 编写Controller和jsp页面
 
 `index.jsp`
 
@@ -1179,11 +1181,13 @@ public class TestSpring {
   </context-param>
 ```
 
+**==也即完成表现层调用持久层==**
+
 #### 5.5 MyBatis框架独立运行
 
 ##### 5.5.1 编写SqlMapConfig配置文件
 
-也可以不用这一步
+也可以不用单独配置这一文件，后面可以在spring配置文件中配置
 
 ```java
 <?xml version="1.0" encoding="UTF-8"?>
@@ -1242,4 +1246,147 @@ public class TestJdbc {
 ```
 
 #### 5.6 Spring和MyBatis整合
+
+##### 5.6.1Spring接管MyBatis的Session工厂
+
+`applicationContext.xml`
+
+```java
+<!--2. spring整合mybatis-->
+    <!--启动数据库连接池-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
+        <property name="jdbcUrl" value="jdbc:mysql:///user"/>
+        <property name="user" value="root"/>
+        <property name="password" value="123456"/>
+    </bean>
+
+    <!--2.1 配置SqlSessionFactory工厂-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+```
+
+##### 5.6.2 配置自动扫描所有Mapper接口和文件
+
+`applicationContext.xml`
+
+```java
+    <!--2.2 配置AccountDao接口所在包-->
+    <bean id="mapperScanner" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.huayun.dao"/>
+    </bean>
+```
+
+##### 5.6.3 配置spring的事务
+
+`applicationContext.xml`
+
+```java
+    <!--3.  配置Spring框架声明式事务管理-->
+    <!--3.1 配置事务管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!--3.2 配置事务通知-->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="find*" read-only="true"/>
+            <tx:method name="*" isolation="DEFAULT"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!--3.3 配置AOP增强-->
+    <aop:config>
+		<!-- 配置切入点表达式-->   
+        <aop:advisor advice-ref="txAdvice" pointcut="execution(* com.huayun.service.impl.*ServiceImpl.*(..))"/>
+    </aop:config>
+```
+
+**==也就实现了业务层调用持久层==**
+
+#### 5.7 测试整合结果
+
+##### 5.7.1 编写测试jsp
+
+`WEB-INF/pages/list.jsp`
+
+```java
+<%--
+  Created by IntelliJ IDEA.
+  User: masterxl
+  Date: 2020-03-22
+  Time: 16:06
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" isELIgnored="false" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<html>
+<head>
+    <title>Title</title>
+</head>
+<body>
+
+<h3>查询所有的帐户</h3>
+
+<c:forEach items="${accounts}" var="account">
+    ${account.name}<br>
+</c:forEach>
+</body>
+</html>
+
+```
+
+##### 5.7.2 修改控制器中的方法
+
+`com/huayun/controller/AccountController.java`
+
+```java
+package com.huayun.controller;
+
+
+import com.huayun.domain.Account;
+import com.huayun.service.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+
+//import org.springframework.web.bind.annotation.RestController;
+
+@Controller
+@RequestMapping("/api")
+public class AccountController {
+
+    @Autowired
+    private AccountService accountService;
+
+    @RequestMapping(value = "/findAll", method = RequestMethod.GET)
+    public String findAll(Model model) {
+        System.out.println("表现层： 查询所有用户信息...");
+        List<Account> accounts = accountService.findAll();
+        model.addAttribute("accounts", accounts);
+        return "list";
+    }
+
+    @RequestMapping(value = "/save")
+    public void save(Account account, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        System.out.println("表现层： 保存账户...");
+        accountService.saveAccount(account);
+        System.out.println(request.getContextPath());
+        response.sendRedirect(request.getContextPath() + "/api/findAll");
+    }
+}
+```
+
+##### 5.7.3 测试运行结果
+
+
 
