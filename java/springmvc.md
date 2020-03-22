@@ -475,4 +475,771 @@ afterCompletion： success.jsp页面执行之后。。。
 </mvc:interceptors>
 ```
 
-​	
+### 五、SSM整合
+
+#### 5.1 导入坐标并建立依赖
+
+##### 5.1.1 Pom.xml
+
+```java
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.huayun</groupId>
+  <artifactId>springmvc_day03_ssm</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>war</packaging>
+
+  <name>springmvc_day03_ssm Maven Webapp</name>
+  <!-- FIXME change it to the project's website -->
+  <url>http://www.example.com</url>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <spring.version>5.0.2.RELEASE</spring.version>
+    <slf4j.version>1.6.6</slf4j.version>
+    <log4j.version>1.2.12</log4j.version>
+    <mysql.version>5.1.6</mysql.version>
+    <mybatis.version>3.4.5</mybatis.version>
+  </properties>
+
+  <dependencies>
+    <!-- spring -->
+    <dependency>
+      <groupId>org.aspectj</groupId>
+      <artifactId>aspectjweaver</artifactId>
+      <version>1.6.8</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aop</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-webmvc</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jdbc</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>${mysql.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <version>2.5</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet.jsp</groupId>
+      <artifactId>jsp-api</artifactId>
+      <version>2.0</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>jstl</groupId>
+      <artifactId>jstl</artifactId>
+      <version>1.2</version>
+    </dependency>
+
+    <!-- log start -->
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>${log4j.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+
+    <!-- log end -->
+    <dependency>
+      <groupId>org.mybatis</groupId>
+      <artifactId>mybatis</artifactId>
+      <version>${mybatis.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mybatis</groupId>
+      <artifactId>mybatis-spring</artifactId>
+      <version>1.3.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>c3p0</groupId>
+      <artifactId>c3p0</artifactId>
+      <version>0.9.1.2</version>
+      <type>jar</type>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <finalName>springmvc_day03_ssm</finalName>
+    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+      <plugins>
+        <plugin>
+          <artifactId>maven-clean-plugin</artifactId>
+          <version>3.1.0</version>
+        </plugin>
+        <!-- see http://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_war_packaging -->
+        <plugin>
+          <artifactId>maven-resources-plugin</artifactId>
+          <version>3.0.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.8.0</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>2.22.1</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-war-plugin</artifactId>
+          <version>3.2.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-install-plugin</artifactId>
+          <version>2.5.2</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>2.8.2</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>
+
+```
+
+##### 5.1.2 编写实体类
+
+`com.huayun.domain.Account`
+
+```java
+package com.huayun.domain;
+
+import java.io.Serializable;
+
+public class Account implements Serializable {
+    private Integer id;
+    private String name;
+    private double money;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public double getMoney() {
+        return money;
+    }
+
+    public void setMoney(double money) {
+        this.money = money;
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", money=" + money +
+                '}';
+    }
+}
+```
+
+##### 5.1.3 编写业务层
+
+`com.huayun.service.AccountService`
+
+```java
+package com.huayun.service;
+
+import com.huayun.domain.Account;
+
+import java.util.List;
+
+public interface AccountService {
+    /**
+     * 查询所有账户信息
+     * @return
+     */
+    public List<Account> findAll();
+
+    /**
+     * 保存账户
+     * @param account
+     */
+    public void saveAccount(Account account);
+}
+
+```
+
+`业务层接口实现类``com.huayun.service.impl.AccountServiceImpl`
+
+```java
+package com.huayun.service.impl;
+
+import com.huayun.dao.AccountDao;
+import com.huayun.domain.Account;
+import com.huayun.service.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service("accountService")
+public class AccountServiceImpl implements AccountService {
+
+    // 业务层调持久层
+    @Autowired
+    private AccountDao accountDao;
+
+    @Override
+    public List<Account> findAll() {
+        System.out.println("业务层： 查询所有用户信息...");
+        List<Account> lists = accountDao.findAll();
+        return lists;
+    }
+
+    @Override
+    public void saveAccount(Account account) {
+        System.out.println("业务层： 保存账户信息...");
+        accountDao.saveAccount(account);
+    }
+}
+
+```
+
+##### 5.1.4 编写Dao层
+
+`com.huayun.dao.AccountDao`
+
+```java
+package com.huayun.dao;
+
+import com.huayun.domain.Account;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Select;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+/**
+ * dao接口
+ */
+@Repository
+public interface AccountDao {
+    /**
+     * 查询所有账户信息
+     *
+     * @return
+     */
+    @Select("select * from account")
+    public List<Account> findAll();
+
+    /**
+     * 保存账户
+     *
+     * @param account
+     */
+    @Insert("insert into account (name,money) values(#{name},#{money})")
+    public void saveAccount(Account account);
+}
+
+```
+
+##### 5.1.5 编写controller
+
+`com.huayun.controller.AccountController`
+
+```java
+package com.huayun.controller;
+
+
+import com.huayun.domain.Account;
+import com.huayun.service.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+
+//import org.springframework.web.bind.annotation.RestController;
+
+@Controller
+@RequestMapping("/api")
+public class AccountController {
+
+    @Autowired
+    private AccountService accountService;
+
+    @RequestMapping(value = "/findAll", method = RequestMethod.GET)
+    public String findAll(Model model) {
+        System.out.println("表现层： 查询所有用户信息...");
+        List<Account> accounts = accountService.findAll();
+        model.addAttribute("accounts", accounts);
+        return "list";
+    }
+
+    @RequestMapping(value = "/save")
+    public void save(Account account, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        System.out.println("表现层： 保存账户...");
+        accountService.saveAccount(account);
+        System.out.println(request.getContextPath());
+        response.sendRedirect(request.getContextPath() + "/api/findAll");
+    }
+}
+```
+
+#### 5.2 整合步骤
+
+思路：确保每一个环节都能独立运作后，再整合
+
+==**整合原则：表现层调用业务层，业务层调用持久层**==
+
+##### 5.2.1 确保Spring框架在web中独立运行
+
+###### 5.2.1.1 编写spring配置文件并导入约束
+
+```java
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx.xsd">
+    <!--1. 开启注解扫描，希望处理service和dao，controller不需要Spring框架去处理-->
+    <context:component-scan base-package="com.huayun">
+        <!--配置哪些注解不扫描-->
+        <context:exclude-filter type="annotation"
+                                expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+
+    <!--2. spring整合mybatis-->
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
+        <property name="jdbcUrl" value="jdbc:mysql:///user"/>
+        <property name="user" value="root"/>
+        <property name="password" value="123456"/>
+    </bean>
+
+    <!--2.1 配置SqlSessionFactory工厂-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!--2.2 配置AccountDao接口所在包-->
+    <bean id="mapperScanner" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.huayun.dao"/>
+    </bean>
+
+    <!--3.  配置Spring框架声明式事务管理-->
+    <!--3.1 配置事务管理器-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!--3.2 配置事务通知-->
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="find*" read-only="true"/>
+            <tx:method name="*" isolation="DEFAULT"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!--3.3 配置AOP增强-->
+    <aop:config>
+        <aop:advisor advice-ref="txAdvice" pointcut="execution(* com.huayun.service.impl.*ServiceImpl.*(..))"/>
+    </aop:config>
+
+</beans>
+```
+
+###### 5.2.1.2 使用注解配置业务层和持久层
+
+`业务层实现类`
+
+```java
+package com.huayun.service.impl;
+
+import com.huayun.dao.AccountDao;
+import com.huayun.domain.Account;
+import com.huayun.service.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service("accountService")
+public class AccountServiceImpl implements AccountService {
+
+    @Override
+    public List<Account> findAll() {
+        System.out.println("业务层： 查询所有用户信息...");
+        return null;
+    }
+
+    @Override
+    public void saveAccount(Account account) {
+        System.out.println("业务层： 保存账户信息...");
+    }
+}
+
+```
+
+`持久层`
+
+```java
+package com.huayun.dao;
+
+import com.huayun.domain.Account;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Select;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+/**
+ * dao接口
+ */
+@Repository
+public interface AccountDao {
+    /**
+     * 查询所有账户信息
+     *
+     * @return
+     */
+    @Select("select * from account")
+    public List<Account> findAll();
+
+    /**
+     * 保存账户
+     *
+     * @param account
+     */
+    @Insert("insert into account (name,money) values(#{name},#{money})")
+    public void saveAccount(Account account);
+}
+
+```
+
+###### 5.2.1.3 测试spring能否独立运行
+
+`com.huayun.test.TestSpring`
+
+```java
+package com.huayun.test;
+
+import com.huayun.domain.Account;
+import com.huayun.service.AccountService;
+import org.junit.Test;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class TestSpring {
+    @Test
+    public void run1(){
+        // 1 加载配置文件
+         ApplicationContext ac = new ClassPathXmlApplicationContext("classpath:applicationContext.xml");
+        // 2 获取对象
+        AccountService as = (AccountService) ac.getBean("accountService");
+        // 3 调用方法
+        as.findAll();
+    }
+}
+
+```
+
+##### 5.2.2 保证SpringMVC在web工程中独立运行
+
+###### 5.2.2.1 在web.xml中配置核心控制器（DispatcherServlet）
+
+```java
+<!DOCTYPE web-app PUBLIC
+        "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+        "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+  <display-name>Archetype Created Web Application</display-name>
+
+  <!--配置Spring的监听器，默认只加载WEB-INF目录下的applicationContext.xml配置文件-->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  <!--设置配置文件的路径-->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:applicationContext.xml</param-value>
+  </context-param>
+
+  <!--配置前端控制器-->
+  <servlet>
+    <servlet-name>dispatcherServlet</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <!--加载springmvc.xml配置文件-->
+    <init-param>
+      <param-name>contextConfigLocation</param-name>
+      <param-value>classpath:springmvc.xml</param-value>
+    </init-param>
+    <!--启动服务器，创建该servlet-->
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>dispatcherServlet</servlet-name>
+    <url-pattern>/</url-pattern>
+  </servlet-mapping>
+
+  <!--解决中文乱码的过滤器-->
+  <filter>
+    <filter-name>characterEncodingFilter</filter-name>
+    <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+    <init-param>
+      <param-name>encoding</param-name>
+      <param-value>UTF-8</param-value>
+    </init-param>
+  </filter>
+  <filter-mapping>
+    <filter-name>characterEncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+</web-app>
+```
+
+###### 5.2.2.2 编写SpringMVC的配置文件
+
+```java
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--1. 开启注解扫描，只扫描Controller注解-->
+    <context:component-scan base-package="com.huayun">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+    </context:component-scan>
+
+    <!--2. 配置的视图解析器对象-->
+    <bean id="internalResourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/pages/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!--3. 过滤静态资源-->
+    <mvc:resources location="/css/" mapping="/css/**" />
+    <mvc:resources location="/images/" mapping="/images/**" />
+    <mvc:resources location="/js/" mapping="/js/**" />
+
+    <!--4. 开启SpringMVC注解的支持-->
+    <mvc:annotation-driven/>
+
+</beans>
+```
+
+###### 5.2.2.3 编写Controller和jsp页面
+
+`index.jsp`
+
+```java
+<%--
+  Created by IntelliJ IDEA.
+  User: masterxl
+  Date: 2020-03-22
+  Time: 16:04
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html>
+<head>
+    <title>Title</title>
+</head>
+<body>
+<a href="/api/findAll">查询所有</a>
+<hr>
+
+<form action="/api/save" method="post">
+    姓名：<input type="text" name="name" /><br/>
+    金额：<input type="text" name="money" /><br/>
+    <input type="submit" value="保存"/><br/>
+</form>
+</body>
+</html>
+
+```
+
+#### 5.4  整合Spring和SpringMVC
+
+##### 5.4.1 配置监听器实现启动服务创建容器
+
+`WEB-INF/web.xml`
+
+```java
+  <!--配置Spring的监听器，默认只加载WEB-INF目录下的applicationContext.xml配置文件-->
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  <!--设置配置文件的路径-->
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>classpath:applicationContext.xml</param-value>
+  </context-param>
+```
+
+#### 5.5 MyBatis框架独立运行
+
+##### 5.5.1 编写SqlMapConfig配置文件
+
+也可以不用这一步
+
+```java
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <!--1. 配置环境-->
+    <environments default="mysql">
+        <environment id="mysql">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="com.mysql.jdbc.Driver"/>
+                <property name="url" value="jdbc:mysql://localhost:3306/User"/>
+                <property name="username" value="root"/>
+                <property name="password" value="123456"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <!--2. 引入映射配置文件-->
+    <mappers>
+        <!--<mapper resource="com.huayun.dao.AccountDao" />-->
+        <package name="com.huayun.dao"/>
+    </mappers>
+</configuration>
+```
+
+##### 5.5.2 测试运行结果
+
+```java
+public class TestJdbc {
+    // 测试查询所有
+    @Test
+    public void testJdbc() throws IOException {
+        // 1. 加载配置文件
+        InputStream in = Resources.getResourceAsStream("SqlMapConfig.xml");
+
+        // 2. 创建SqlSessionFactory对象
+        SqlSessionFactory factory = new SqlSessionFactoryBuilder().build(in);
+
+        // 3. 创建SqlSession对象
+        SqlSession session = factory.openSession();
+
+        // 4. 获取到代理对象
+        AccountDao accountDao = session.getMapper(AccountDao.class);
+
+        // 5. 查询所有信息
+        List<Account> list = accountDao.findAll();
+        for (Account account : list) {
+            System.out.println(account);
+        }
+        session.close();
+
+        in.close();
+    }
+}
+```
+
+#### 5.6 Spring和MyBatis整合
+

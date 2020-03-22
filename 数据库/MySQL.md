@@ -420,7 +420,7 @@ select id,name,score from students where gender = "M"
 
 ##### 4.3.4 小结
 
-- 使用`SELECT *`表示查询表的所有列，使用`SELECT 列1, 列2, 列3`则可以仅返回指定列，这种操作称为投影。
+- 使用`SELECT *`表示查询表的所有列，使用`SELECT 列1, 列2, 列3`则可以==仅返回指定列==，这种操作称为投影。
 
 - `SELECT`语句可以对结果集的列进行重命名。
 
@@ -507,7 +507,7 @@ limit 3 offset 6
 
 - 使用`LIMIT  OFFSET `可以对结果集进行分页，每次查询返回结果集的一部分；
 
-- 分页查询需要先确定每页的数量和当前页数，然后确定`LIMIT`和`OFFSET`的值。
+- ==分页查询需要先确定每页的数量和当前页数，然后确定`LIMIT`和`OFFSET`的值。==
 
 #### 4.6 聚合查询
 
@@ -538,7 +538,7 @@ select count(*) from <表名>
 【举例】统计成绩高于85分的数量，并设置列名为专业“professional”
 
 ```sql
-SELECT COUNT(*)professional FROM students WHERE score > 85;
+SELECT COUNT(*) professional FROM students WHERE score > 85;
 ```
 
 ##### 4.6.3 聚合函数分类
@@ -608,7 +608,7 @@ group by
 
 ##### 4.6.5 小结
 
-- 使用SQL提供的聚合查询，我们可以方便地计算总数、合计值、平均值、最大值和最小值；
+- 使用SQL提供的聚合查询，我们可以==方便地计算总数、合计值、平均值、最大值和最小值==；
 
 - 聚合查询也可以添加`WHERE`条件。
 
@@ -622,7 +622,7 @@ group by
 SELECT * FROM students, classes;
 ```
 
-​		这种一次查询两个表的数据，查询的结果也是一个二维表，它是`students`表和`classes`表的“乘积”，即`students`表的每一行与`classes`表的每一行都两两拼在一起返回。结果集的列数是`students`表和`classes`表的列数之和，行数是`students`表和`classes`表的行数之积。
+​		这种一次查询两个表的数据，查询的结果也是一个二维表，它是`students`表和`classes`表的“乘积”，即`students`表的每一行与`classes`表的每一行都两两拼在一起返回。结果集的列数是`students`表和`classes`表的==**列数之和**==，行数是`students`表和`classes`表的==**行数之积**==。
 
 ```sql
 select 
@@ -665,7 +665,7 @@ where
 
 #### 4.8 连接查询(join)
 
-​		连接查询是另一种类型的多表查询。连接查询对多个表进行JOIN运算，简单地说，就是先确定一个主表作为结果集，然后，把其他表的行有选择性地“连接”在主表结果集上。
+​		连接查询是另一种类型的多表查询。连接查询对多个表进行JOIN运算，简单地说，就是==先确定一个主表作为结果集==，然后，==把其他表的行有选择性地“连接”在主表结果集上==。
 
 ##### 4.8.1 基本用法
 
@@ -785,7 +785,7 @@ on s.class_id = c.id
 | 9    | 小王 | 3        | 三班       | M      | 89    |
 | 10   | 小丽 | 3        | 三班       | F      | 88    |
 | 11   | 新生 | 5        | NULL       | M      | 88    |
-| NULL | NULL | NULL     | 四班       | NULL   | NULL  |
+| NULL | NULL |          | 四班       | NULL   | NULL  |
 
 ##### 4.8.2 连接查询模型
 
@@ -793,9 +793,9 @@ on s.class_id = c.id
 
 ##### 4.8.3 小结
 
-- JOIN查询需要先确定主表，然后把另一个表的数据“附加”到结果集上；
+- JOIN查询需要==先确定主表==，然后把另一个表的数据“附加”到结果集上；
 
-- INNER JOIN是最常用的一种JOIN查询，它的语法是`SELECT ... FROM <表1> INNER JOIN <表2> ON <条件...>`；
+- INNER JOIN是最常用的一种==JOIN查询==，它的语法是`SELECT ... FROM <表1> INNER JOIN <表2> ON <条件...>`；
 
 - JOIN查询仍然可以使用`WHERE`条件和`ORDER BY`排序。
 

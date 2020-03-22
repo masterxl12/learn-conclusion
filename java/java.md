@@ -17,6 +17,7 @@
 | commond + Fn + F1            | 在光标所在错误代码处显示错误信息                             |
 | commond + Fn + F3            | 选中文件/文件夹，使用助记符/取消书签                         |
 | Control + Space              | 基本代码补全（可能会被输入法占用）                           |
+| Command + O                  | ==全局搜索类==                                               |
 | command + /                  | ==注释==                                                     |
 | Option + Fn + Delete         | ==删除光标后面的单词或中文语句==                             |
 | Option + Delete              | ==删除光标前面的单词或中文语句==                             |
