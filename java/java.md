@@ -128,10 +128,9 @@ public class ReflectClass {
         System.out.println(p1 == p3);
     }
 }
-
 ```
 
-[Out]
+[Output]
 
 ```java
 class com.huayun.java_demo.domain.Person
@@ -205,14 +204,13 @@ public class ReflectDemo {
 
 ```
 
-【output】
+【Output】
 
 ```java
 Person{name='kobe', gender='null', age=40}
 Person{name='null', gender='null', age=0}
 Person{name='null', gender='null', age=0}
 false
-
 ```
 
 - Constructor: 构造方法
