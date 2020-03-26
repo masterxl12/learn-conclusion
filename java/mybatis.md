@@ -1737,6 +1737,43 @@ Role{id=3, roleName='校长', roleDesc='管理整个学校'}
 []
 ```
 
+##### 3.3.13 SqlMapConfig.xml配置文件
+
+```java
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+    <!-- 配置properties-->
+    <properties resource="db.properties"/>
+
+    <!--使用typeAliases配置别名，它只能配置domain中类的别名 -->
+    <typeAliases>
+        <package name="com.huayun.domain" />
+    </typeAliases>
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}" />
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <package name="com.huayun.dao" />
+        <!--1. 基于xml配置dao的映射文件-->
+        <!--<mapper resource="com/huayun/dao/IUserDao.xml"/>-->
+        <!--2. 基于注解配置-->
+    </mappers>
+</configuration>
+```
+
 
 
 
