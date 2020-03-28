@@ -641,5 +641,149 @@ show
 demo1...show...
 ```
 
+### 三、IO流 
 
+​		数据的传输，可以看做是一种数据的流动，按照流动的方向，以==内存为基准==，分为`输入input` 和`输出output` 即流向内存是输入流，流出内存的输出流。
 
+​		Java中I/O操作主要是指使用`java.io`包下的内容，进行输入、输出操作。**输入**也叫做**读取**数据，**输出**也叫做作**写出**数据。
+
+------
+
+#### 3.1 IO的分类
+
+根据数据的流向分为：**输入流**和**输出流**。
+
+* **输入流** ：把数据从`其他设备`上读取到`内存`中的流。 
+* **输出流** ：把数据从`内存` 中写出到`其他设备`上的流。
+
+格局数据的类型分为：**字节流**和**字符流**。
+
+* **字节流** ：以字节为单位，读写数据的流。
+* **字符流** ：以字符为单位，读写数据的流。
+
+|            |           **输入流**            |              输出流              |
+| :--------: | :-----------------------------: | :------------------------------: |
+| **字节流** | 字节输入流<br />**InputStream** | 字节输出流<br />**OutputStream** |
+| **字符流** |   字符输入流<br />**Reader**    |    字符输出流<br />**Writer**    |
+
+#### 3.2 字节输出流OutputStream
+
+​		一切文件数据(文本、图片、视频等)在存储时，都是以二进制数字的形式保存，都一个一个的字节，那么传输时一样如此。所以，字节流可以传输任意文件数据。在操作流的时候，我们要时刻明确，无论使用什么样的流对象，底层传输的始终为二进制数据。
+
+##### 3.2.1 字节输出流【OutputStream】
+
+`java.io.OutputStream `抽象类是表示字节输出流的所有类的超类，将指定的字节信息写出到目的地。它定义了字节输出流的基本共性功能方法。
+
+* `public void close()` ：关闭此输出流并释放与此流相关联的任何系统资源。  
+* `public void flush() ` ：刷新此输出流并强制任何缓冲的输出字节被写出。  
+* `public void write(byte[] b)`：将 b.length字节从指定的字节数组写入此输出流。  
+* `public void write(byte[] b, int off, int len)` ：从指定的字节数组写入 len字节，从偏移量 off开始输出到此输出流。  
+* `public abstract void write(int b)` ：将指定的字节输出流。
+
+> 小贴士：
+>
+> close方法，当完成流的操作时，必须调用此方法，释放系统资源。
+
+##### 3.2.2 FileOutputStream类
+
+`OutputStream`有很多子类：
+
+`ByteArrayOutputStream `， `FileOutputStream` ， `FilterOutputStream` ， `ObjectOutputStream` ， `OutputStream` ， `PipedOutputStream`
+
+`java.io.FileOutputStream `==类是文件输出流，用于将数据写出到文件==。
+
+构造方法
+
+* `public FileOutputStream(File file)`：创建文件输出流以写入由指定的 File对象表示的文件。 
+* `public FileOutputStream(String name)`： 创建文件输出流以指定的名称写入文件。  
+  * 参数：写入数据的目的
+    * String name：目的地是一个文件的路径
+    * File file：目的地是一个文件
+* 构造方法的作用
+  * ==创建一个FileOutputStream对象==
+  * ==会根据构造方法中传递的文件/文件路径，创建一个空的文件==
+  * ==会把FileOutputStream对象指向创建好的文件==
+
+​        当创建一个流对象时，必须传入一个文件路径。该路径下，如果没有这个文件，会创建该文件。如果有这个文件，会清空这个文件的数据。
+
+##### 3.2.3 字节输出流的使用步骤
+
+1. 创建一个FileOutputStream对象，构造方法中传递写入数据的目的地
+2. 调用FileOutputStream对象中的write，把数据写入到文件中
+3. 释放资源(流的使用会占用一定的内存，使用完毕要把内存清空，提供程序的效率)
+
+##### 3.2.4 数据追加续写/换行
+
+- `public FileOutputStream(File file, boolean append)`：
+
+   创建文件输出流以写入由指定的 File对象表示的文件。  
+
+- `public FileOutputStream(String name, boolean append)`： 
+
+  创建文件输出流以指定的名称写入文件。  
+
+这两个构造方法，参数中都需要传入一个boolean类型的值，`true` ==表示追加数据==，`false` 表示==清空原有数据==。这样创建的输出流对象，就可以指定是否追加续写。
+
+```java
+    public static void fosWrite() throws IOException {
+        // 追加续写，指定为true，不指定则默认会清空当前文件
+        FileOutputStream stream = new FileOutputStream("b.txt", true);
+        for (int i = 0; i < 10; i++) {
+            byte[] bytes = "你好".getBytes();
+            stream.write(bytes);
+            // 写出换行
+            // Windows系统，换行符号是"\r\n" 。
+            // linux系统    换行符号是"/n"
+            // mac系统      换行符号是"\r"
+            stream.write("\r".getBytes());
+        }
+        stream.close();
+    }
+```
+
+* 回车符`\r`和换行符`\n` ：
+  * 回车符：回到一行的开头（return）。
+  * 换行符：下一行（newline）。
+* 系统中的换行：
+  * Windows系统里，每行结尾是 `回车+换行` ，即`\r\n`；
+  * Unix系统里，每行结尾只有 `换行` ，即`\n`；
+  * Mac系统里，每行结尾是 `回车` ，即`\r`。从 Mac OS X开始与Linux统一。
+
+#### 3.3 字节输入流InputStream
+
+`java.io.InputStream `抽象类是表示字节输入流的所有类的超类，可以读取字节信息到内存中。它定义了字节输入流的基本共性功能方法。
+
+- `public void close()` ：关闭此输入流并释放与此流相关联的任何系统资源。    
+- `public abstract int read()`： 从输入流读取数据的下一个字节。 
+- `public int read(byte[] b)`： 从输入流中读取一些字节数，并将它们存储到字节数组 b中 。
+
+> 小贴士：
+>
+> close方法，当完成流的操作时，必须调用此方法，释放系统资源。
+
+##### 3.3.1 FileInputStream: 文件字节输入流
+
+java.io.FileInputStream extends InputStream 
+
+作用：==把硬盘文件中的数据，读取到内存中使用==
+
+构造方法：
+
+* `FileInputStream(File file)`：
+
+   通过打开与实际文件的连接来创建一个 FileInputStream ，该文件由文件系统中的 File对象 file命名。 
+
+* `FileInputStream(String name)`： 
+
+  通过打开与实际文件的连接来创建一个 FileInputStream ，该文件由文件系统中的路径名 name命名。  
+
+  参数：读取文件的数据源
+
+  ​		String name：文件的路径
+
+  ​		File file：		 文件
+
+- 构造方法的作用：
+
+	1. 会创建一个FileInputStream对象
+ 	2. 会把FileInputStream对象指定构造方法中要读取的文件
