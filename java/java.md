@@ -1,4 +1,4 @@
-### 一、Mac-Idea快捷键使用
+、
 
 | 快捷键                       | 描述                                                         |
 | ---------------------------- | ------------------------------------------------------------ |
@@ -712,6 +712,38 @@ demo1...show...
 2. 调用FileOutputStream对象中的write，把数据写入到文件中
 3. 释放资源(流的使用会占用一定的内存，使用完毕要把内存清空，提供程序的效率)
 
+```java
+package com.huayun.java_demo.io;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
+
+public class Demo01OutputStream {
+    public static void main(String[] args) throws IOException {
+        // 1. 一次写一个数据
+        // * 创建一个FileOutputStream对象，构造方法中传递写入数据的目的地
+        FileOutputStream fos = new FileOutputStream("a.txt");
+        // * 调用FileOutputStream对象中的write，把数据写入到文件中
+        fos.write(97);
+        // * 释放资源(流的使用会占用一定的内存，使用完毕要把内存清空，提供程序的效率)
+        fos.close();
+
+        // 2 一次写入多个字节
+        // 2.1 write(byte[] b) 传入字节数组
+        FileOutputStream fos1 = new FileOutputStream(new File("fos.txt"));
+        byte[] bytes = {65, 66, 67, 68, 69};
+        fos1.write(bytes);
+        // 2.2 wirte(byte[],off,len) 传入字节数组，并指定起始位置和长度
+        byte[] bytes1 = "你好".getBytes();
+        System.out.println(Arrays.toString(bytes1));
+        fos1.write(bytes1, 0, bytes1.length);
+        fos1.close();
+    }
+}
+```
+
 ##### 3.2.4 数据追加续写/换行
 
 - `public FileOutputStream(File file, boolean append)`：
@@ -761,6 +793,13 @@ demo1...show...
 >
 > close方法，当完成流的操作时，必须调用此方法，释放系统资源。
 
+##### 3.3.0 字节转String的构造方法
+
+| 字符串的构造方法                                             | 使用说明                                                     |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| String(byte[] bytes)                                         | 通过使用平台的默认字符集解码指定的字节数组来构造新的 `String` 。 |
+| **[String](itss://E1BBDAD3-A1E8-459C-AFF5-83BC2D31BFAA/java/lang/String.html#String-byte:A-int-int-)**(byte[] bytes, int offset, int length) | 通过使用平台的默认字符集解码指定的字节子阵列来构造新的 `String` 。 |
+
 ##### 3.3.1 FileInputStream: 文件字节输入流
 
 java.io.FileInputStream extends InputStream 
@@ -771,19 +810,151 @@ java.io.FileInputStream extends InputStream
 
 * `FileInputStream(File file)`：
 
-   通过打开与实际文件的连接来创建一个 FileInputStream ，该文件由文件系统中的 File对象 file命名。 
+   通过打开与实际文件的连接来创建一个 FileInputStream ，该文件由文件系统中的 ==File对象 file命名==。 
 
 * `FileInputStream(String name)`： 
 
-  通过打开与实际文件的连接来创建一个 FileInputStream ，该文件由文件系统中的路径名 name命名。  
+  通过打开与实际文件的连接来创建一个 FileInputStream ，该文件由文件系统中的==路径名 name命名==。  
 
   参数：读取文件的数据源
 
   ​		String name：文件的路径
 
-  ​		File file：		 文件
+  ​		File file：		 文件对象
 
 - 构造方法的作用：
 
 	1. 会创建一个FileInputStream对象
  	2. 会把FileInputStream对象指定构造方法中要读取的文件
+
+```java
+package com.huayun.java_demo.io;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+
+public class Demo02InputStream {
+    public static void main(String[] args) throws IOException {
+        FileInputStream fis = new FileInputStream("fos.txt");
+        int len;
+        while ((len = fis.read()) != -1) {
+            System.out.println(len);
+            // System.out.println((char) len);
+        }
+        fis.close();
+    }
+}
+```
+
+##### 3.3.2 读取字节数据—读取一个
+
+```java
+int read()
+从输入流读取数据的下一个字节。
+```
+
+`read`方法，每次可以读取一个字节的数据，提升为int类型，读取到文件末尾，返回`-1`，代码使用：
+
+上面代码的输出：其中fos.txt中的内容为：`ABCDE`
+
+[Output]:输出结果对应的是ASCII码表的数据
+
+```java
+65
+66
+67
+68
+69
+```
+
+##### 3.3.3 读取字节数据—多个字节
+
+```java
+int read(byte[] b)
+从输入流读取一些字节数，并将它们存储到缓冲区 b 
+  
+read(byte[] b, int off, int len)
+从输入流读取最多 len字节的数据到一个字节数组。
+```
+
+- 方法参数byte[ ]的作用
+  - **==起到缓冲作用，存储每次读取到的多个字节==**
+  - **数组的长度一般定义为1024(1kB)或者1024的整数倍**
+- 方法的==返回值int==
+  - **==每次读取的有效字节个数==**
+
+<img src="/Users/masterxl/Library/Application Support/typora-user-images/image-20200329221444914.png" alt="image-20200329221444914" style="zoom: 43%;" />
+
+```java
+package com.huayun.java_demo.io;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+
+public class Demo03InputStream {
+    public static void main(String[] args) throws IOException {
+        FileInputStream fis = new FileInputStream("fos.txt");
+        byte[] bytes = new byte[2];
+        int len = fis.read(bytes);
+        System.out.println(len);                // 2
+        System.out.println(new String(bytes));  // AB
+
+        len = fis.read(bytes);
+        System.out.println(len);                // 2
+        System.out.println(new String(bytes));  //CD
+
+        len = fis.read(bytes);
+        System.out.println(len);                // 1
+        System.out.println(new String(bytes));  // ED
+
+        len = fis.read(bytes);
+        System.out.println(len);               // -1
+        System.out.println(new String(bytes)); // ED
+
+        fis.close();
+    }
+}
+```
+
+##### 3.3.4 使用循环一次读取多个字节
+
+```java
+    public static void readByte() throws IOException {
+        FileInputStream fis = new FileInputStream("fos.txt");
+        byte[] bytes = new byte[1024]; // 一次读取1KB
+        int len = 0;  // 记录每次读取的有效字节个数
+        while ((len = fis.read(bytes)) != -1) {
+            System.out.println(new String(bytes, 0, len));
+        }
+        fis.close();
+    }
+```
+
+##### 3.3.5 文件复制的案例
+
+```java
+package com.huayun.java_demo.io;
+
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+public class Demo04FileCopy {
+    public static void main(String[] args) throws IOException {
+        long begin = System.currentTimeMillis();
+        FileInputStream fis = new FileInputStream("/Users/masterxl/Desktop/testfile/1.png");
+        FileOutputStream fos = new FileOutputStream("/Users/masterxl/Desktop/1.png");
+
+        byte[] bytes = new byte[1024 * 5]; // 使用数组缓冲一次读取5KB
+        int len = 0; // 每次读取的有效字节个数
+        while ((len = fis.read(bytes)) != -1) {
+            fos.write(bytes, 0, len); // 把读取的文件写入到指定目的地文件中
+        }
+        fos.close(); // 先关闭写入的流，写完即一定读完，但读完不一定写完
+        fis.close();
+        long end = System.currentTimeMillis();
+        System.out.println("共耗时: " + (end - begin) + " ms");
+    }
+}
+```
+
