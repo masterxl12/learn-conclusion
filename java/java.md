@@ -1,4 +1,4 @@
-、
+### 一、常用快捷键
 
 | 快捷键                       | 描述                                                         |
 | ---------------------------- | ------------------------------------------------------------ |
@@ -956,5 +956,178 @@ public class Demo04FileCopy {
         System.out.println("共耗时: " + (end - begin) + " ms");
     }
 }
+```
+
+#### 3.4 字符输入流Reader
+
+​		当使用字节流读取文本文件时，可能会有一个小问题。就是遇到中文字符时，可能不会显示完整的字符，那是因为一个中文字符可能占用多个字节存储。所以Java提供一些字符流类，以字符为单位读写数据，专门用于处理文本文件。
+
+------
+
+##### 3.4.1 FileReader类
+
+`java.io.Reader`抽象类是表示用于读取字符流的所有类的超类，可以读取字符信息到内存中。它定义了字符输入流的基本共性功能方法。
+
+- `public void close()` ：关闭此流并释放与此流相关联的任何系统资源。    
+- `public int read()`： 从输入流读取一个字符。 
+- `public int read(char[] cbuf)`： 从输入流中读取一些字符，并将它们存储到字符数组 cbuf中 。
+
+`java.io.FileReader `类是读取字符文件的便利类。构造时使用系统默认的字符编码和默认字节缓冲区。
+
+> 小贴士：
+>
+> 1. 字符编码：字节与字符的对应规则。Windows系统的中文编码默认是GBK编码表。
+>
+>    idea中UTF-8
+>
+> 2. 字节缓冲区：一个字节数组，用来临时存储字节数据。
+
+##### 3.4.2 FileReader构造方法
+
+- `FileReader(File file)`： 创建一个新的 FileReader ，给定要读取的File对象。   
+- `FileReader(String fileName)`： 创建一个新的 FileReader ，给定要读取的文件的名称。  
+
+当你创建一个流对象时，必须传入一个文件路径。类似于FileInputStream 。
+
+##### 3.4.3 读取字符数据
+
+###### 3.4.3.1 一次读取一个字符
+
+**读取字符**：
+
+- `read`方法，每次可以读取一个字符的数据，提升为int类型，读取到文件末尾，返回`-1`，循环读取
+
+【举例】
+
+```java
+    // 一次读取一个字符
+    public static void readOne() throws Exception {
+        long start = System.currentTimeMillis();
+        fr = new FileReader("b.txt");
+        int len = 0;
+        while ((len = fr.read()) != -1) {
+            System.out.println((char) len);
+        }
+        long end = System.currentTimeMillis();
+        System.out.println((end - start) + " ms");
+
+        fr.close();
+    }
+```
+
+###### 3.4.3.2 使用字符数组读取
+
+`read(char[] chars)`，
+
+- 每次==读取chars的长度个字符==到数组中，
+- 返回读取到的有效字符个数，
+- 读取到末尾时，返回`-1` ，
+
+代码使用演示：
+
+```java
+    // 一次读取多个字符
+    public static void readMore() throws Exception {
+        long start = System.currentTimeMillis();
+        fr = new FileReader("b.txt");
+        int len = 0;
+        char[] chars = new char[1024 * 2];
+        while ((len = fr.read(chars)) != -1) {
+            System.out.println(new String(chars, 0, len));
+        }
+        long end = System.currentTimeMillis();
+        System.out.println((end - start) + " ms");
+        fr.close();
+    }
+```
+
+#### 3.5 字符输出流Writer
+
+`java.io.Writer `抽象类是表示用于写出字符流的所有类的超类，将指定的字符信息写出到目的地。它定义了字节输出流的基本共性功能方法。
+
+- `void write(int c)` 写入单个字符。
+- `void write(char[] cbuf) `写入字符数组。 
+- `abstract  void write(char[] cbuf, int off, int len) `写入字符数组的某一部分,off数组的开始索引,len写的字符个数。 
+- `void write(String str) `写入字符串。 
+- `void write(String str, int off, int len)` 写入字符串的某一部分,off字符串的开始索引,len写的字符个数。
+- `void flush() `刷新该流的缓冲。  
+- `void close()` 关闭此流，但要先刷新它。 
+
+##### 3.5.1 FileWriter类
+
+`java.io.FileWriter `类是内存中写出字符到磁盘文件的类。构造时使用系统默认的字符编码和默认字节缓冲区。
+
+###### 3.5.1.1 构造方法
+
+- `FileWriter(File file)`： 创建一个新的 FileWriter，给定要读取的File对象。   
+- `FileWriter(String fileName)`： 创建一个新的 FileWriter，给定要读取的文件的名称。  
+
+当你创建一个流对象时，必须传入一个文件路径，类似于FileOutputStream。
+
+##### 3.5.2 写出单个数据
+
+`write(int b)` 方法，每次可以写出一个字符数据
+
+```java
+    public static void writeOne() throws Exception {
+        fw = new FileWriter("a.txt");
+        fw.write("c");
+        fw.write(65);
+        fw.close();
+    }
+```
+
+##### 3.5.3 关闭(close)和刷新(flush)
+
+​		因为内置缓冲区的原因，如果==不关闭输出流，无法写出字符到文件中==。但是关闭的流对象，是无法继续写出数据的。如果我们既想写出数据，又想继续使用流，就需要`flush` 方法了。
+
+* `flush` ：刷新缓冲区，流对象可以继续使用。
+* `close `:    先刷新缓冲区，然后通知系统释放资源。流对象不可以再被使用了。
+
+**==小贴士：即便是flush方法写出了数据，操作的最后还是要调用close方法，释放系统资源。==**
+
+##### **==3.5.4 写出多个数据—写出字符数组==**
+
+`write(char[] cbuf)` 和 `write(char[] cbuf, int off, int len)` ，每次可以写出字符数组中的数据，用法类似FileOutputStream
+
+```java
+    public static void writeMoreChars() throws Exception{
+        fw = new FileWriter("a.txt");
+        char[] chars = "中国你好".toCharArray();
+        for (char aChar : chars) {
+            System.out.println(aChar);
+        }
+        fw.write(chars);
+        fw.write(chars,2,2);
+        fw.close();
+    }
+```
+
+##### **==3.5.5 写出多个数据—写出字符串==**
+
+`write(String str)` 和 `write(String str, int off, int len)` ，每次可以写出字符串中的数据，更为方便，代码使用演示
+
+```java
+    public static void writeMoreString() throws Exception{
+        fw = new FileWriter("a.txt");
+        String str = "中国hello***";
+        fw.write(str);
+        fw.write(str,2,2);
+        fw.close();
+    }
+```
+
+##### **3.5.6 续写和换行**：
+
+操作类似于FileOutputStream。
+
+```java
+    public static void writeAppend() throws Exception {
+        fw = new FileWriter("a.txt", true);
+        fw.write("中国,");
+        fw.write("\n");
+        fw.write("welcome to you!!!");
+        fw.close();
+    }
 ```
 
