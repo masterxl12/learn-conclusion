@@ -1781,7 +1781,7 @@ Role{id=3, roleName='校长', roleDesc='管理整个学校'}
 
 ### 开发Problems
 
-#### 1.1 mybatis连接数据库中文乱码问题
+##### 1.1 mybatis连接数据库中文乱码问题
 
 在数据库配置文件，==连接的数据库url==处添加如下代码`characterEncoding=utf-8`
 
@@ -1813,11 +1813,17 @@ Role{id=3, roleName='校长', roleDesc='管理整个学校'}
 </configuration>
 ```
 
-达梦数据库
+##### 1.2 达梦数据库
 
 不能同时包含聚集key和大字段解决方案
 
 建表时==主键字段==如果指定`“NOT CLUSTER PRIMARY KEY”`则可以随时添加大字段
 
 <img src="/Users/masterxl/Library/Application Support/typora-user-images/image-20200327223516931.png" alt="image-20200327223516931" style="zoom:50%;" />
+
+##### 1.3 数据库设置主键自增长
+
+```sql
+<selectKey resultType="java.lang.String" keyProperty="fileId" order="AFTER"> select @@IDENTITY as file_id
+```
 

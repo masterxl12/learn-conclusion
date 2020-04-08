@@ -1131,3 +1131,68 @@ public class Demo04FileCopy {
     }
 ```
 
+#### ==3.6 比较两个文件内容相等==
+
+maven中引入文件
+
+```java
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.12</version>
+        </dependency>
+```
+
+**<font color=red>使用DigestUtils.md5Hex( )===对要加密的参数值直接进行加密处理，返回加密后的字符串</font>**
+
+```java
+package com.huayun.java_demo.io;
+
+import org.apache.commons.codec.digest.DigestUtils;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+
+public class StrToMd5 {
+    public static void main(String[] args) throws IOException {
+        long start = System.currentTimeMillis();
+        // DigestUtils.md5Hex()===要加密的参数值直接进行加密处理
+        String str1 = "fin";
+        String _str1 = "fin";
+        FileInputStream fis1 = new FileInputStream
+                ("/Users/masterxl/Desktop/testfile/小结.md");
+        FileInputStream fis2 = new FileInputStream("/Users/masterxl/Desktop/testfile/坐标系.md");
+        // 读取文件输入流进行对比
+        String s = DigestUtils.md5Hex(fis1);
+        String s1 = DigestUtils.md5Hex(fis2);
+
+        System.out.println(s);
+        System.out.println(s1);
+
+        // 读取字节数组进行对比
+        byte[] bytes1 = str1.getBytes("UTF-8");
+        byte[] bytes2 = _str1.getBytes("UTF-8");
+        String s2 = DigestUtils.md5Hex(bytes1);
+        String s3 = DigestUtils.md5Hex(bytes2);
+        System.out.println(s2);
+        System.out.println(s3);
+        long end = System.currentTimeMillis();
+        System.out.println("耗时: " + (end - start) + " ms");
+    }
+}
+
+```
+
+[outPut] ===
+
+- 当内容相同时，返回相同的字符串
+- 内容不同，加密后返回字符串则不相同
+
+```java
+282cd348b1a42f24104ad33979d6cc85
+477cc3c81aa59362c3553bcdf512de70
+d79695776a5b40f7cadbee1f91a85c82
+d79695776a5b40f7cadbee1f91a85c82
+耗时: 26 ms
+```
+
