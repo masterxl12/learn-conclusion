@@ -958,6 +958,39 @@ public class Demo04FileCopy {
 }
 ```
 
+##### 3.3.6 inputStream转byte[ ]
+
+​	读取字节使用InputStream.available()方法, 这个方法可以在读写操作前先得知数据流里有多少个字节可以读取
+
+使用注意事项：
+
+- 如果这个方法用在从==本地文件读取数据==时，一般不会遇到问题
+- 如果是==用于网络操作==，比如，Socket通讯时，由于网络通讯往往是间断性的，一串字节往往分几批进行发送。本地程序调用available()方法有时得到0，这可能是对方还没有响应，也可能是对方已经响应了，但是数据还没有送达本地。
+
+```java
+    public static void readByte() throws IOException {
+        FileInputStream fis = new FileInputStream("fos.txt");
+        byte[] bytes1 = new byte[fis.available()];
+        fis.read(bytes1);
+        System.out.println(Arrays.toString(bytes1));
+        for (byte b : bytes1) {
+            System.out.println( (char) b);
+        }
+        fis.close();
+    }
+```
+
+[Output]
+
+```java
+[65, 66, 67, 68, 69]
+A
+B
+C
+D
+E
+```
+
 #### 3.4 字符输入流Reader
 
 ​		当使用字节流读取文本文件时，可能会有一个小问题。就是遇到中文字符时，可能不会显示完整的字符，那是因为一个中文字符可能占用多个字节存储。所以Java提供一些字符流类，以字符为单位读写数据，专门用于处理文本文件。
@@ -1195,4 +1228,45 @@ d79695776a5b40f7cadbee1f91a85c82
 d79695776a5b40f7cadbee1f91a85c82
 耗时: 26 ms
 ```
+
+#### 3.7 Properties属性集合
+
+加载文本中的数据
+
+==文本中的数据，必须是键值对形式，可以使用空格、等号、冒号等符号分隔==
+
+```java
+package com.huayun.java_demo.Proper;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+import java.util.Set;
+
+public class DemoProperties {
+    public static void main(String[] args) throws IOException {
+        // 创建属性集对象
+        Properties pro = new Properties();
+        // 加载文本中信息到属性集
+        pro.load(new FileInputStream("a.txt"));
+        // 遍历集合并打印
+        Set<String> keys = pro.stringPropertyNames();
+        for (String key : keys) {
+            System.out.println(key + "->" + pro.getProperty(key));
+        }
+    }
+}
+```
+
+[Output]
+
+```java
+location->/Users/masterxl/Desktop/myCode/java/javaLearn/a.txt
+filename->a.txt
+length->68B
+```
+
+
+
+
 
