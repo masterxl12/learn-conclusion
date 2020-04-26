@@ -390,3 +390,8 @@ oAuth2是一种协议，主要作用是为了提供认证和授权的标准
 - `/oauth/check_token`：用于资源服务访问的令牌解析端点
 - `/oauth/token_key`：提供公有密匙的端点，如果你使用 JWT 令牌的话
 
+<img src="/Users/masterxl/Library/Application Support/typora-user-images/image-20200412223442085.png" alt="image-20200412223442085" style="zoom:33%;" />
+
+一个用户可以拥有多种角色
+
+一个角色可以拥有多种权限
