@@ -268,4 +268,3 @@ console.log(Object.prototype.__proto__ === null);
 ```
 
 <img src="https://user-gold-cdn.xitu.io/2019/2/17/168fb9a3828f9cb4?imageslim" alt="img" style="zoom:67%;" />
-

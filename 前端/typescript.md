@@ -52,9 +52,11 @@ super关键字
 
 
 
-#### 1. 方法的重载
+#### 1. TS中的方法
 
 ##### 1.1 ts中定义方法传参
+
+​	需要指定参数类型和返回值类型
 
 ```js
 // 1. ts中定义方法传参
@@ -66,6 +68,8 @@ console.log(getInfo('zs', 20));
 ```
 
 ##### 1.2 方法的可选参数
+
+在参数后面使用`?`符号修饰 ，指定该参数是可选参数
 
 ```js
 // 2. 方法的可选参数[注：可选参数配置在参数的最后]
@@ -130,7 +134,79 @@ function sum(a: any, b: any): any {
 }
 console.log(sum(1, 2));
 console.log(sum("a", "b"));
+```
 
+#### 2.TS的类与继承
+
+#### 3.访问修饰符
+
+类中定义的属性和方法如果不加修饰符 默认就是公有(public)
+
+| 访问修饰符  | 当前类内部 | 子类 | 当前类外部 |
+| ----------- | ---------- | ---- | ---------- |
+| `public`    | ✅          | ✅    | ✅          |
+| `protected` | ✅          | ✅    | ❎          |
+| `private`   | ✅          | ❎    | ❎          |
+
+
+
+```typescript
+class Student {
+  public name: String;
+  constructor(name: String) {
+    this.name = name;
+  }
+  getName(): String {
+    return this.name;
+  }
+  setName(name: String): void {
+    this.name = name;
+  }
+  protected study(): void {
+    console.log(`${this.name}---well done!`)
+  }
+
+  private gender(): void {
+    console.log("female");
+  }
+}
+
+class MiddleStudent extends Student {
+  private age: number;
+  constructor(name: string, age: number) {
+    super(name);
+    this.age = age;
+  }
+  // 子类重写 父类方法
+  study(): void {
+  // 子类访问父类的protectd方法，编译通过
+    super.study();
+  // 子类访问父类的private方法,  编译不通过
+  // super.gender(); 编译出错
+    console.log(`${this.name}---good job!`)
+  }
+  sayAge(): void {
+    console.log(`my age:${this.age}`);
+  }
+}
+
+const s1 = new Student("wade");
+console.log(s1.getName());
+s1.setName("curry");
+console.log(s1.getName());
+
+const child2 = new MiddleStudent("kobe", 40);
+console.log(child2.study());
+console.log(child2.sayAge());
 
 ```
 
+#### 4.多态/抽象类/抽象方法	
+
+![image-20200427232619570](/Users/masterxl/Library/Application Support/typora-user-images/image-20200427232619570.png)
+
+![image-20200427232841864](/Users/masterxl/Library/Application Support/typora-user-images/image-20200427232841864.png)
+
+其他类继承的基类，不能直接实例化 
+
+抽象类的子类必须实现抽象类中的抽象方法
