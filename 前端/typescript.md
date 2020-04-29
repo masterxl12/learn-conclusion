@@ -110,7 +110,7 @@ console.log(add(1, 2, 3, 4, 5));
 ◆ 方法名相同；
 ◆ 参数列表不同；
 
-1.4.3.方法重载是多态的一种实现方式；
+1.4.3. 方法重载是多态的一种实现方式；
 
 在JS中本身不支持重载的，而在TS中使用可以"变通"的支持重载：
 
@@ -121,7 +121,7 @@ console.log(add(1, 2, 3, 4, 5));
 3.实现any类型的方法并通过参数类型（和返回类型）不同来实现重载
 
 ```js
-// 4. 函数重载
+// 4.  函数重载
 // 4.1 先申明所有方法重载的定义，不包含方法的实现；
 function sum(a: number, b: number): number;
 function sum(a: String, b: String): String;
@@ -203,10 +203,219 @@ console.log(child2.sayAge());
 
 #### 4.多态/抽象类/抽象方法	
 
-![image-20200427232619570](/Users/masterxl/Library/Application Support/typora-user-images/image-20200427232619570.png)
+*多态 ，一种事物的不同表现形态。*
 
-![image-20200427232841864](/Users/masterxl/Library/Application Support/typora-user-images/image-20200427232841864.png)
+多态: 父类定义一个方法不去实现，让继承它的子类去实现 每一个子类有不同的表现
 
-其他类继承的基类，不能直接实例化 
+多态属于继承
 
-抽象类的子类必须实现抽象类中的抽象方法
+抽象类：用abstract关键字声明的类
+
+- 其他类继承的基类，不能直接实例化 
+- 抽象类的子类必须实现抽象类中的抽象方法
+
+抽象方法：抽象类中使用abstract关键字修饰的方法
+
+- abstract抽象方法只能放在抽象类中
+
+- 抽象类中的抽象方法不包含具体实现且必须在派生类中实现
+- 抽象类和抽象方法用来定义标准
+
+#### 5.接口
+
+接口：行为和动作的规范，对批量方法进行约束
+
+- 属性接口
+  - 对批量方法传入参数进行约束
+  - 传入对象的约束(一般为json格式)
+  - **==如果单独定义对象传参，则该对象必须包含interface中定义的属性==**
+
+```typescript
+interface FullName {
+  firstName: string;
+  lastName: string
+}
+
+function printName(name: FullName): void {
+  console.log(name.firstName + ":" + name.lastName);
+}
+
+printName({ firstName: "Michale", lastName: "Jordan" });
+
+function printInfo(info: FullName): void {
+  console.log(info.firstName + "-" + info.lastName);
+}
+const obj = {
+  firstName: "Kobe",
+  lastName: "Brown",
+  age: 40,
+  major: "NBA Player"
+}
+
+printInfo(obj)  // 传入的参数必须包含firstName，lastName
+```
+
+- 接口的可选属性
+
+  案例：使用原生js封装ajax
+
+```typescript
+interface Config {
+  type: string;
+  url: string;
+  data?: string;
+  dataType: string
+}
+
+// 原生js封装ajax
+function ajax(config: Config) {
+  let xhr = new XMLHttpRequest();
+  xhr.open(config.type, config.url, true);
+  xhr.send(config.data);
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4 && xhr.status == 200) {
+      console.log("success");
+      if (config.dataType == "json") {
+        console.log(JSON.parse(xhr.responseText));
+      } else {
+        console.log(xhr.responseText);
+      }
+    }
+  }
+}
+
+ajax(
+  {
+    type: "get",
+    url: "http://a.itying.com/api/productlist",
+    data: "name=zs",
+    dataType: 'json'
+  }
+)	
+```
+
+- 函数类型接口
+
+  - 功能：对方法传入的参数以及返回值进行约束   批量约束
+  - 为了使用接口表示函数类型，我们需要给接口定义一个调用签名。 它就像是一个只有参数列表和返回值类型的函数定义。参数列表里的每个参数都需要名字和类型。
+
+  语法：
+
+  ```typescript
+  interface SearchFunc {
+    (source: string, subString: string): boolean;
+  }
+  ```
+
+  ​	这样定义后，我们可以像使用其它接口一样使用这个函数类型的接口。 下例展示了如何创建一个函数类型的变量，==并将一个同类型的函数赋值给这个变量。==
+
+  ```typescript
+  let mySearch: SearchFunc;
+  mySearch = function(source: string, subString: string) {
+    let result = source.search(subString);
+    return result > -1;
+  }
+  ```
+
+  - 对于函数类型的类型检查来说，==函数的参数名不需要与接口里定义的名字相匹配==，只需要参数对应的位置与接口定义的参数类型一致即可。
+  - 函数的参数会逐个进行检查，要求对应位置上的参数类型是兼容的。 ==如果你不想指定类型，TypeScript的类型系统会推断出参数类型==
+
+  ```typescript
+  // 定义一个加密的函数类型接口
+  interface encrypt {
+    (username: string, password: string): string;
+  }
+  
+  const md5: encrypt = function (user: string, pass: string): string {
+    return user + ":" + pass;
+  }
+  
+  console.log(md5("admin", "admin123"));
+  ```
+
+- 可索引接口
+  - 不常用
+
+- 类类型接口
+
+   对类的约束，和抽象类有些类似
+
+- 接口扩展
+
+#### 6. TS中的as/?/!
+
+##### 6.1 as关键字 - 类型断言
+
+功能：通过类型断言可以告知编译器具体的数据类型（开发者清楚地知道一个实体具有比它现有类型更确切的类型。）
+
+使用类型断言有两种方式：
+
+- 尖括号语法
+
+```typescript
+let someValue:any = "this is a string";
+let strLength:number = (<string>someValue).length;
+```
+
+- 使用as关键字描述
+
+```typescript
+let someValue:any = "this is a string";
+let strLength:number = (someValue as string).length;
+```
+
+【注】当在TypeScript里使用JSX时，只有 `as`语法断言是被允许的。
+
+##### 6.2 ?用于属性定义
+
+功能：表示可选参数，
+
+- 用于接口时
+
+```typescript
+interface SquareConfig {
+  color?: string; // 表示可选参数
+  width?: number; // 表示可选参数
+}
+function createSquare(config: SquareConfig): { color: string, area: number } {
+  let newSquare = { color: "red", area: 100 };
+  if (config.color) {
+    newSquare.color = config.color;
+  }
+  if (config.width) {
+    newSquare.area = config.width * config.width;
+  }
+  return newSquare;
+}
+```
+
+- 用于方法时,可选参数放在参数的最后
+
+```typescript
+function getFullName(firstName: string, lastName?: string): void {
+  if (lastName) {
+    console.log(firstName + ":" + lastName);
+  } else {
+    console.log(firstName);
+  }
+}
+
+getFullName("kobe")
+```
+
+##### 6.3 !非空断言操作法
+
+! 表示非`null`和非`undefined`的类型断言
+
+```typescript
+interface Entity {
+  name: string
+}
+
+function validateEntity(e?: Entity) {
+  // let s = e.name;  // 如果直接使用let s = e.name;，编译器会抛出e可能不存在的错误，
+  // 但是使用非空断言，则表示e肯定是存在的，从而不会产生编译问题。
+  let s2 = e!.name;
+}
+```
+
