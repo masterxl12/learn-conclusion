@@ -225,10 +225,11 @@ console.log(child2.sayAge());
 
 接口：行为和动作的规范，对批量方法进行约束
 
-- 属性接口
-  - 对批量方法传入参数进行约束
-  - 传入对象的约束(一般为json格式)
-  - **==如果单独定义对象传参，则该对象必须包含interface中定义的属性==**
+##### 5.1 属性接口
+
+- 对批量方法传入参数进行约束
+- 传入对象的约束(一般为json格式)
+- **==如果单独定义对象传参，则该对象必须包含interface中定义的属性==**
 
 ```typescript
 interface FullName {
@@ -294,53 +295,127 @@ ajax(
 )	
 ```
 
-- 函数类型接口
+##### 5.2 函数类型接口
 
-  - 功能：对方法传入的参数以及返回值进行约束   批量约束
-  - 为了使用接口表示函数类型，我们需要给接口定义一个调用签名。 它就像是一个只有参数列表和返回值类型的函数定义。参数列表里的每个参数都需要名字和类型。
+- 功能：对方法传入的参数以及返回值进行约束   批量约束
+- 为了使用接口表示函数类型，我们需要给接口定义一个调用签名。 它就像是一个只有参数列表和返回值类型的函数定义。参数列表里的每个参数都需要名字和类型。
 
-  语法：
+语法：
 
-  ```typescript
-  interface SearchFunc {
-    (source: string, subString: string): boolean;
+```typescript
+interface SearchFunc {
+  (source: string, subString: string): boolean;
+}
+```
+
+​	这样定义后，我们可以像使用其它接口一样使用这个函数类型的接口。 下例展示了如何创建一个函数类型的变量，==并将一个同类型的函数赋值给这个变量。==
+
+```typescript
+let mySearch: SearchFunc;
+mySearch = function(source: string, subString: string) {
+  let result = source.search(subString);
+  return result > -1;
+}
+```
+
+- 对于函数类型的类型检查来说，==函数的参数名不需要与接口里定义的名字相匹配==，只需要参数对应的位置与接口定义的参数类型一致即可。
+- 函数的参数会逐个进行检查，要求对应位置上的参数类型是兼容的。 ==如果你不想指定类型，TypeScript的类型系统会推断出参数类型==
+
+```typescript
+// 定义一个加密的函数类型接口
+interface encrypt {
+  (username: string, password: string): string;
+}
+
+const md5: encrypt = function (user: string, pass: string): string {
+  return user + ":" + pass;
+}
+
+console.log(md5("admin", "admin123"));
+```
+
+##### 5.3 可索引接口
+
+- 不常用
+
+##### 5.4 类类型接口
+
+ 对类的约束，和抽象类有些类似
+
+```typescript
+// 定义接口
+interface Animal {
+  name: string;
+  eat(): void;
+}
+// 类实现接口，并且定义接口中的属性，实现接口中的方法
+class Dog implements Animal {
+  name: string;
+  constructor(name: string) {
+    this.name = name;
   }
-  ```
-
-  ​	这样定义后，我们可以像使用其它接口一样使用这个函数类型的接口。 下例展示了如何创建一个函数类型的变量，==并将一个同类型的函数赋值给这个变量。==
-
-  ```typescript
-  let mySearch: SearchFunc;
-  mySearch = function(source: string, subString: string) {
-    let result = source.search(subString);
-    return result > -1;
+  eat(): void {
+    console.log(this.name + "喜欢啃骨头");
   }
-  ```
+}
+const littleDog = new Dog("虎子");
+littleDog.eat();
 
-  - 对于函数类型的类型检查来说，==函数的参数名不需要与接口里定义的名字相匹配==，只需要参数对应的位置与接口定义的参数类型一致即可。
-  - 函数的参数会逐个进行检查，要求对应位置上的参数类型是兼容的。 ==如果你不想指定类型，TypeScript的类型系统会推断出参数类型==
-
-  ```typescript
-  // 定义一个加密的函数类型接口
-  interface encrypt {
-    (username: string, password: string): string;
+class Cat implements Animal {
+  name: string;
+  constructor(name: string) {
+    this.name = name;
   }
-  
-  const md5: encrypt = function (user: string, pass: string): string {
-    return user + ":" + pass;
+  eat(): void {
+    console.log(this.name + "喜欢吹鱼");
   }
-  
-  console.log(md5("admin", "admin123"));
-  ```
+}
 
-- 可索引接口
-  - 不常用
+const littleCat = new Cat("小花");
+littleCat.eat()
+```
 
-- 类类型接口
+##### 5.5 接口扩展(接口的继承)
 
-   对类的约束，和抽象类有些类似
+- 接口可以多继承，类是单继承
+- 类中实现的接口，需要定义接口中的属性、实现接口中的方法
 
-- 接口扩展
+```typescript
+interface Personal {
+  eat(): void;
+}
+interface Engineer extends Personal { // 接口继承
+  work(): void
+}
+class Programmer {
+  major: string;
+  name: string;
+  constructor(name: string, major: string) {
+    this.major = major;
+    this.name = name;
+  }
+  codeing(): string {
+    return this.name + "的职业是:" + this.major;
+  }
+}
+
+class Web extends Programmer implements Engineer { // 子类继承父类并实现接口
+  constructor(name: string, major: string) {
+    super(name, major);
+  }
+  eat(): void {
+    console.log(this.name + "吃水果");
+  }
+  work(): void {
+    console.log(this.name + "喜欢codeing");
+  }
+}
+
+const frontEnd = new Web("zs", 'junior web development');
+console.log(frontEnd.codeing());
+frontEnd.eat();
+frontEnd.work();
+```
 
 #### 6. TS中的as/?/!
 
@@ -419,3 +494,50 @@ function validateEntity(e?: Entity) {
 }
 ```
 
+#### 7. 范型T
+
+功能：解决类、接口、方法的复用性，以及对不特定数据类型的支持
+
+要求：返回值的类型与传入参数的类型相同
+
+##### 7.1 范型函数
+
+```typescript
+// 范型函数
+// 定义函数时：在函数名后使用范型变量"T"声明，且数/返回值使用范型变量"T"声明
+function getData<T>(value: T): T {
+  return value;
+}
+// 使用范型函数，调用时需指定范型类型
+console.log(getData<number>(23));
+```
+
+##### 7.2 范型类
+
+```typescript
+// 范型类
+// 定义类时，在类名后使用范型变量"T"声明
+class GetMin<T>{
+  public list: T[] = [];
+  public add(value: T): void {
+    this.list.push(value);
+  }
+  getMinValue(): T {
+    let minValue = this.list[0];
+    this.list.map(item => {
+      minValue = minValue >= item ? item : minValue;
+    })
+    return minValue;
+  }
+}
+// 使用范型类，在实例化时指定范型类型
+const minList = new GetMin<number>();
+minList.add(23);
+minList.add(123);
+minList.add(13);
+minList.add(323);
+minList.add(83);
+console.log(minList.getMinValue());
+```
+
+##### 7.3 范型接口
