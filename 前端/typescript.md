@@ -1,3 +1,7 @@
+
+
+
+
 安装TypeScript
 
 ```js
@@ -635,7 +639,35 @@ mysqlDb.add(user);
 
 ![image-20200503113843921](/Users/masterxl/Library/Application Support/typora-user-images/image-20200503113843921.png)
 
-```typescript
+![image-20200503223612497](/Users/masterxl/Library/Application Support/typora-user-images/image-20200503223612497.png)
 
-```
+![image-20200503224123685](/Users/masterxl/Library/Application Support/typora-user-images/image-20200503224123685.png)
 
+![image-20200503224917411](/Users/masterxl/Library/Application Support/typora-user-images/image-20200503224917411.png)
+
+
+
+属性装饰器
+
+![image-20200503225939749](/Users/masterxl/Library/Application Support/typora-user-images/image-20200503225939749.png)
+
+
+
+方法装饰器
+
+![image-20200503230031455](/Users/masterxl/Library/Application Support/typora-user-images/image-20200503230031455.png)
+
+
+
+![image-20200503230545822](/Users/masterxl/Library/Application Support/typora-user-images/image-20200503230545822.png)
+
+
+
+方法参数装饰器
+
+![image-20200503231154738](/Users/masterxl/Library/Application Support/typora-user-images/image-20200503231154738.png)
+
+装饰器的执行顺序：
+
+1. 属性装饰器 》方法装饰器 》方法参数装饰器 》类装饰器
+2. 同类型的装饰器执行顺序：由后向前
