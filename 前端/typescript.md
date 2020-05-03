@@ -541,3 +541,101 @@ console.log(minList.getMinValue());
 ```
 
 ##### 7.3 范型接口
+
+(1) 使用含有泛型的接口来==定义函数的形状==
+
+(2) 把泛型参数==提前到接口名上==，此时在使用泛型接口的时候，需要定义泛型的类型
+
+```typescript
+// 第一种定义范型类型方式
+interface ConfigFn {
+  <T>(value1: T, value2: T): T
+}
+const configFn: ConfigFn = <T>(var1: T, var2: T): T => var1;
+
+// 函数调用该时指定具体的范型类型
+configFn<string>("abc", "d");
+// 第二种定义范型类型方式
+interface MyInterface<T> {
+  (value: T): T
+}
+let myFn: MyInterface<string>;
+myFn = (value: string): string => value;
+myFn('abc');
+```
+
+##### 7.4 类作为参数的范型类
+
+把类作为参数传入到范型类（约束数据传入的类型)
+
+- 去除重复代码
+
+- 对不特定类型进行数据校验
+
+![image-20200503105559080](/Users/masterxl/Library/Application Support/typora-user-images/image-20200503105559080.png)
+
+```typescript
+interface DBI<T> {
+  add(info: T): boolean;
+  update(info: T, id: number): boolean;
+  delete(id: number): boolean;
+  get(id: number): any[];
+}
+
+class MySqlDb<T> implements DBI<T> {
+  add(info: T): boolean {
+    console.log(info);
+    return true;
+  }
+  update(info: T, id: number): boolean {
+    throw new Error("Method not implemented.");
+  }
+  delete(id: number): boolean {
+    throw new Error("Method not implemented.");
+  }
+  get(id: number): any[] {
+    throw new Error("Method not implemented.");
+  }
+
+}
+
+class MongoDb<T> implements DBI<T>{
+  add(info: T): boolean {
+    throw new Error("Method not implemented.");
+  }
+  update(info: T, id: number): boolean {
+    throw new Error("Method not implemented.");
+  }
+  delete(id: number): boolean {
+    throw new Error("Method not implemented.");
+  }
+  get(id: number): any[] {
+    throw new Error("Method not implemented.");
+  }
+
+}
+
+// 操作用户表，定义一个用户类和数据库映射
+class User {
+  username: string;
+  password: string;
+  constructor(username: string, password: string) {
+    this.username = username;
+    this.password = password;
+  }
+}
+// 类作为参数约束数据传入的类型
+const mysqlDb = new MySqlDb<User>();
+const user = new User("zs", "admin123");
+// 模拟向数据库添加数据
+mysqlDb.add(user);
+```
+
+ 
+
+![image-20200503113843921](/Users/masterxl/Library/Application Support/typora-user-images/image-20200503113843921.png)
+
+```typescript
+
+```
+
