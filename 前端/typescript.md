@@ -635,37 +635,239 @@ const user = new User("zs", "admin123");
 mysqlDb.add(user);
 ```
 
- 
+#### 8 模块与命名空间
 
-![image-20200503113843921](/Users/masterxl/Library/Application Support/typora-user-images/image-20200503113843921.png)
+##### 8.1 命名空间（对内部）
 
-![image-20200503223612497](/Users/masterxl/Library/Application Support/typora-user-images/image-20200503223612497.png)
+==主要用于组织代码，避免命名冲突==
 
-![image-20200503224123685](/Users/masterxl/Library/Application Support/typora-user-images/image-20200503224123685.png)
+在代码量较大的情况下，为了避免各种高变量命名冲突，可以将相似功能的函数、类、接口等放置到命名空间内。
 
-![image-20200503224917411](/Users/masterxl/Library/Application Support/typora-user-images/image-20200503224917411.png)
+同Java的包一样，TS的命名空间可以将代码包裹起来，只对外暴露需要在外部访问的对象。命名空间内的对象通过export导出。
+
+##### 8.2 模块（对外部）
+
+==侧重代码的复用，一个模块中可以包含多个命名空间==
+
+可以把一些公共的功能单独抽离成一个文件作为一个模块。
+
+模块中的变量、函数、类等默认是私有的，需要使用过export暴露，在模块外部使用import导入使用。
+
+#### 9. 装饰器
+
+装饰器是一种特殊的类型声明，它能够被附加到类声明、方法、属性或参数上，可以修改类的行为。
+
+可以理解为装饰器就是一个方法，可以注入到类、方法、属性、参数上以扩展类、属性、方法、参数的功能。
+
+常见的装饰器：类装饰器、属性装饰器、方法装饰器、参数装饰器。
+
+装饰器的写法：普通装饰器(无法传参)、装饰器工厂(可传参)。
+
+装饰器是ES7的标准特性之一。
+
+##### 9.1 类装饰器
+
+类装饰器在类声明之前被声明（紧靠着类声明）,传入一个参数，即为当前类
+类装饰器应用于类构造函数，可以用来监视，修改或替换类定义。 传入一个参数
+1. 类装饰器 ：普通装饰器（无法传参）
+2. 类装饰器：装饰器工厂（可传参）---使用闭包
+
+`普通装饰器`
+
+```typescript
+function seald(currentClass: any) {
+  console.log(currentClass);
+  currentClass.prototype.baseUrl = "www.api/get";
+  currentClass.prototype.run = function () {
+    console.log("run...");
+  }
+}
+
+@seald
+class HttpClient {
+  greeting: string;
+  constructor(messagge: string) {
+    this.greeting = messagge;
+  }
+  greet() {
+    return "hello, " + this.greeting;
+  }
+}
+
+const client: any = new HttpClient("world!");
+client.run();
+console.log(client.baseUrl);
+```
+
+`装饰器工厂`
+
+```typescript
+// 类装饰器：装饰器工厂（可传参）---使用闭包
+function Decorator(params: any) {
+  console.log("params:", params);
+  return function (target: any) {
+    console.log("target:", target);
+    target.prototype.url = params;
+  }
+}
+@Decorator("www.api/post")
+class ClassDecoratorDemo {
+
+}
+
+const classInstance: any = new ClassDecoratorDemo();
+console.log(classInstance.url)
+```
+
+##### 9.2 属性装饰器
+
+ 属性装饰器表达式会在运行时当作函数被调用，传入两个参数：
+
+1. 对于静态成员来说是类的构造函数，对于实例成员来说是类的原型对象；
+2. 成员的名字；
+
+```typescript
+//用法 
+return function(target: any, attr: any){ }
+							//当前类       指定修饰的属性名称
+```
+
+举栗
+
+```typescript
+function logProp(params: any) {
+  return function (target: any, attr: any) {
+    // 传入的参数值       http://www.baidu.com
+    console.log(params);
+    // 当前类的原型对象   PropDecorator { getData: [Function] }
+    console.log(target);
+    // 指定修饰的属性名称 url,
+    console.log(attr);
+    target[attr] = params;
+    target.api = "xxxx";        // 扩展属性
+    target.run = function () {  // 扩展方法
+      console.log('run...');
+    }
+  }
+}
 
 
+class PropDecorator {
+  @logProp("http://www.baidu.com")
+  public url!: string;
+  constructor() {
+    console.log('构造函数...');
+  };
+  getData(): string {
+    return this.url;
+  }
+}
 
-属性装饰器
+const prop: any = new PropDecorator();
+prop.getData();
+console.log(prop.api);
+console.log(prop.run());
+```
 
-![image-20200503225939749](/Users/masterxl/Library/Application Support/typora-user-images/image-20200503225939749.png)
+##### 9.3 方法装饰器
 
+1. 方法装饰器被应用到方法的属性描述符上，可以用来监视、修改、替换方法的定义；
 
+2. 方法装饰器会在运行时传入3个参数：
+   2.1 对于静态成员来说是类的构造函数，对于实例成员来说是类的原型对象；
 
-方法装饰器
+   2.2 成员的名字；
+   2.3 成员的属性描述符；
 
-![image-20200503230031455](/Users/masterxl/Library/Application Support/typora-user-images/image-20200503230031455.png)
+```typescript
+// 用法
+return function(target: any, methodName: any, desc: any){ }
+							//当前类        方法名            属性描述符
+```
 
+举栗
 
+```typescript
+function logMethod(params: any) {
+  console.log("params: ", params);
+  return function (target: any, methodName: any, desc: any) {
+    console.log('target: ', target);
+    console.log("methodName: ", methodName);
+    console.log("desc: ", desc);
+    console.log(desc.value);
+    /*修改被修饰的方法*/
+    // 1. 保存原来的方法
+    let oldMethod = desc.value;
+    // 2. 重新定义新的方法体
+    desc.value = function (...args: any[]) {
+      // 3. 把传入的数组元素都转为字符串
+      let newArgs = args.map(item => item.toString());
+      // console.log(arr);
+      console.log(this);
+      // return newArgs;
+      // 4. 执行原来的方法体
+      oldMethod.call(this, ...newArgs);
+    }
+  }
+}
 
-![image-20200503230545822](/Users/masterxl/Library/Application Support/typora-user-images/image-20200503230545822.png)
+class ClassMethod {
 
+  constructor() {
 
+  }
+
+  @logMethod('http:www.baidu.com')
+  getData(...args: any[]) {
+    console.log('123');
+    console.log('getData:', args);
+  }
+}
+
+const methodInstance = new ClassMethod();
+console.log(methodInstance.getData(1, 2, "true"));
+
+```
+
+##### 9.4 方法参数装饰器
+
+(不常用)
 
 方法参数装饰器
+参数装饰器表达式会在运行时被调用，可以为类的原型增加一些元素数据，传入3个参数：
+	1.1 对于静态成员来说是类的构造函数，对于实例成员来说是类的原型对象；
+	1.2 方法名称；
+	1.3 参数在函数参数列表中的索引；
 
-![image-20200503231154738](/Users/masterxl/Library/Application Support/typora-user-images/image-20200503231154738.png)
+```typescript
+// 用法
+return function(target: any, methodName: any, paramIndex: number){ }
+							// 当前类       方法名            修饰的参数索引
+```
+
+举例
+
+```typescript
+function logParams(params: any) {
+  return function (target: any, methodName: any, paramIndex: number) {
+    console.log(target);
+    console.log(methodName);
+    console.log(paramIndex);
+  }
+}
+
+class ParamDecorator {
+  constructor() { };
+  getData(param1: string, @logParams('uuid') uuid: string) {
+    console.log(uuid);
+  }
+}
+
+const paramInstance = new ParamDecorator();
+paramInstance.getData("abc", "f");
+```
+
+##### 9.5 装饰器的执行顺序
 
 装饰器的执行顺序：
 
