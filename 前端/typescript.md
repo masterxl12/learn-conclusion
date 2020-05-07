@@ -1,7 +1,3 @@
-
-
-
-
 安装TypeScript
 
 ```js
@@ -869,7 +865,68 @@ paramInstance.getData("abc", "f");
 
 ##### 9.5 装饰器的执行顺序
 
+举栗
+
+```typescript
+function logClass1(param: string) {
+  return function (target?: any) {
+    console.log("类装饰器1...")
+  }
+}
+function logClass2(param: string) {
+  return function (target?: any) {
+    console.log("类装饰器2...")
+  }
+}
+
+function logAttribute(param: string) {
+  return function (target: any, attr: any) {
+    console.log("属性装饰器...")
+  }
+}
+
+function logMethod(param: string) {
+  return function (target: any, methodName: any, desc: any) {
+    console.log("方法装饰器...")
+  }
+}
+
+function logParameter(params: any) {
+  return function (target: any, methodName: any, paramIndex: number) {
+    console.log("方法参数装饰器...")
+  }
+}
+
+@logClass1("class1")
+@logClass2("class2")
+class DecoratorOrder {
+
+  @logAttribute("attribute")
+  public username!: string;
+
+  constructor() { };
+
+  @logMethod("userInfo")
+  getInfo(userName: string, @logParameter("male") gender: string, major: string): void {
+    console.log({ userName, gender, major });
+  }
+}
+const orderInstance = new DecoratorOrder();
+orderInstance.getInfo("kobe", 'male', 'nbaStar');
+```
+
+
+
+```typescript
+属性装饰器...
+方法参数装饰器...
+方法装饰器...
+类装饰器2...
+类装饰器1...
+{ userName: 'kobe', gender: 'male', major: 'nbaStar' }
+```
+
 装饰器的执行顺序：
 
-1. 属性装饰器 》方法装饰器 》方法参数装饰器 》类装饰器
+1. 属性装饰器 》方法参数装饰器 》方法装饰器 》类装饰器
 2. 同类型的装饰器执行顺序：由后向前
