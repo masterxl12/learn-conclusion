@@ -930,3 +930,14 @@ orderInstance.getInfo("kobe", 'male', 'nbaStar');
 
 1. 属性装饰器 》方法参数装饰器 》方法装饰器 》类装饰器
 2. 同类型的装饰器执行顺序：由后向前
+
+
+
+![image-20200514144039233](/Users/masterxl/Library/Application Support/typora-user-images/image-20200514144039233.png)
+
+![image-20200514144111473](/Users/masterxl/Library/Application Support/typora-user-images/image-20200514144111473.png)
+
+![image-20200514144813531](/Users/masterxl/Library/Application Support/typora-user-images/image-20200514144813531.png)
+
+![image-20200514144904805](/Users/masterxl/Library/Application Support/typora-user-images/image-20200514144904805.png)
+
