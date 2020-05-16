@@ -302,3 +302,105 @@ console.log("------------------getTail----------------");
 console.log(list.getTail());
 ```
 
+#### 4 . 集合
+
+##### 4.1 集合的特点
+
+集合：一组无序的、不能重复的元素
+
+可以理解为特殊的数组：
+
+- 里面的元素没有顺序，也不能重复.
+- ==没有顺序==则意味着==不能通过下标值进行访问==，==不能重复==意味着==相同的对象在集合中只会存在一份==。
+
+集合的实现方式：使用Hash(散列表进行封装)
+
+##### 4.2 集合的属性和方法
+
+常用方法：
+
+| 方法            | 说明                                               |
+| --------------- | -------------------------------------------------- |
+| `add(value)`    | 向集合添加一个新的项。                             |
+| `remove(value)` | 从集合移除一个值。                                 |
+| `has(value)`    | 如果值在集合中，返回true，否则返回false。          |
+| `clear()`       | 移除集合中的所有项。                               |
+| `size()`        | 返回集合所包含元素的数量。与数组的length属性类似。 |
+| `values()`      | 返回一个包含集合中所有值的数组。                   |
+
+```javascript
+// add(value)：向集合添加一个新的项。
+// remove(value)：从集合移除一个值。
+// has(value)：如果值在集合中，返回true，否则返回false。
+// clear()：移除集合中的所有项。
+// size()：返回集合所包含元素的数量。与数组的length属性类似。
+// values()：返回一个包含集合中所有值的数组。
+function MySet() {
+  this.items = {};
+  //  1. has(value)：如果值在集合中，返回true，否则返回false。
+  MySet.prototype.has = function (value) {
+    // hasOwnProperty 判断对象是否包含特定的自身属性
+    return this.items.hasOwnProperty(value);
+  }
+  // 2. add(value)：向集合添加一个新的项
+  MySet.prototype.add = function (value) {
+    if (this.has(value)) {
+      return false;
+    }
+    this.items[value] = value;
+    return true;
+  }
+
+  // 3.remove(value)：从集合移除一个值。
+  MySet.prototype.remove = function (value) {
+    if (!this.has(value)) {
+      return false;
+    }
+    delete this.items[value];
+    return true
+  }
+
+  // 4. clear()：移除集合中的所有项。
+  MySet.prototype.clear = function () {
+    this.items = {};
+  }
+  // 5. size()：返回集合所包含元素的数量。与数组的length属性类似。
+  MySet.prototype.size = function () {
+    return Object.keys(this.items).length;
+  }
+  // 6. values()：返回一个包含集合中所有值的数组。
+  MySet.prototype.values = function () {
+    return Object.keys(this.items);
+  }
+}
+
+const set = new MySet();
+set.add('cba');
+set.add('nba');
+set.add('mba');
+set.add('pba');
+
+console.log(set.values());
+console.log(set.size());
+console.log(set.has("mba"));
+console.log(set.clear());
+console.log(set.size());
+// 打印输出
+[ 'cba', 'nba', 'mba', 'pba' ]
+4
+true
+undefined
+0
+```
+
+##### 4.3 集合间操作
+
+并集：对于给定的两个集合，返回一个包含两个集合中所有元素的新集合
+
+
+
+交集：对于给定的两个集合，返回一个包含两个集合中共有元素的新集合
+
+差集：A、B两个集合，x（元素）存在于A中，且x不存在于B中
+
+子集：A、B两个集合，集合A中的每一个x（元素），也需要存在于B中
