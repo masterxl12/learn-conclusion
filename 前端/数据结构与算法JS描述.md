@@ -404,3 +404,365 @@ undefined
 差集：A、B两个集合，x（元素）存在于A中，且x不存在于B中
 
 子集：A、B两个集合，集合A中的每一个x（元素），也需要存在于B中
+
+#### 5. 散列表(Hash)
+
+​	==散列算法==的作用是尽可能快地在数据结构中找到一个值。如果使用==散列函数==，就知道值的具体位置，因此能够快速检索到该值。散列函数的作用是给定一个键值，然后==返回值在表中的地址==。
+
+##### 5.1 散列函数：
+
+​	给定一个key参数，我们就能根据组成key的==每个字符的ASCII码值的和==得到一个数字。
+
+- 遍历key(行{2})并将从ASCII表中查到 的每个字符对应的ASCII值加到hash变量中(String类中的charCodeAt 方法)。
+- 根据指定的hash表的长度，一般是质数，
+
+###### 5.1.1 判断质数方法
+
+不需要整个区间判断，只需要判断`(2~Math.sqrt(number))`之间的数能否被number整除即可
+
+```javascript
+function isPrime(number) {
+    let num = parseInt(Math.sqrt(number));
+    for (let i = 2; i <= num; i++) {
+        if (number % i === 0) {
+            return false
+        }
+    }
+    return true;
+}
+```
+
+###### 5.1.2 给定指定number，获取最近的素数
+
+```javascript
+function getPrime(number) {
+    while (!isPrime(number)) { // 不是质数
+        number++
+    }
+    return number;
+}
+```
+
+###### 5.1.3 hash函数
+
+- 根据组成key的每个字符的ASCII码值的==和==得到一个数字hashcode。
+- 由计算出的hashcode和指定的hash表的长度(一般是质数)得到index(mod(取余数))
+
+```javascript
+// 
+    hashHandler(key,limit) {
+        // 1. 定义hashCode变量
+        let hashCode = 0;
+        // 2. 霍纳算法，计算hashCode值
+        for (let strKey in str) {
+            hashCode = 37 * hashCode + str.charCodeAt(strKey);
+        }
+        // 3. 取余操作
+        let index = hashCode % limit;
+        return index;
+    }
+```
+
+##### 5.2 hash表的实现
+
+###### 5.2.1 基于链表的实现
+
+在hash表的每一个位置创建一个链表，并将元素存储在里面
+
+每一项是链表，如图所示:
+
+![image-20200531105121184](/Users/masterxl/Library/Application Support/typora-user-images/image-20200531105121184.png)
+
+###### 5.2.2 hash表的常见操作
+
+| 方法           | 描述                                   |
+| -------------- | -------------------------------------- |
+| put(key,value) | 向散列表增加一个新的项(也能更新散列表) |
+| remove(key)    | 根据键值从散列表中移除值               |
+| get(key)       | 返回根据键值检索到的特定的值           |
+
+put方法:
+
+Hash表新增/修改元素的过程：
+
+- 根据key获取索引值
+  - 将数据插入到对应的位置
+- 根据索引值取出对应位置的bucket(链表)
+  - 判断桶是否存在，如果存在，调用链表插入元素的方法
+  - 如果不存在，在该索引处新建链表
+- 判断是新增还是修改
+  - 如果已经有值，就修改值
+  - 如果没有，执行后续的新增操作
+- 新增操作
+
+###### 5.2.3 创建链表类LinkedList，并导出
+
+```javascript
+class Node {
+    constructor(data) {
+        this.data = data;
+        this.next = null;
+    }
+}
+
+class LinkedList {
+    constructor() {
+        this.length = 0;
+        this.head = null;
+    }
+
+    // 1. append(data) 添加元素
+    append(data) {
+        let current;
+        let newNode = new Node(data);
+        // 1.1 链表长度为0
+        if (this.length === 0) {
+            this.head = newNode;
+        } else {
+            // 1.2 链表长度不为0
+            current = this.head;
+            while (current.next) {
+                current = current.next;
+            }
+            current.next = newNode;
+        }
+        this.length += 1;
+    }
+
+    // 2. 插入元素 insert(position,data)
+    insert(position, data) {
+        let index = 0;
+        let newNode = new Node(data);
+        let current = this.head;
+        // 1. 越界判断
+        if (position < 0 || position > this.length) return false;
+        // 2.1 头部插入元素
+        if (position === 0) {
+            newNode.next = current;
+            this.head = newNode;
+        } else { // 2.2 中间或者尾部插入元素
+            let previous;
+            while (index < position) {
+                previous = current;
+                current = current.next;
+                index++;
+            }
+            newNode.next = current;
+            previous.next = newNode;
+        }
+        this.length += 1;
+        return true;
+    }
+
+    // 3. indexOf(data)方法 返回元素的位置
+    indexOf(data) {
+        let current = this.head;
+        let index = 0;
+        while (current) {
+            if (current.data === data) {
+                return index;
+            }
+            current = current.next;
+            index++;
+        }
+        return -1;
+    }
+
+    // 4. removeAt(position) 在链表指定位置移除元素
+    removeAt(position) {
+        let index = 0;
+        let current = this.head;
+        let previous = null;
+        if (position >= 0 && position <= this.length - 1) {
+            if (position === 0) {
+                this.head = current.next;
+            } else {
+                while (index < position) {
+                    previous = current;
+                    current = current.next;
+                    index++
+                }
+                previous.next = current.next;
+            }
+            this.length--;
+            return current.data;
+        }
+        return false;
+    }
+
+    // 5. remove(data), 删除指定列表中指定元素
+    remove(data) {
+        let number = this.indexOf(data);
+        return this.removeAt(number);
+    }
+
+    // 6. 把LinkedList对象转换成一个字符串
+    toString() {
+        let current = this.head;
+        let string = "";
+        while (current) {
+            string += current.data + (current.next ? ' ' : '');
+            current = current.next;
+        }
+        return string;
+    }
+
+    // 7. getHead(),返回头部元素
+    getHead() {
+        return this.head;
+    }
+
+    // 8. isEmpty(),是否为空
+    isEmpty() {
+        return this.length === 0 ? true : false;
+    }
+
+    // 9. size,返回链表的长度
+    size() {
+        return this.length;
+    }
+}
+
+// 将类导出
+exports.LinkedList = LinkedList;
+
+```
+
+###### 5.2.4 创建hashTable，并导入链表类
+
+```javascript
+// 将类导入
+const ABC = require('./04LinkedList');
+
+// 定义一个辅助类
+class ValuePair {
+    constructor(key, value) {
+        this.key = key;
+        this.value = value;
+        this.toString = function () {
+            return "[" + this.key + "->" + this.value + "]"
+        }
+    }
+}
+
+class HashTable {
+    constructor(count, limit) {
+        this.storage = [];  // 定义数组
+        this.count = count; // 当前表中的数据量
+        this.limit = limit; // 数组的长度
+    }
+
+    /**
+     * 定义哈希函数
+     * @param str
+     * @param size
+     * @returns {number}
+     */
+    hashHandler(str) {
+        // 1. 定义hashCode变量
+        let hashCode = 0;
+        // 2. 霍纳算法，计算hashCode值
+        for (let strKey in str) {
+            hashCode = 37 * hashCode + str.charCodeAt(strKey);
+        }
+        // 3. 取余操作
+        let index = hashCode % 37;
+        return index;
+    }
+
+    /**
+     * 插入和修改操作
+     * @param key
+     * @param value
+     */
+    put(key, value) {
+        // 1. 根据key获取对应的index
+        let index = this.hashHandler(key);
+        // 2. 验证要加入新元素的位置是否已经被占据
+        let bucket = this.storage[index];
+        if (bucket === undefined) {
+            // 2.1 表明hash表不存在该bucket
+            this.storage[index] = new ABC.LinkedList();
+        }
+        // 2.2 表明hash表存在该bucket,往对应的链表中append元素
+        let pair = new ValuePair(key, value);
+        this.storage[index].append(pair);
+        this.count += 1;
+    }
+
+    /**
+     * 用来获取特定值的get方法
+     * @param key
+     */
+    get(key) {
+        let index = this.hashHandler(key);
+        if (this.storage[index] !== undefined) {
+            //遍历链表来寻找键/值
+            // 1.1 获取链表表头的引用
+            let current = this.storage[index].getHead();
+            while (current) {
+                // 1.2 如果key 值相同，就返回Node的值(行{7});
+                if (current.data.key === key) {
+                    return current.data.value;
+                }
+                // 1.3 如果不相同，就继续遍历链表，访问下一个节点
+                current = current.next;
+            }
+            // 1.4 没有找到返回undefined
+            return undefined;
+        }
+    }
+
+    remove(key) {
+        let index = this.hashHandler(key);
+        let linkedList = this.storage[index];
+        if (linkedList !== undefined) {
+            let current = linkedList.getHead();
+            while (current) {
+                if (current.data.key === key) {
+                    // 调用链表删除元素的方法
+                    linkedList.remove(current.data);
+                    // 进行一步额外的验证:如果链表为空
+                    if (linkedList.isEmpty()) {
+                        linkedList = undefined;
+                    }
+                    return true;
+                }
+                current = current.next;
+            }
+        }
+        return false;
+    }
+}
+
+const hash = new HashTable(0, 1031);
+hash.put('Gandalf', 'gandalf@email.com');
+hash.put('John', 'johnsnow@email.com');
+hash.put('Tyrion', 'tyrion@email.com');
+hash.put('Aaron', 'aaron@email.com');
+hash.put('Donnie', 'donnie@email.com');
+hash.put('Ana', 'ana@email.com');
+hash.put('Jonathan', 'jonathan@email.com');
+hash.put('Jamie', 'jamie@email.com');
+hash.put('Sue', 'sue@email.com');
+hash.put('Mindy', 'mindy@email.com');
+hash.put('Paul', 'paul@email.com');
+hash.put('Nathan', 'nathan@email.com');
+
+console.log(hash.get("Tyrion"));
+console.log(hash.storage);
+console.log("++++++++++++++++");
+console.log(hash.remove("Jonathan"));
+console.log("==============");
+console.log(hash.storage);
+
+```
+
+###### 5.2.5 哈希表的扩容
+
+![image-20200527235422512](/Users/masterxl/Library/Application Support/typora-user-images/image-20200527235422512.png)
+
+5.2.6 hash表解决冲突的方法
+
+- 分离链接法(拉链法)
+- 线性探查

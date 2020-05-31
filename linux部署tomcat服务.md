@@ -68,3 +68,21 @@
 
 
 
+使用命令发jar包，关闭窗口程序一直运行
+
+`nohup java -jar xxx.jar &`
+
+如果查看日志：
+
+可指定输出的日志文件
+
+`nohup java -jar xxx.jar > msg.log 2>&1 &`
+
+`tail -f msg.log` 	查看日志
+
+重命名文件
+
+`mv filename1 filename2`
+
+
+
