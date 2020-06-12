@@ -13,6 +13,7 @@ function Create(){
   let obj = new Object();
   // 1.1. 获取构造函数(因为构造函数是第一个参数，arguments里面的其余的参数就是构造函数的参数)
   let Construtor = [].shift.call(arguments);
+  // 1.2 获取构造函数的参数
   let params = arguments;
   // 2. 链接到原型
   obj.__proto__ = Construtor.prototype;

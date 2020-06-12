@@ -1,3 +1,15 @@
+Linux 安装xshell
+
+win10系统64位：
+
+​		提示找不到文件的情况：
+
+​		解决办法：
+
+​				需要安装vcredist_x64.exe 、 vcredist_x86.exe两个可执行的文件	、
+
+Linux安装SecureCRT
+
 ### 一、Linux常用命令
 
 `ps -ef|grep tomcat`    查看所有tomcat进程信息
@@ -7,8 +19,6 @@
 `| `符号，是个管道符号，表示ps 和 grep 命令同时执行；
 
 `grep` 命令是查找（Global Regular Expression Print），使用正则表达式搜索文本，然后把匹配的行显示出来；
-
-
 
 `rz`       上传本地文件命令：
 
@@ -65,6 +75,16 @@
 `unzip -n xxx.zip 指定文件目录`    ==解压缩文件到指定的文件下==，
 
 【注】如果不指定文件目录，则会把当前文件名作为压缩文件名
+
+
+
+下载文件命令 
+
+`sz 文件名`
+
+上传文件命令
+
+`rz 文件名`
 
 
 
