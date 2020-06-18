@@ -298,3 +298,183 @@ function apiPost(url, data = {}) {
 }
 ```
 
+### 6.WebSocket通信协议(Vue引入)
+
+onerror 		连接失败执行的回调
+
+onopen 		连接成功执行的回调
+
+onmessage   建立连接，接收信息
+
+Onclose         关闭连接
+
+```javascript
+let ws = new WebSocket("ws://xxx.com");
+// 1.连接失败执行的回调函数
+ws.onerror = function(){
+  // 业务代码
+  setTimeout(()=>{
+    this.$message({
+      type:'error',
+      message:'error,连接失败',
+      duration:2500
+    })
+  },1000)
+}.bind(this)
+// 2.连接成功执行的回调函数
+ws.open = function(){
+  this.viewLog = true;
+  ws.send("webSocket connected!");
+}.bind(this)
+// 3.建立连接，接收信息
+ws.onmessage = function(evt){
+  let outDiv = document.getElementById('outDiv');
+  let innDiv = document.getElementById('innDiv');
+  if(typeof evt.data === 'string'){
+    innDiv.innerHTML += "<br/>" + evt.data.replace(/</g,'');
+  }
+  setTimeout(()=>{
+    // 实现日志滑动到底部
+    outDiv.scrollTop = outDiv.scrollHeight;
+  },1000)
+}
+// 4.连接失败执行的回调
+ws.onclose = function(){
+  ws.close();
+  console.log("Connection closed!")
+}
+```
+
+```css
+.outDiv{
+  width:100%;
+  padding:10px;
+  background-color:rgba(0,0,0,.8);
+  color:#0aa908;
+  line-height:1.5;
+  overflow-y:scroll;
+  overflow:auto
+}
+```
+
+### 7.echarts数据改变-视图改变
+
+```javascript
+import echarts from 'echarts';
+// 页面视图初步加载
+this.$nextTick(()=>{
+  this.chartLine = echarts.init(this.$refs.aDiv);
+  api.get(url).then(res=>{
+    this.optionData = res.data;
+    this.chartLine.setOption(this.optionData);
+  })
+})
+
+// 数据改变后的视图刷新
+this.chartLine.clear();
+this.chartLine = echarts.init(this.$refs.aDiv);
+// 改变后的数据
+this.optionData.series.data = changedData;
+this.chartLine.setOption(this.optionData);
+
+```
+
+### 8.正则表达式
+
+#### 8.1 匹配192.168.1.1:ABC-CDF:8080的格式
+
+目的：获取到格式`192.168.1.1:8080`
+
+```javascript
+let regExp = /[a-zA-Z].*?\:/g;
+let matchUrl = "192.168.1.1:ABC-CDF:8080";
+let urlParam = matchUrl.replace(regExp,"");
+console.log(urlParam)
+```
+
+### 9.时间选择器控件
+
+#### 9.1 日期时间格式函数
+
+```javascript
+function padLeftZero(str) {
+  return ("00" + str).substr(str.length);
+}
+
+function formatDate(date, fmt) { 
+  // date new Date()
+  // fmt  "yyyy-MM-dd hh:mm"
+  if (/(y+)/.test(fmt)) {
+    fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+  }
+
+  let o = {
+    "M+": date.getMonth() + 1,
+    "d+": date.getDate(),
+    "h+": date.getHours(),
+    "m+": date.getMinutes(),
+    "s+": date.getSeconds()
+  };
+
+  for (let k in o) {
+    if (new RegExp(`(${k})`).test(fmt)) {
+      let str = o[k] + "";
+      fmt = fmt.replace(RegExp.$1, RegExp.$1.length === 1 ? str : padLeftZero(str));
+    }
+  }
+
+  return fmt;
+}
+```
+
+#### 9.2 起始、截止时间设置
+
+```html
+// 起始时间
+<el-time-picker
+    v-model="startTime"
+		value-format="yyyy-MM-dd HH:mm:ss"
+		:picker-options="startTimeRule"  
+		@change="startTimeChange"
+		placeholder="选择起始时间">
+</el-time-picker>
+
+// 截止时间
+<el-time-picker
+    v-model="endTime"
+		value-format="yyyy-MM-dd HH:mm:ss"
+		:picker-options="endTimeRule"  
+		@change="triggerTimeChange"
+		placeholder="选择起始时间">
+</el-time-picker>
+```
+
+起始时间(00:00:00—当前时间)
+
+```javascript
+computed:{
+  startTimeRule:function(){
+  let timeNow = formatDate(new Date(),"yyyy-MM-dd hh:mm:ss"); 	 // 2020-06-18 20:20:20
+  let currentTime = timeNow.split(" ")[1]; // 20:20:20
+  return {
+    selectableRange:`00:00:00-${currentTime}`
+  	}
+	}
+}
+```
+
+终止时间(起始时间—当前时间可选)
+
+```javascript
+startTimeChange(val){
+  let timeNow = formatDate(new Date(),"yyyy-MM-dd hh:mm:ss");
+  let start = val.split(" ")[1];
+  let currentTime = timeNow.split(" ")[1];
+  this.endTimeRule = {
+    selectableRange:`${start}-${currentTime}`
+  }
+}
+```
+
+
+
