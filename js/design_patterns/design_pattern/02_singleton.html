@@ -1,0 +1,93 @@
+<div>
+  <div>采购余额:<span id="bonus">100</span>元</div>
+  <div class="page a">
+    部门A:
+    <input type="number" name="name" />
+    <button class="add">+</button>
+    <button class="sub">-</button>
+  </div>
+  <div class="page b">
+    部门B:
+    <input type="number" name="name" />
+    <button class="add">+</button>
+    <button class="sub">-</button>
+  </div>
+</div>
+
+<script>
+  init();
+  let bonus = document.getElementById("bonus");
+  function init() {
+    let a = new District('.page.a');
+    let b = new District('.page.b');
+  }
+
+  function renderBonus() {
+    let single = new Singleton();
+    bonus.innerText = single.bonus;
+  }
+
+  function District(selector) {
+    this.el = document.querySelector(selector);
+    this.elInput = this.el.querySelector('input');
+    this.elAdd = this.el.querySelector(".add");
+    this.elSub = this.el.querySelector(".sub");
+
+    let single = new Singleton();
+    let that = this;
+
+    this.elAdd.addEventListener('click', function () {
+      single.add(that.elInput.value);
+      that.elInput.value = "";
+      renderBonus();
+    });
+
+    this.elSub.addEventListener('click', function () {
+      single.sub(that.elInput.value);
+      that.elInput.value = "";
+      renderBonus();
+    });
+  }
+  // 单例构造函数
+  function Singleton() {
+    if (Singleton.instance) {
+      return Singleton.instance;
+    } else {
+      this.bonus = 100;
+      Singleton.instance = this;
+    }
+  }
+
+  Singleton.prototype.add = function (num) {
+    this.change(num);
+  }
+  Singleton.prototype.sub = function (num) {
+    this.change(-num);
+  }
+  Singleton.prototype.change = function (num) {
+    if (!num) return;
+    this.bonus += parseFloat(num);
+  }
+  var aa = new Singleton();;
+  var bb = new Singleton();
+  console.log(aa === bb)
+
+</script>
+
+<script>
+  let Resource = function (name) {
+    this.name = name;
+    this.instance = null;
+  }
+  // 构造函数的方法，实例不可调用，相当于es6中的类的static方法
+  Resource.getInstance = function (name) {
+    if (!this.instance) {
+      this.instance = new Resource(name);
+    }
+    return this.instance;
+  }
+  let r1 = Resource.getInstance('kobe');
+  let r2 = Resource.getInstance('jordan');
+  // 指向的是唯一实例化的对象
+  console.log(r1 === r2); // true
+</script>

@@ -1,3 +1,5 @@
+#### 一、Vue开发
+
 ### 1.`vm.nextTick()`
 
 **nextTick的由来：**
@@ -475,6 +477,106 @@ startTimeChange(val){
   }
 }
 ```
+
+
+
+## 二、elementUI开发
+
+### 1. el-tree
+
+#### 1.1 节点条件过滤
+
+`filter-node-method` 
+
+`对树节点进行筛选时执行的方法，返回 true 表示这个节点可以显示，返回 false 则表示这个节点会被隐藏`
+
+Function(value, data, node)
+
+```vue
+<el-input
+          placeholder="输入用户名查询"
+          prefix-icon="el-icon-search"
+          v-model="searchByUserName"
+          >
+</el-input>
+<el-tree
+          ref="organizationTree"
+          :default-expanded-keys="['RootNode']" // "[0]"
+          node-key="id"
+          :filter-node-method="filterNode"
+          >
+</el-tree>
+
+<script>
+	export default{
+    data(){
+      return {
+        searchByUserName:''
+      }
+    },
+    watch:{
+      searchByUserName(val){
+        this.$refs.organizationTree.filter(val);
+      }
+    },
+    filterNode(value,data){
+      if(!value) return true;
+      // name 根据节点中的data指定(Node.data.name)，也有可能是Node.data.label
+      return data.name.indexOf(value) !== -1; 
+    }
+  }
+</script>
+```
+
+#### 1.2 局部节点刷新
+
+[参考链接1](https://blog.csdn.net/gm0125/article/details/103288701/?utm_medium=distribute.pc_relevant.none-task-blog-baidujs-2)
+
+[参考链接2](https://www.cnblogs.com/LittleMore/p/9052788.html)
+
+**思路**：**找到想要刷新的树节点，重新模拟执行一次展开请求子节点的功能(expand)。**
+
+修改/新建/删除节点操作后，只需要刷新当前节点，无需刷新整棵树和再次请求后台数据
+
+```vue
+<el-tree
+          ref="organizationTree"
+          :default-expanded-keys="['RootNode']" // "[0]"
+          node-key="id"
+          :filter-node-method="filterNode"
+          >
+</el-tree>
+
+<script>
+	export default{
+    methods:{
+      // 局部节点刷新方法
+      refreshNode(currentNode){
+        if(currentNode && currentNode.node){
+           // 获取当前节点对象，作为准备刷新的节点
+          let refreshNode = currentNode.node;
+          refreshNode.loaded = false;
+          //  主动调用节点展开方法，重新查询该节点下的所有子节点
+          refreshNode.expand();
+        }
+      }
+      nodeOperate(){	
+    		// 同级节点操作
+    		let peerOrgNode = this.$refs.organizationTree.currentNode;
+    		// 调用局部节点刷新方法
+    		this.refreshNode(peerOrgNode);
+  
+  			// 下级节点操作
+    		let subOrgNode = this.$refs.organizationTree.currentNode;
+    		// 调用局部节点刷新方法
+    		this.refreshNode(subOrgNode);
+  		}
+    }
+  }
+</script>
+```
+
+
 
 
 
