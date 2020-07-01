@@ -478,7 +478,33 @@ startTimeChange(val){
 }
 ```
 
+### 10.scoped样式作用域
 
+#### 10.1 scoped的作用功能
+
+==实现组件的私有化，不对全局造成样式污染，表示当前style属性只属于当前模块==
+
+#### 10.2 实现原理
+
+通过观察DOM结构可以发现：vue通过在DOM结构以及css样式上加上唯一的标记，保证唯一，达到样式私有化，不污染全局的作用，如图，样式属性上也会多一个该字符，以保证唯一
+
+<img src="/Users/masterxl/Library/Application Support/typora-user-images/image-20200630171919911.png" alt="image-20200630171919911" style="zoom:50%;" />
+
+ 可以看出加上`scoped`后的组件里的标签都会多一个`data-v-469af010`的属性，并且在css样式部分可以看出
+
+<img src="/Users/masterxl/Library/Application Support/typora-user-images/image-20200630171956859.png" alt="image-20200630171956859" style="zoom:50%;" />
+
+ 由此可知，添加`scoped`属性的组件，为了达到不污染全局，做了如下处理：
+
+- 给HTML的DOM节点加一个不重复属性`data-v-469af010`标志唯一性
+- 在添加`scoped`属性的组件的每个样式选择器后添加一个等同与“不重复属性”相同的字段，实现类似于“作用域”的作用，不影响全局
+- 如果组件内部还有组件，只会给最外层的组件里的标签加上唯一属性字段，不影响组件内部引用的组件（ 注意  ）
+
+#### 10.3 慎用原因：
+
+1. 父组件无`scoped`属性，子组件带有`scoped`，父组件是无法操作子组件的样式的（原因在原理中可知），虽然我们可以在全局中通过该类标签的标签选择器设置样式，但会影响到其他组件
+2. 父组件有`scoped`属性，子组件无，父组件也无法设置子组件样式，因为父组件的所有标签都会带有`data-v-469af010`唯一标志，但子组件不会带有这个唯一标志属性，与1同理，虽然我们可以在全局中通过该类标签的标签选择器设置样式，但会影响到其他组件。**==如在vue项目中使用element-ui组件库,当前vue组件为父组件，引入的element-ui(如el-tree、el-table等)为子组件，在父组件中修改子组件样式不起效果。==**
+3. 父子组建都有，同理也无法设置样式，更改起来增加代码量
 
 ## 二、elementUI开发
 
@@ -576,7 +602,60 @@ Function(value, data, node)
 </script>
 ```
 
+#### 1.3 el-tree节点高亮设置
 
+[参考链接](https://www.jianshu.com/p/b92e2a022cd8)
+
+问题描述: 默认节点点击后背景不易区分，且失去焦点后，背景高亮消失
+
+问题分析：
+
+​		使用==scoped样式作用域==带来的影响
+
+##### 1.3.1 清楚scoped样式作用域，避免组件内部修改样式无效
+
+当前组件为父组件(使用scoped)，引用的组件库为element-ui的子组件，父组件中使用scoped后修改子组件样式不起效果。
+
+```css
+<style lang="less">
+  .uniformConfig{
+    // 树形节点点击背景颜色高亮
+    .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content{
+      background-color:rgba(21,159,230,.7);
+      color:#000
+    }
+  }
+</style>
+```
+
+##### 1.3.2 如果设置了nodeKey, 需要为树形节点指定key
+
+```vue
+<el-tree :data="serverData" node-key="id" :props="defaultProps">
+</el-tree>
+
+<script>
+  data(){
+    return {
+      defaultProps:{
+        children:'children',
+        label:'name'
+      }
+    }
+  },
+  created(){
+    axios.get(url).then(res=>{
+      res.data.map((item,index)=>{
+        this.serverData.push({
+          name:item.name,
+          id:index+1,
+          children:null
+        })
+      })
+    })
+  }
+</script>
+```
 
 
 
