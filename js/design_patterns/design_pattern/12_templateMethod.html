@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>12_模板方法模式</title>
+</head>
+
+<body>
+  <div id="nav"></div>
+  <script>
+    var formateStr = function (param, data) {
+      return param.replace(/\{#(\w+)#\}/g, function (match, key) {
+        debugger;
+        console.log(key);
+        return typeof data[key] === undefined ? "" : data[key];
+      });
+    };
+
+    var Nav = function (data) {
+      var _this = this;
+      _this.item = '<li><a href="{#hrefUrl#}" title="{#title#}" {#sign#}>{#content#}</a></li>';
+      _this.html = '<ul>';
+      for (var i = 0, l = data.length; i < l; i++) {
+        _this.html += formateStr(_this.item, data[i]);
+      }
+      _this.html += '</ul>';
+      return _this.html;
+    }
+
+
+    var infoNav = function (data) {
+      var _this = this;
+      _this.info = '<i>{#num#}</i>';
+      for (var i = data.length - 1; i >= 0; i--) {
+        // content: '百度一下',
+        // content: "百度一下<i>10</i>"
+        data[i].content += formateStr(_this.info, data[i]);
+      };
+      console.log(data);
+
+      return Nav.call(this, data);
+    };
+
+    var objNav = document.getElementById('nav');
+    objNav.innerHTML = infoNav([
+      {
+        hrefUrl: 'http://www.baidu.com',
+        content: '百度一下',
+        title: '百度',
+        num: '10',
+        sign: 'sign="1"'
+      },
+      {
+        hrefUrl: 'http://www.zhihu.com',
+        content: '知乎一下',
+        title: '知乎',
+        num: '10',
+        sign: 'sign="2"'
+      }
+    ]);
+    /*
+      0: {hrefUrl: "http://www.baidu.com", content: "百度一下<i>10</i>", title: "百度", num: "10", sign: "sign="1""}
+      1: {hrefUrl: "http://www.zhihu.com", content: "知乎一下<i>10</i>", title: "知乎", num: "10", sign: "sign="2""}
+    */
+  </script>
+</body>
+
+</html>

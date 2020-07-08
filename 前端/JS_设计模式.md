@@ -1056,7 +1056,9 @@ superMarry
 
 [参考链接2](https://juejin.im/post/5b90bb20e51d450e5519c2c7#heading-4)
 
-策略模式的目的：**将算法的使用和算法的实现分离开来**。
+#### 10.1 策略模式简介
+
+目的：**将算法的使用和算法的实现分离开来**。
 
 策略模式指的是定义一系列的算法，把它们一个个封装起来，将不变的部分和变化的部分隔开，实际就是将算法的使用和实现分离出来。
 
@@ -1090,9 +1092,189 @@ let calculateBonus = function (level, salary) {
 console.log(calculateBonus('better', 16000)) // 48000;
 ```
 
+#### 10.2 应用场景:  
 
-
-应用场景:  表单验证
+- 如果在一个系统里面有许多类，它们之间的区别仅在于它们的'行为'，那么使用策略模式可以动态地让一个对象在许多行为中选择一种行为。
+- 一个系统需要动态地在几种算法中选择一种。
+- 表单验证
 
 表单检验是非常常见的功能。因为涉及到大量的验证规则，使用策略模式会非常便利。
+
+【举例】
+
+HTML表单代码
+
+```html
+<form id="ruleForm">
+  <label for='userName'>userName:</label><input id="userName" type="text" name='userName' />
+  <label for="password">passWord:</label><input type="text" name='passWord' />
+  <label for="phoneNumber">phoneNumber:</label><input type="number" name='phoneNumber' />
+  <input type="submit" value="submit">
+</form>
+```
+
+JS逻辑代码部分
+
+```js
+<script>
+  let strategys = {
+    isNotEmpty: function (value, errorMsg) {
+      if (value === '') {
+        return errorMsg;
+      }
+    },
+    // 限制最小长度
+    minLength: function (value, length, errorMsg) {
+      if (value.length < length) {
+        return errorMsg;
+      }
+    },
+    // 手机号码格式
+    mobileFormat: function (value, errorMsg) {
+      if (!/(^1[3|5|8][0-9]{9}$)/.test(value)) {
+        return errorMsg;
+      }
+    }
+  };
+  let Validator = function () {
+    this.cache = []; // 保存校验规则
+  };
+  Validator.prototype.add = function (dom, rules) {
+    let self = this;
+    for (let i in rules) {
+      (function (rule) {
+        // minLength:6 -> [minLength,6];
+        let strategyArr = rule.strategy.split(":");
+        let errorMsg = rule.errorMsg;
+        self.cache.push(function () {
+          let strategy = strategyArr.shift();
+          strategyArr.unshift(dom.value);
+          strategyArr.push(errorMsg);
+          return strategys[strategy].apply(dom, strategyArr);
+        })
+      })(rules[i])
+    }
+  };
+  Validator.prototype.start = function () {
+    for (var i = 0, validate; validate = this.cache[i++];) {
+      let msg = validate();
+      if (msg) {
+        return msg;
+      }
+    }
+  };
+
+  let registerForm = document.getElementById("ruleForm");
+  // 代码调用
+  let validateFunc = function () {
+    var validator = new Validator(); // 创建一个Validator对象
+    /* 添加一些效验规则 */
+    validator.add(registerForm.userName, [
+      { strategy: 'isNotEmpty', errorMsg: '用户名不能为空' },
+      { strategy: 'minLength:6', errorMsg: '用户名长度不能小于6位' }
+    ]);
+    validator.add(registerForm.passWord, [
+      { strategy: 'minLength:6', errorMsg: '密码长度不能小于6位' },
+    ]);
+    validator.add(registerForm.phoneNumber, [
+      { strategy: 'mobileFormat', errorMsg: '手机号格式不正确' },
+    ]);
+
+    console.log(validator.cache);
+    var errorMsg = validator.start(); // 获得效验结果
+    return errorMsg; // 返回效验结果
+  }
+
+  // 点击确定提交
+  registerForm.onsubmit = function () {
+    var errorMsg = validateFunc();
+    console.log(errorMsg);
+    if (errorMsg) {
+      alert(errorMsg);
+      return false;
+    }
+  }
+
+</script>
+```
+
+### 11. 享元模式
+
+定义:  运用共享技术来有效地==支持大量细粒度对象的复用==，以==减少创建对象的数量==。系统只使用少量的对象，而这些对象都很相似，状态变化很小，可以实现对象的多次复用。
+
+主要思想: 细粒度对象的共享和复用。
+
+```javascript
+let examCarNum = 0;
+class ExamCar {
+  constructor(carType) {
+    examCarNum++;
+    this.carId = examCarNum;
+    this.carType = carType ? "手动挡" : "自动挡";
+    this.usingState = false;
+  }
+  examine(candidateId) {
+    return new Promise(resolve => {
+      this.usingState = true;
+      console.log(`考生- ${candidateId} 开始在${this.carType}驾考车- ${this.carId} 上考试`);
+      setTimeout(() => {
+        this.usingState = false;
+        console.log(`%c考生- ${candidateId} 在${this.carType}驾考车- ${this.carId} 上考试完毕`, 'color:#f40')
+        resolve();
+      }, Math.random() * 2000)
+    })
+  }
+}
+// 手动汽车对象池
+const ManualExamCarPool = {
+  _pool: [],            // 驾考车对象池
+  _candidateQueue: [],  // 考生队列
+  // 注册考试ID列表
+  registCandidates(candidateList) {
+    candidateList.forEach(candidateId => this.registCandidate(candidateId));
+  },
+  // 注册手动挡考生
+  registCandidate(candidateId) {
+    // 找一个未被占用的手动挡考车
+    const examCar = this.getManualExamCar();
+    if (examCar) {
+      examCar.examine(candidateId) // 开始考试，考完了让队列中的下一个考生开始考试
+        .then(() => {
+          const nextCandidateId = this._candidateQueue.length && this._candidateQueue.shift();
+          nextCandidateId && this.registCandidate(nextCandidateId);
+        })
+    } else this._candidateQueue.push(candidateId)
+  },
+
+  // 注册手动挡车
+  initManualExamCar(manualExamCarNum) {
+    for (let i = 1; i <= manualExamCarNum; i++) {
+      this._pool.push(new ExamCar(true));
+    }
+  },
+
+  // /* 获取状态为未被占用的手动档车 */
+  getManualExamCar() {
+    return this._pool.find(car => !car.usingState);
+  }
+}
+
+ManualExamCarPool.initManualExamCar(3);
+ManualExamCarPool.registCandidates([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+```
+
+应用场景:
+
+- 如果一个程序中大量使用了相同或相似对象，那么可以考虑引入享元模式；
+- 如果使用了大量相同或相似对象，并造成了比较大的内存开销；
+- 对象的大多数状态可以被转变为外部状态；
+- 剥离出对象的外部状态后，可以使用相对较少的共享对象取代大量对象；
+- 前端分页
+  - 分页的特点是每一页的内容结构基本相同，只是数据不同。
+
+### 12. 模板方法模式
+
+> 模板方法模式是一种只需使用继承就可以实现的非常简单的模式。模板方法模式由两部分结构组成，第一部分是抽象父类，第二部分是具体的实现子类。通常在抽象父类中封装了子类的算法框架，包括实现一些公共方法以及封装子类中所有方法的执行顺序。子类通过继承这个抽象类，也继承了整个算法结构，并且可以选择重写父类的方法。
+
+核心在于方法的重用，将核心方法封装在基类中，让子类继承基类的方法，实现基类方法的共享，达到方法共用。
 
