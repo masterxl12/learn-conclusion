@@ -1274,7 +1274,122 @@ ManualExamCarPool.registCandidates([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
 ### 12. 模板方法模式
 
+模版方法模式：（Template Method），父类中定义一组操作算法骨架，而将一些实现步骤延迟到子类中，使得子类可以不改变父类的算法结构的同时可重新定义算法中某些实现步骤。
+
 > 模板方法模式是一种只需使用继承就可以实现的非常简单的模式。模板方法模式由两部分结构组成，第一部分是抽象父类，第二部分是具体的实现子类。通常在抽象父类中封装了子类的算法框架，包括实现一些公共方法以及封装子类中所有方法的执行顺序。子类通过继承这个抽象类，也继承了整个算法结构，并且可以选择重写父类的方法。
 
-核心在于方法的重用，将核心方法封装在基类中，让子类继承基类的方法，实现基类方法的共享，达到方法共用。
+核心在于==方法的重用==，将==核心方法封装在基类中，让子类继承基类的方法==，实现基类方法的共享，达到方法共用。
+
+举例一：
+
+```js
+// 定义饮料基类
+class Beverage {
+  constructor(data) {
+    this.brewDrink = data.brewDrink;
+    this.addCondiment = data.addCondiment;
+  }
+  /* 烧开水，共用方法 */
+  boilWater() { console.log('水已经煮沸=== 共用') }
+  /* 倒杯子里，共用方法 */
+  pourCup() { console.log('倒进杯子里=== 共用') }
+  /* 模板方法 */
+  init() {
+    this.boilWater()
+    this.brewDrink()
+    this.pourCup()
+    this.addCondiment()
+  }
+}
+
+const coffee = new Beverage({
+  /* 冲泡咖啡，覆盖抽象方法 */
+  brewDrink: function () { console.log('子类方法 --- 冲泡咖啡') },
+  /* 加调味品，覆盖抽象方法 */
+  addCondiment: function () { console.log('子类方法 --- 加点奶和糖') }
+});
+
+coffee.init();
+```
+
+举例二：导航栏
+
+html代码部分
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>12-模板方法模式</title>
+</head>
+
+<body>
+  <div id="nav"></div>
+  <script src="./index.js"></script>
+</body>
+
+</html>
+```
+
+js代码部分(index.js)
+
+```js
+let formateStr = function (param, data) {
+  return param.replace(/\{#(\w+)#\}/g, (match, key) => {
+    return typeof data[key] === undefined ? '' : data[key];
+  })
+}
+// 定义基本的导航类(基类)
+let Nav = function (data) {
+  let _this = this;
+  _this.item = '<li><a href="{#hrefUrl#}" title="{#title#}" {#sign#}>{#content#}</a></li>';
+  _this.html = '<ul>';
+  for (let i = 0; i < data.length; i++) {
+    _this.html += formateStr(_this.item, data[i]);
+  }
+  _this.html += '</ul>';
+  return _this.html;
+}
+
+// 增加功能：带提示消息的导航
+let InfoNav = function (data) {
+  let _this = this;
+  _this.info = '<i>{#num#}</i>';
+  for (var i = data.length - 1; i >= 0; i--) {
+    // 修改对content的内容  '百度一下' -> '百度一下<i>10</i>'
+    data[i].content += formateStr(_this.info, data[i]);
+  };
+  // 调用父类方法
+  return Nav.call(this, data);
+}
+
+
+let objNav = document.getElementById('nav');
+objNav.innerHTML = InfoNav([
+  {
+    hrefUrl: 'http://www.baidu.com',
+    content: '百度一下',
+    title: '百度',
+    num: '10',
+    sign: 'sign="1"'
+  },
+  {
+    hrefUrl: 'http://www.zhihu.com',
+    content: '知乎一下',
+    title: '知乎',
+    num: '10',
+    sign: 'sign="2"'
+  }
+]);
+```
+
+应用场景：
+
+- 一次性实现一个算法的不变的部分，并将可变的行为留给子类来实现
+- 子类中公共的行为应被提取出来并集中到一个公共父类中的避免代码重复
+
+### 13. 职责链模式
 
