@@ -1393,3 +1393,157 @@ objNav.innerHTML = InfoNav([
 
 ### 13. 职责链模式
 
+​		[参考链接](https://juejin.im/post/5c1a37ca6fb9a049f8193cc8)
+
+​		很多个对象都有机会处理请求，从而避免请求的发送者和接受者之间的耦合关系，将这些对象连成一条链，并沿着这条链传递该请求，直到有一个对象处理它为止
+
+==类似工作生活中==的`工作流程审批`
+
+举例1:
+
+```js
+class Chain {
+  constructor(name) {
+    this.name = name;
+    this.nextAction = null;
+  }
+  setNextAction(action) {
+    this.nextAction = action;
+  }
+  handle() {
+    console.log(`${this.name}处理请求完毕!`);
+    if (this.nextAction !== null) {
+      this.nextAction.handle();
+    }
+  }
+}
+const a1 = new Chain("组长");
+const a2 = new Chain("经理");
+const a3 = new Chain("总监");
+
+a1.setNextAction(a2);
+a2.setNextAction(a3)
+a1.handle();
+```
+
+举例2:
+
+```js
+/**
+ * 
+ * @param {*} orderType 订单类型
+ * @param {*} isPaym 是否支付定金
+ * @param {*} stock 库存量
+ */
+let order500 = function (orderType, isPay, stock) {
+  if (orderType === 1 && isPay === true) {
+    console.log('500 元定金预购，得到 100 优惠券');
+  } else {
+    return 'nextSuccessor'; // 我不知道下一个节点是谁，反正把请求往后面传递 
+  }
+}
+
+let order200 = function (orderType, isPay, stock) {
+  if (orderType === 2 && isPay === true) {
+    console.log('200 元定金预购，得到 50 优惠券');
+  } else {
+    return 'nextSuccessor'; // 我不知道下一个节点是谁，反正把请求往后面传递 
+  }
+}
+
+let orderNormal = function (orderType, isPay, stock) {
+  if (stock > 0) {
+    console.log('普通购买，无优惠券');
+  } else {
+    console.log('手机库存不足');
+  }
+}
+
+class Chain {
+  constructor(fn) {
+    this.fn = fn;
+    this.successor = null;
+  }
+  setNextSuccessor(successor) {
+    this.successor = successor;
+  }
+  passRequest() {
+    let ret = this.fn.apply(this, arguments);
+    if (ret === 'nextSuccessor') {
+      return this.successor && this.successor.passRequest.apply(this.successor, arguments);
+    }
+  }
+}
+
+let chainOrder500 = new Chain(order500);
+let chainOrder200 = new Chain(order200);
+let chainOrderNormal = new Chain(orderNormal);
+
+chainOrder500.setNextSuccessor(chainOrder200);
+chainOrder200.setNextSuccessor(chainOrderNormal);
+
+chainOrder500.passRequest(1, true, 500);   // 输出:500 元定金预购，得到 100 优惠券
+chainOrder500.passRequest(2, true, 500);   // 输出:200 元定金预购，得到 50 优惠券
+chainOrder500.passRequest(3, true, 500);   // 输出:普通购买，无优惠券
+chainOrder500.passRequest(1, false, 0);    // 输出:手机库存不足
+```
+
+通过改进，我们可以自由灵活地增加、移除和修改链中的节点顺序，假如某天网站运营人员 又想出了支持 300 元定金购买，那我们就在该链中增加一个节点即可
+
+```js
+var order300 = function(){
+ // 具体实现略
+};
+chainOrder300= new Chain( order300 ); 
+chainOrder500.setNextSuccessor( chainOrder300); 
+chainOrder300.setNextSuccessor( chainOrder200);
+```
+
+### 14. 命令模式
+
+[参考链接](https://www.kancloud.cn/cyyspring/more/1355676)
+
+将一个请求封装成一个对象，从而让你使用不同的请求把客户端参数化，对请求排队或者记录请求日志，可以提供命令的撤销和恢复功能。
+
+命令模式是将执行的命令封装，解决命令的发起者与命令的执行者之间的耦合。
+
+举例
+
+```js
+// 接收者类  
+class Receiver {
+  execute() {
+    console.log("库存管理员接单-执行请求...准备出库")
+  }
+}
+//命令对象
+class Command {
+  constructor(receiver) {
+    this.receiver = receiver;
+  }
+  execute() {
+    console.log("接收订单-给库存管理员发单")
+    this.receiver.execute();
+  }
+}
+//触发者 /调用者
+class Invoker {
+  constructor(command) {
+    this.command = command;
+  }
+  invoke() {
+    console.log("客户端-发布订单");
+    this.command.execute();
+  }
+}
+
+// 仓库
+const warehouse = new Receiver();  		// 客户端-发布订单
+// 订单    
+const order = new Command(warehouse);	// 接收订单-给库存管理员发单
+// 客户
+const client = new Invoker(order);		// 库存管理员接单-执行请求...
+client.invoke()
+```
+
+### 15. 

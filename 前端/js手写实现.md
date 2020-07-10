@@ -269,3 +269,83 @@ console.log(Object.prototype.__proto__ === null);
 ```
 
 <img src="https://user-gold-cdn.xitu.io/2019/2/17/168fb9a3828f9cb4?imageslim" alt="img" style="zoom:67%;" />
+
+#### 5. 检测对象类型
+
+##### 5.1 typeof 
+
+​	检测基本数据类型
+
+```javascript
+console.log(typeof undefined);
+console.log(typeof null);
+console.log(typeof 123);
+console.log(typeof 'abc');
+console.log(typeof [1, 2, 3]);
+console.log(typeof {});
+console.log(typeof function(){});
+
+// undefined
+// object
+// number
+// string
+// object
+// object
+// function
+```
+
+缺点: 对于object类型(如数组 ，对象)无法检测出
+
+##### 5.2 instanceof
+
+- instanceof操作符会返回一个Boolean值，==指出对象是否是特定类的一个实例==
+- 用法一：<font color=red>obj instanceof Object 检测Object.prototype是否存在于参数obj的原型链上。</font>
+- 用法二：<font color=red>继承中判断实例是否属于它的父类</font>
+  ==Student和Person都在stu的原型链中==
+
+```javascript
+function Person() { };
+let person = new Person();
+
+console.log(person instanceof Person);  // true
+
+function Student() { };
+Student.prototype = new Person();
+
+let stu = new Student();
+console.log(stu instanceof Person);     // true
+console.log(stu instanceof Person);     // true
+```
+
+##### 5.3 Object.prototype.toString.call()
+
+​	检测对象类型
+
+object.prototype.toString可以精准判断变量类型
+
+```js
+// return "[object classType]"
+console.log(Object.prototype.toString.call(undefined));
+console.log(Object.prototype.toString.call(null));
+console.log(Object.prototype.toString.call(123));
+console.log(Object.prototype.toString.call('abc'));
+console.log(Object.prototype.toString.call([1, 2, 3]));
+console.log(Object.prototype.toString.call({}));
+console.log(Object.prototype.toString.call(function () { }));
+console.log(Object.prototype.toString.call(Math));
+
+console.log(Object.prototype.toString.call(Array));
+console.log(Object.prototype.toString.call(Object));
+
+// [object Undefined]
+// [object Null]
+// [object Number]
+// [object String]
+// [object Array]
+// [object Object]
+// [object Function]
+// [object Math]
+// [object Function]
+// [object Function]
+```
+
