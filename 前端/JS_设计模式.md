@@ -1546,4 +1546,67 @@ const client = new Invoker(order);		// 库存管理员接单-执行请求...
 client.invoke()
 ```
 
-### 15. 
+### 15. 迭代器模式
+
+在不暴露对象内部结构的同时，可以顺序地访问聚合对象内部的元素。
+
+#### 15.1 模式特点:
+
+1. 为遍历不同数据结构的 “集合” 提供统一的接口；
+2. 能遍历访问 “集合” 数据中的项，不关心项的数据结构
+
+```js
+// 迭代器模式
+let eachArr = function (arr, callBack) {
+  for (let i = 0, len = arr.length; i < len; i++) {
+    if (callBack(i, arr[i]) === false) {
+      break;  // 终止迭代器，跳出循环
+    }
+  }
+}
+
+eachArr([1, 2, 3, 4, 5], function (index, value) {
+  if (value > 3) {
+    return false;
+  }
+  console.log([index, value]);
+})
+```
+
+#### 15.2 ES6中的迭代器
+
+Iterator 作用：
+
+1. 为各种数据结构，提供一个统一的、简便的访问接口；
+2. 使得数据结构的成员能够按某种次序排列；
+3. 为新的遍历语法 `for...of` 实现循环遍历
+
+**Iterator只是一种接口，与遍历的数据结构是分开的。** 重温迭代器模式特点：我只要统一遍历数据项的接口，不关心其数据结构。
+
+ES6 默认的 Iterator 接口部署在数据结构的 `Symbol.iterator` 属性上，该属性本身是一个函数，代表当前数据结构默认的遍历器生成函数。执行该函数 `[Symbol.iterator]()`，会返回一个遍历器对象。只要数据结构拥有 `Symbol.iterator` 属性，那么它就是 “可遍历的” 。
+
+遍历器对象的特征：
+
+1. 拥有 `next` 属性方法；
+2. 执行 `next()`会返回一个包含 `value` 和`done`  属性的对象
+   - `value`: 当前数据结构成员的值
+   - `done`: 布尔值，表示遍历是否结束
+
+#### 15.3 原生具备 Iterator 接口的数据结构：
+
+1. Array
+2. Map
+3. Set
+4. String
+5. TypedArray
+6. 函数的 arguments 对象
+7. NodeList 对象
+
+[注意]
+
+**对象(Object)没有默认 Iterator 接口，因为对象属性遍历顺序不确定，需开发者手动指定。**
+
+`for...of` 遍历普通对象的解决方法：
+
+1. 使用 `Objet.keys` 将对象键名生成一个数组，然后遍历该数组；
+2. Generator 函数重新包装对象

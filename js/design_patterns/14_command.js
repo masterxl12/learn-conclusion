@@ -33,47 +33,19 @@ const order = new Command(warehouse);
 const client = new Invoker(order);
 client.invoke()
 
-const { log } = console;
-log(1);
 
-console.log(Object.prototype.toString.call(undefined));
-console.log(Object.prototype.toString.call(null));
-console.log(Object.prototype.toString.call(123));
-console.log(Object.prototype.toString.call('abc'));
-console.log(Object.prototype.toString.call([1, 2, 3]));
-console.log(Object.prototype.toString.call({}));
-console.log(Object.prototype.toString.call(function () { }));
-console.log(Object.prototype.toString.call(Math));
+Array.prototype.fakeEach = function (fn) {
+  let context = arguments[1];
+  console.log(context);
+  if (typeof fn !== "function") {
+    throw new TypeError(fn + "is not a function");
+  }
 
-console.log(Object.prototype.toString.call(Array));
-console.log(Object.prototype.toString.call(Object));
-
-
-console.log(typeof undefined);
-console.log(typeof null);
-console.log(typeof 123);
-console.log(typeof 'abc');
-console.log(typeof [1, 2, 3]);
-console.log(typeof {});
-console.log(typeof function () { });
-
-// undefined
-// object
-// number
-// string
-// object
-// object
-// function
-
-
-function Person() { };
-let person = new Person();
-
-console.log(person instanceof Person);
-
-function Student() { };
-Student.prototype = new Person();
-
-let stu = new Student();
-console.log(stu instanceof Person);
-console.log(stu instanceof Person);
+  for (var i = 0; i < this.length; i++) {
+    fn.call(context, this[i], i, this);
+  }
+}
+let a = [1, 2, 4];
+a.fakeEach(item => {
+  console.log(item);
+})
