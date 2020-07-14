@@ -13,3 +13,4 @@ eachArr([1, 2, 3, 4, 5], function (index, value) {
   }
   console.log([index, value]);
 })
+
