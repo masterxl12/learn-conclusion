@@ -501,6 +501,298 @@ console.log(fakeInstanceOf(p1, People))
 console.log(fakeInstanceOf(p1, Object))
 ```
 
+#### 8.防抖与节流函数
 
+**函数节流（throttle）**与 **函数防抖（debounce）**都是为了限制函数的执行频次，以优化函数触发频率过高带来的性能损耗。
 
-#### 
+**1、函数防抖(debounce)**
+
+- 实现方式：每次触发事件时设置一个延迟调用方法，并且取消之前的延时调用方法
+- 缺点：如果事件在规定的时间间隔内被不断的触发，则调用方法会被不断的延迟
+
+<img src="/Users/masterxl/Library/Application Support/typora-user-images/image-20200716224427543.png" alt="image-20200716224427543" style="zoom: 50%;" />
+
+防抖函数的核心思路如下：
+
+当触发一个函数时，并不会立即执行这个函数，而是会延迟（通过定时器来延迟函数的执行）
+
+- 如果在延迟时间内，有重新触发函数，那么取消上一次的函数执行（取消定时器）；
+
+- 如果在延迟时间内，没有重新触发函数，那么这个函数就正常执行（执行传入的函数）；
+
+版本一：原始版
+
+```js
+    function debounce(fn, delay) {
+        let timer = null;
+        return function () {
+            if (timer) clearTimeout(timer);
+            timer = setTimeout(() => {
+                fn();
+            }, delay);
+        }
+    }
+```
+
+版本二、优化参数和this
+
+```js
+    function debounce(fn, delay) {
+        let timer = null;
+       	return function () {
+            if (timer) clearTimeout(timer);
+            let _this = this;
+            let args = [...arguments];
+            timer = setTimeout(() => {
+                fn.apply(_this, args);
+            }, delay);
+        }
+
+    }
+```
+
+版本三 优化取消功能
+
+有时候，在等待执行的过程中，可能需要取消之前的操作：
+
+- 比如用户进行了搜索，但是还没有来得及发送搜索的情况下，退出了界面；
+- 当用户退出时，之前的操作就可以取消掉；
+
+```js
+    function debounce(fn, delay) {
+        let timer = null;
+        let handleFn = function () {
+            if (timer) clearTimeout(timer);
+            let _this = this;
+            let args = [...arguments];
+            timer = setTimeout(() => {
+                fn.apply(_this, args);
+            }, delay);
+        }
+        // 取消处理
+        handleFn.cancel = function () {
+            if (timer) clearTimeout(timer)
+        };
+        return handleFn;
+
+    }
+```
+
+版本四、优化返回值
+
+```js
+    function _debounce(fn, delay, option) {
+        let result = option.result || null;
+        let timer = null;
+        let handleFn = function () {
+            if (timer) clearTimeout(timer);
+            let _this = this;
+            let args = [...arguments];
+            timer = setTimeout(() => {
+                // fn.apply(_this, args);
+                callFn(_this, args)
+            }, delay);
+        };
+
+        function callFn(context, arguments) {
+            let res = fn.apply(context, arguments);
+            // console.log(arguments);
+            if (result) {
+                result(res);
+            }
+        }
+
+        // 取消处理
+        handleFn.cancel = function () {
+            if (timer) clearTimeout(timer)
+        };
+        return handleFn;
+    }
+```
+
+完整版
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<input type="text" class="search"/>
+<br>
+<button class="cancel-btn">取消</button>
+<script>
+    // 版本4 回调函数版
+    function _debounce(fn, delay, option) {
+        let result = option.result || null;
+        let timer = null;
+        let handleFn = function () {
+            if (timer) clearTimeout(timer);
+            let _this = this;
+            let args = [...arguments];
+            timer = setTimeout(() => {
+                // fn.apply(_this, args);
+                callFn(_this, args)
+            }, delay);
+        };
+
+        function callFn(context, arguments) {
+            let res = fn.apply(context, arguments);
+            // console.log(arguments);
+            if (result) {
+                result(res);
+            }
+        }
+
+        // 取消处理
+        handleFn.cancel = function () {
+            if (timer) clearTimeout(timer)
+        };
+        return handleFn;
+    }
+
+    // 绑定oninput
+    // 在用户输入时触发，它是在元素值发生变化时立即触发；实时触发
+
+    // 1.获取输入框
+    let search = document.querySelector(".search");
+
+    // 2.监听输入内容,发送ajax请求
+    // 2.1.定义一个监听函数
+    let counter = 0;
+    function searchChange(e) {
+        counter++;
+        console.log("发送" + counter + "网络请求");
+        return 123 + parseInt(e.target.value);
+    }
+
+    // 对searchChange处理
+    let option = {
+        result(data) {
+            console.log("=====");
+            console.log(data);
+        }
+    };
+    let _searchChange = _debounce(searchChange, 1000, option);
+
+    // 绑定oninput
+    search.oninput = _searchChange;
+
+    // 3.取消事件
+    let cancelBtn = document.querySelector(".cancel-btn");
+    cancelBtn.onclick = function (event) {
+        _searchChange.cancel();
+    }
+
+</script>
+
+</body>
+</html>
+```
+
+**2、函数节流(throttle)**
+
+- 实现方式：每次触发事件时，如果当前有等待执行的延时函数，则直接return
+
+<img src="/Users/masterxl/Library/Application Support/typora-user-images/image-20200716224541494.png" alt="image-20200716224541494" style="zoom:50%;" />
+
+```js
+function throttle(fn, delay) {
+    let flag = true;
+  	// 1、通过闭包保存一个标记
+    return function () {
+    // 2.1 在函数开头判断标记是否为true，不为true则return
+        if (!flag) return;
+      // 2.2 立即设置为false
+        flag = false;
+      // 3.0 将外部传入的函数的执行放在setTimeout中
+        setTimeout(() => {
+        //3.1 最后在setTimeout执行完毕后再把标记设置为true(关键)表示可以执行下一次循环了。
+        //3.2 当定时器没有执行的时候标记永远是false，在开头被return掉
+            fn.apply(this, arguments);
+            flag = true;
+        }, delay)
+    }
+}
+```
+
+**3、二者区别**：
+
+- 函数节流不管事件触发有多频繁，都会保证==在规定时间内一定会执行一次真正的事件处理函数==
+
+- 而函数防抖==只是在最后一次事件后才触发一次函数==。
+-  比如在页面的无限加载场景下，我们需要用户在滚动页面时，每隔一段时间发一次 Ajax 请求，而不是在用户停下滚动页面操作时才去请求数据。这样的场景，就适合用节流技术来实现。
+
+#### 9.函数柯里化
+
+[参考链接](https://blog.csdn.net/shunfa888/article/details/80013170)
+
+核心思想: 柯里化是一种将==使用多个参数==的**一个函数**转换成==一系列使用一个参数==的函数的技术。
+
+关键点：柯里化后的函数在**<u>传入参数未达到柯里化前的个数时候我们不能返回值</u>**，<u>**应该返回函数让它继续执行**</u>
+
+```js
+let curry = function (fn, ...args) {
+    let all = args || [];
+    let len = fn.length;
+    return function (...rest) {
+        let _args = all.concat();
+        _args.push(...rest);
+        if (_args.length < len) {
+            return curry.call(this, fn, ..._args);
+        } else {
+            return fn.apply(this, _args);
+        }
+    }
+}
+
+let test = curry((a, b, c, d) => console.log(a + b + c + d));
+test(1)(2)(3)(4);
+test(1,2)(3)(4);
+test(1,2,3)(4);
+test(1,2,3,4);
+// 10
+// 10
+// 10
+// 10
+```
+
+#### 10.对象深拷贝
+
+```js
+function deepClone(origin, target) {
+    target = target || {};
+    for (let prop in origin) {
+        debugger;
+        if (origin.hasOwnProperty(prop)) {
+            if (typeof origin[prop] === 'object') {
+                if (Object.prototype.toString.call(origin[prop]) === '[object Array]') {
+                    target[prop] = [];
+                } else {
+                    target[prop] = {};
+                }
+                deepClone(origin[prop], target[prop]);
+            } else {
+                target[prop] = origin[prop];
+            }
+        }
+    }
+    return target;
+}
+
+var a = {
+    name: "xl",
+    age: 12,
+    school: ['sh', 'bj'],
+    face: {
+        aa: "handsome",
+        bb: ['surprise', 'amazing']
+    }
+};
+
+let b  = deepClone(a)
+console.log(b);
+```
+

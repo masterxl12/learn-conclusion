@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="71f26902-c539-4bed-9d64-95ec4f685632" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/03throttle.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/html/02debounce.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/html/03throttle.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/前端/js手写实现.md" beforeDir="false" afterPath="$PROJECT_DIR$/前端/js手写实现.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/数据库/MySQL.md" beforeDir="false" afterPath="$PROJECT_DIR$/数据库/MySQL.md" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+        <option value="HTML File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1ej3n3mtuCfFUnHZwLQ2U59xTB2" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="js.last.introduce.type" value="LET" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/js/design_patterns/manualJS" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Node.js.05deepClone.js">
+    <configuration name="04curry.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/js/design_patterns/manualJS/04curry.js" working-dir="$PROJECT_DIR$/js/design_patterns/manualJS">
+      <method v="2" />
+    </configuration>
+    <configuration name="05deepClone.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/js/design_patterns/manualJS/05deepClone.js" working-dir="$PROJECT_DIR$/js/design_patterns/manualJS">
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Node.js.05deepClone.js" />
+        <item itemvalue="Node.js.04curry.js" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="71f26902-c539-4bed-9d64-95ec4f685632" name="Default Changelist" comment="" />
+      <created>1594821338256</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1594821338256</updated>
+      <workItem from="1594821340789" duration="13719000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="184" y="112" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1594911996100">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="184" y="112" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1440.900@0.0.1440.900" timestamp="1594911996100" />
+    <state width="1419" height="143" key="GridCell.Tab.0.bottom" timestamp="1594913466641">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1419" height="143" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1594913466641" />
+    <state width="1419" height="143" key="GridCell.Tab.0.center" timestamp="1594913466640">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1419" height="143" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1594913466640" />
+    <state width="1419" height="143" key="GridCell.Tab.0.left" timestamp="1594913466639">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1419" height="143" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1594913466639" />
+    <state width="1419" height="143" key="GridCell.Tab.0.right" timestamp="1594913466641">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1419" height="143" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1594913466641" />
+  </component>
+</project>

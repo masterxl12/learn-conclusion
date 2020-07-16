@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<input type="text" class="search"/>
+<br>
+<button class="cancel-btn">取消</button>
+<script>
+    // 版本1
+    function debounce(fn, delay) {
+        let timer = null;
+        return function () {
+            if (timer) clearTimeout(timer);
+            timer = setTimeout(() => {
+                fn();
+            }, delay);
+        }
+    }
+
+    // 版本2
+    function debounce(fn, delay) {
+        let timer = null;
+        let handleFn = function () {
+            if (timer) clearTimeout(timer);
+            let _this = this;
+            let args = [...arguments];
+            timer = setTimeout(() => {
+                fn.apply(_this, args);
+            }, delay);
+        }
+        // 取消处理
+        handleFn.cancel = function () {
+            if (timer) clearTimeout(timer)
+        };
+        return handleFn;
+
+    }
+
+
+    // 版本3 promise版
+    function debounce(fn, delay) {
+        let timer = null;
+        return new Promise((resolve, reject) => {
+            let _this = this;
+            let args = [...arguments];
+            if (timer) clearTimeout(timer);
+            timer = setTimeout(() => {
+                resolve(fn.apply(_this, args));
+            }, delay)
+        });
+    }
+
+    // 版本4 回调函数版
+    function _debounce(fn, delay, option) {
+        let result = option.result || null;
+        let timer = null;
+        let handleFn = function () {
+            if (timer) clearTimeout(timer);
+            let _this = this;
+            let args = [...arguments];
+            timer = setTimeout(() => {
+                // fn.apply(_this, args);
+                callFn(_this, args)
+            }, delay);
+        };
+
+        function callFn(context, arguments) {
+            let res = fn.apply(context, arguments);
+            // console.log(arguments);
+            if (result) {
+                result(res);
+            }
+        }
+
+        // 取消处理
+        handleFn.cancel = function () {
+            if (timer) clearTimeout(timer)
+        };
+        return handleFn;
+    }
+
+    // 绑定oninput
+    // 在用户输入时触发，它是在元素值发生变化时立即触发；实时触发
+
+    // 1.获取输入框
+    let search = document.querySelector(".search");
+
+    // 2.监听输入内容,发送ajax请求
+    // 2.1.定义一个监听函数
+    let counter = 0;
+
+    function searchChange(e) {
+        counter++;
+        console.log("发送" + counter + "网络请求");
+        return 123 + parseInt(e.target.value);
+        // fetch('http://jsonplaceholder.typicode.com/comments?postId=' + e.target.value)
+        //     .then(res => res.json())
+        //     .then(res => {
+        //         console.log("+++++");
+        //         // console.log(res);
+        //         return res;
+        //     })
+        // console.log(this);
+        // console.log(e.target.value);
+    }
+
+    // 对searchChange处理
+    let option = {
+        result(data) {
+            console.log("=====");
+            console.log(data);
+        }
+    };
+    let _searchChange = _debounce(searchChange, 1000, option);
+    // let _searchChange = debounce(searchChange, 1000);
+
+    // 绑定oninput
+    search.oninput = _searchChange;
+
+    // 3.取消事件
+    let cancelBtn = document.querySelector(".cancel-btn");
+    cancelBtn.onclick = function (event) {
+        _searchChange.cancel();
+    }
+
+</script>
+
+</body>
+</html>
