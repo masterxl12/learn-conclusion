@@ -28,5 +28,14 @@ var a = {
     }
 };
 
-let b  = deepClone(a)
+let b = deepClone(a)
 console.log(b);
+
+function Person(name) {
+    this.name = name;
+}
+
+const p1 = new Person('kobe');
+console.log(Object.getPrototypeOf(p1));
+console.log(Person.prototype);
+console.log(Object.getPrototypeOf(Person));

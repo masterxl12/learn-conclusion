@@ -42,7 +42,7 @@ console.log(person2); // Person { name: 'jordan' }
 
 #### 2.手动实现Object.create() (ES5)
 
-功能：Create方法创建一个新对象，使用现有的对象来提供新创建的对象的`__proto__`
+功能：==Create方法创建一个新对象，使用现有的对象来提供新创建的对象的`__proto__`==
 
 ​		也即生成一个实例，这个实例的原型具体由传进来的proto指定，但它的构造函数F会被隐藏。
 
@@ -151,6 +151,10 @@ Object.setPrototypeOf(Student.prototype,Professional.prototype);
 console.log(Student.prototype.__proto__ === Person.prototype);  			// false
 console.log(Student.prototype.__proto__ === Professional.prototype);  // true
 ```
+
+##### 3.1 **Object.getPrototypeOf()**
+
+**Object.getPrototypeOf()**` 方法返回指定对象的原型（内部`[[Prototype]]`属性的值）。
 
 #### 4.构造函数、原型对象和实例之间的关系(ES5)
 
@@ -477,7 +481,7 @@ son();
 
 #### 7. instanceof实现
 
-instanceof 用于检测构造函数的prototype属性是否存在于某个实例对象的原型链上
+**`instanceof`** **运算符**用于检测构造函数的 `prototype` 属性是否出现在某个实例对象的原型链上。
 
 ```js
 // instanceof 用于检测构造函数的prototype属性是否存在于某个实例对象的原型链上
@@ -499,6 +503,28 @@ class People {
 const p1 = new People("zs");
 console.log(fakeInstanceOf(p1, People))
 console.log(fakeInstanceOf(p1, Object))
+```
+
+##### 7.1 Object.getPropertyOf()
+
+该方法返回指定对象的原型对象(内部[[Property]])属性的值。
+
+```js
+function instaceOf(left, right) {
+    let proto = Object.getPrototypeOf(left);
+    while (true) {
+        if (proto === null) return false;
+        if (proto === right.prototype) return true;
+        proto = Object.getPrototypeOf(proto);
+    }
+}
+
+function Person() {
+};
+let p1 = new Person();
+console.log(instaceOf(p1, Person)); // true
+console.log(instaceOf(p1, Object)); // true
+console.log(instaceOf(p1, Array));  // false
 ```
 
 #### 8.防抖与节流函数
@@ -796,3 +822,248 @@ let b  = deepClone(a)
 console.log(b);
 ```
 
+#### 11.Promise
+
+- Promise新建之后立即执行。`then`方法指定的回调函数，将在当前脚本所有同步任务执行完才会执行。
+- 立即 resolved 的 Promise 是在本轮事件循环的末尾执行，总是==晚于本轮循环的同步任务==。
+- `reject()`方法的作用，等同于抛出错误。
+
+- 如果调用`resolve`函数和`reject`函数时带有参数，那么它们的参数会被传递给回调函数
+  - `reject`函数的参数通常是`Error`对象的实例，表示抛出的错误；
+  - `resolve`函数的参数除了正常的值以外，还可能是另一个 Promise 实例
+
+```js
+const p1 = new Promise((resolve, reject) => {
+    // ...
+})
+
+const p2 = new Promise((resolve, reject) => {
+    resolve(p1)
+})
+```
+
+> 注意，这时`p1`的状态就会传递给`p2`，也就是说，`p1`的状态决定了`p2`的状态。
+>
+> 如果`p1`的状态是`pending`，那么`p2`的回调函数就会等待`p1`的状态改变；
+>
+> 如果`p1`的状态已经是`resolved`或者`rejected`，那么`p2`的回调函数	将会立刻执行
+
+##### 11.1 Promise.prototype.then
+
+- Promise 实例具有`then`方法，也就是说，`then`方法是定义在原型对象
+- 作用：==为 Promise 实例添加状态改变时的回调函数==
+  - 第一个参数是`resolved`状态的回调函数，
+  - 第二个参数（可选）是`rejected`状态的回调函数。
+
+- 返回值：一个新的Promise实例(注意，不是原来那个`Promise`实例)，因此可以采用链式写法，即`then`方法后面再调用另一个`then`方法。
+- 一般来说，不要在`then()`方法里面定义 Reject 状态的回调函数（即`then`的第二个参数），总是使用`catch`方法。
+
+##### 11.2 promise.all
+
+`Promise.all()`方法用于将多个 Promise 实例，包装成一个新的 Promise 实例。
+
+```js
+const p = Promise.all([p1, p2, p3]);
+```
+
+- `Promise.all()`方法接受一个数组作为参数，`p1`、`p2`、`p3`都是 Promise 实例;
+
+  如果不是，就会先调用`Promise.resolve`方法，将参数转为 Promise 实例，再进一步处理。
+
+- `Promise.all()`方法的参数可以不是数组，但必须具有 Iterator 接口，且返回的每个成员都是 Promise 实例。`p`的状态由`p1`、`p2`、`p3`决定，分成两种情况。
+
+  - 只有`p1`、`p2`、`p3`的状态<u>都变成`fulfilled`，`p`的状态才会变成`fulfilled`</u>，此时`p1`、`p2`、`p3`的返回值组成一个数组，传递给`p`的回调函数。
+  - 只要`p1`、`p2`、`p3`之中有一个被`rejected`，`p`的状态就变成`rejected`，<u>此时第一个被`reject`的实例的返回值，会传递给`p`的回调函数。</u>
+
+##### 11.3 promise.race()
+
+```js
+const p = Promise.race([p1, p2, p3]);
+```
+
+​		上面代码中，只要`p1`、`p2`、`p3`之中<u>有一个实例率先改变状态</u>，`p`的状态就跟着改变。那个率先改变的 Promise 实例的返回值，就传递给`p`的回调函数。
+
+​		`Promise.race()`方法的参数与`Promise.all()`方法一样，==如果不是 Promise 实例==，就会先调 `Promise.resolve()`方法，将参数转为 Promise 实例，再进一步处理。
+
+##### 11.4 promise.allSettled()
+
+​	有时候，==我们不关心异步操作的结果，只关心这些操作有没有结束==。这时，`Promise.allSettled()`方法就很有用。如果没有这个方法，想要确保所有操作都结束，就很麻烦。`Promise.all()`方法无法做到这一点。
+
+##### 11.5 promise.resolve()
+
+作用：将现有对象转为 Promise 对象
+
+`Promise.resolve`方法的参数分成四种情况。
+
+(1)**参数是一个 Promise 实例**
+
+如果参数是 Promise 实例，那么`Promise.resolve`将不做任何修改、原封不动地返回这个实例。
+
+(2)**参数是一个`thenable`对象**
+
+`thenable`对象指的是具有`then`方法的对象，比如下面这个对象。
+
+```js
+let thenable = {
+  then: function(resolve, reject) {
+    resolve(42);
+  }
+};
+```
+
+`Promise.resolve`方法会将这个对象转为 Promise 对象，然后就立即执行`thenable`对象的`then`方法。
+
+(3)**参数不是具有`then`方法的对象，或根本就不是对象**
+
+如果参数是一个原始值，或者是一个不具有`then`方法的对象，则`Promise.resolve`方法返回一个新的 Promise 对象，状态为`resolved`
+
+```js
+const p = Promise.resolve('Hello');
+
+p.then(function (s){
+  console.log(s)
+});
+```
+
+(4)不带任何参数
+
+`Promise.resolve()`方法允许调用时不带参数，直接返回一个`resolved`状态的 Promise 对象。
+
+所以，如果希望得到一个 Promise 对象，比较方便的方法就是直接调用`Promise.resolve()`方法。
+
+需要注意的是，立即`resolve()`的 Promise 对象，是在本轮“事件循环”（event loop）的结束时执行，而不是在下一轮“事件循环”的开始时。
+
+```js
+setTimeout(function () {
+  console.log('three');
+}, 0);
+
+Promise.resolve().then(function () {
+  console.log('two');
+});
+
+console.log('one');
+```
+
+#### 12.数组flat实现
+
+[参考l链接](https://juejin.im/post/5dff18a4e51d455804256d31#heading-8)
+
+实现思路：
+
+1.遍历数组  
+
+- forEach
+- map
+- Reduce
+- for in
+- for of
+
+2.判断当前元素是否是数组
+
+- Array.isArray() `Array.isArray(arr)` 
+
+```js
+let arr = [1,2,3];
+console.log(Array.isArray(arr)) // true
+```
+
+- Instanceof  `arr instanceof Array`
+
+```js
+let arr = [1,2,3];
+console.log(arr instanceof Array) // true
+```
+
+- Object.prototype.toString.call(arr) === `'[object Array]'`
+
+```js
+let arr = [1,2,3];
+console.log(Object.prototype.toString.call(arr) === '[object Array]'); //true
+```
+
+- constructor   
+
+  - 实例对象的构造函数属性执行的是构造函数
+
+  `arr.constructor === Array`   
+
+```js
+let arr = [1,2,3];
+console.log(arr.constructor === Array); //true
+```
+
+3.数组展开一层
+
+【测试数组】
+
+```js
+const arr = [1, 2, 3, 4, ['a', 'b', 'c', ['A', 'B', 'C', ['one', 'two', 'three']]], 5, "string", {name: "弹铁蛋同学"}];
+
+```
+
+##### 12.1 concat + Array.isArray + recursive
+
+```js
+function arrFlat(arr) {
+    let arrResult = [];
+    arr.forEach(item => {
+        if (Array.isArray(item)) {
+            arrResult = arrResult.concat(arguments.callee(item));
+            // arrResult = arrResult.concat(...arguments.callee(item))
+        } else {
+            arrResult.push(item)
+        }
+    });
+    return arrResult;
+}
+```
+
+##### 12.2 用 reduce + concat + Array.isArray + recursive
+
+```js
+const flat2 = (arr) => {
+    return arr.reduce((prev, current) => {
+        return prev.concat(Array.isArray(current) ? flat2(current) : current);
+    }, [])
+};
+```
+
+##### 12.3 无递归数组扁平化，使用堆栈结构
+
+```js
+function flat3(arr) {
+    const result = [];
+    const stack = [].concat(arr);  // 将数组元素拷贝至栈，直接赋值会改变原数组
+    //如果栈不为空，则循环遍历
+    while (stack.length) {
+        const next = stack.pop();
+        if (Array.isArray(next)) {
+            stack.push(...next); //如果是数组再次入栈，并且展开了一层
+        } else {
+            result.unshift(next); //如果不是数组就将其取出来放入结果数组中
+        }
+    }
+    return result;
+}
+```
+
+##### 12.4 reduce + Array.isArray + concat + recursive
+
+```js
+function flatDeep(arr, num = 1) {
+    return num > 0 ? arr.reduce((prev, curr) => prev.concat(Array.isArray(curr) ? flatDeep(curr, num - 1) : curr), []) : arr.slice();
+}
+```
+
+##### 12.5 正则表达式 + JSON.parse/JSON.stringify()
+
+```js
+function flatten(arr) {
+    let arrTostr = JSON.stringify(arr).replace(/\[|\]/g, '');
+    arrTostr = `[${arrTostr}]`;
+    return JSON.parse(arrTostr);
+}
+```
+
+#### 13.数组去重的实现

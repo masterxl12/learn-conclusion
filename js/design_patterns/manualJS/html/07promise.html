@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<script>
+    // const f = () => console.log('now');
+
+    const f = () => {
+        fetch('http://jsonplaceholder.typicode.com/comments?postId=1')
+            .then(res => res.json())
+            .then(res => {
+                console.log("+++++");
+                console.log(res);
+            })
+    };
+
+    (
+        () => new Promise(
+            resolve => resolve(f())
+        )
+    )();
+    console.log('next');
+
+</script>
+</body>
+</html>
