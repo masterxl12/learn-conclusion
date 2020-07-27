@@ -1067,3 +1067,50 @@ function flatten(arr) {
 ```
 
 #### 13.数组去重的实现
+
+#### 14. Promise手写
+
+##### 14.1 预备知识
+
+###### 14.1.1 区别函数对象和实例对象
+
+函数对象: 	将函数作为对象使用时，简称为**函数对象**
+实例对象:	 new 函数产生的对象，简称为**实例对象**	
+
+###### 14.1.2 两种类型的回调函数
+
+同步回调
+
+1. 理解：立即执行，完全执行完才结束，不会放入到回调队列中
+2. 例子：数组遍历相关的回调函数 /Promise 的excutor函数
+
+```js
+const arr = [1,3,5];
+arr.forEach(item => console.log(item));
+console.log("forEach() 后执行")
+```
+
+异步回调
+
+1. 理解：会放入回调队列，所有同步执行完后才可能执行。
+2. 例子：ajax请求、定时器、promise.then()、nextTick()等
+
+```js
+setTimeOut(()=>{
+  console.log("timeout callBack()")
+},0);
+console.log('setTimeOut()之后');
+```
+
+###### 14.1.3 常见的内置错误
+
+`ReferenceError`  引用变量不存在
+
+`TypeError`			变量或参数不属于有效类型
+
+`SyntaxError`		语法错误
+
+`RanageError` 		数值变量或参数超出其有效范围
+
+
+
