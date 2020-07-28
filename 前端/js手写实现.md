@@ -1114,3 +1114,40 @@ console.log('setTimeOut()之后');
 
 
 
+解决的问题
+
+指定回调函数的方式更加灵活
+
+旧版：必须在启动异步任务前指定(启动异步任务前指定回调函数)
+
+promise： 启动异步任务 — 返回promise对象 — 给promise对象绑定回调函数(甚至可以在异步任务结束后指定)
+
+```js
+const p = new Promise((resolve,reject)=>{  // excutor 同步回调
+  //...逻辑代码
+  setTimeout(()=>{
+    resolve(123)
+  },2000)
+})
+// 在启动任务后，结果处理返回前指定回调函数
+p.then(onFulfilled,onRejected)   
+
+setTimeout(()=>{
+  // 在启动任务后，且在任务完成之后指定回调函数
+  p.then(onFulfilled,onRejected)
+},3000)
+```
+
+
+
+支持链式调用，可以解决回调地狱问题。
+
+
+
+回调地狱: 
+
+- 多个异步操作串联执行的 
+- 后一个异常操作以前一个异步操作的结果为前提
+- 每个回调异常都会处理一遍
+
+缺点：代码水平向右扩展，不便阅读维护
