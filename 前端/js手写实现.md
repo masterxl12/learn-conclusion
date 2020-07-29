@@ -1112,11 +1112,9 @@ console.log('setTimeOut()之后');
 
 `RanageError` 		数值变量或参数超出其有效范围
 
+#### 14.2 promise解决的问题
 
-
-解决的问题
-
-指定回调函数的方式更加灵活
+(1) 指定回调函数的方式更加灵活
 
 旧版：必须在启动异步任务前指定(启动异步任务前指定回调函数)
 
@@ -1138,11 +1136,7 @@ setTimeout(()=>{
 },3000)
 ```
 
-
-
-支持链式调用，可以解决回调地狱问题。
-
-
+(2) 支持链式调用，可以解决回调地狱问题。
 
 回调地狱: 
 
@@ -1151,3 +1145,149 @@ setTimeout(()=>{
 - 每个回调异常都会处理一遍
 
 缺点：代码水平向右扩展，不便阅读维护
+
+#### 14.3 promise几个关键问题
+
+##### 14.3.1 如何改变promise状态？
+
+(1) resolve(value): 如果当前是pending就会变为resolved
+
+(2) reject(reason): 如果当前是pending就会变为rejectd
+
+(3) **抛出异常：如果当前是pending就会变为rejected**
+
+```js
+const p = new Promise(((resolve, reject) => {
+    throw new Error('出错了...');
+}));
+
+p.then(value => {
+    console.log(value);
+}, reason => {
+    console.log('reason', reason)
+});
+// reason Error: 出错了...
+```
+
+##### 14.3.2 一个promise指定多个成功/失败回调函数，都会调用吗？
+
+==当promise**改变为对应状态时**都会调用==
+
+```js
+const p1 = new Promise(((resolve, reject) => {
+    throw 3;
+}));
+
+p1.then(value => {
+    console.log(value);
+}, reason => {
+    console.log('reason1', reason);
+});
+console.log('=======');
+p1.then(value => {
+    console.log(value);
+}, reason => {
+    console.log('reason2', reason);
+})
+
+// reason1 3
+// reason2 3
+```
+
+14.3.3 改变promise状态和指定回调函数谁先谁后？
+
+(1) 都有可能，正常情况下是先指定回调再改变状态，但也可以先改变状态再指定回调
+
+- 常规操作 先指定回调函数 后改变状态
+
+```js
+// 常规操作 先指定回调函数 后改变状态
+new Promise(((resolve, reject) => {
+    setTimeout(() => {
+        resolve(1);  // 后改变状态(同时指定数据)，异步执行回调函数
+    }, 1000)
+})).then(                 // 先指定回调函数  保存当前指定的回调函数
+    value => {
+    },
+    reason => {
+        console.log('reason1', reason);
+    });
+```
+
+- 先改状态  后指定回调函数
+
+实现方式一  在执行器 中直接调用resolve()/reject()
+
+```js
+new Promise(((resolve, reject) => {
+    resolve(1); // 先改变状态(同时指定数据)
+})).then(            // 后指定回调函数 异步执行回调函数
+    value => {
+    },
+    reason => {
+        console.log('reason2', reason);
+    }
+);
+```
+
+实现方式二  延迟更长时间才调用then()
+
+```js
+const p2 = new Promise(((resolve, reject) => {
+    setTimeout(() => {
+        resolve(1); // 先改变状态(同时指定数据)
+    }, 1000);
+}));
+
+setTimeout(() => {
+    p2.then(value => {   // 后指定回调函数 异步执行回调函数
+        console.log(value);
+    }, reason => {
+        console.log('reason2', reason);
+    })
+}, 1100);
+
+```
+
+(2) 如何先改变状态再指定回调？
+
+- 在执行器 中直接调用resolve()/reject()
+- 延迟更长时间才调用then()
+
+(3) 什么时候才能得到数据？
+
+- 如果先指定的回调，那当状态发生改变时，回调函数就会调用，得到数据
+- 如果先改变的状态，那当指定回调时，回调函数就会调用，得到数据
+
+##### 14.3.4 promise.then() 返回的新promise的结果状态由什么决定？
+
+(1)	简单表达：由then()指定的回调函数执行的结果决定
+
+(2)	详细表达：
+
+​		a. 如果抛出异常，新promise变为rejected，reason为抛出的异常
+
+​		b. 如果返回的是非promise的任意值，新promise变为resolved，value为返回的值，默认值为undefined
+
+```js
+new Promise(((resolve, reject) => {
+    resolve(1);
+})).then(value => {
+    console.log('onFulfilled()1:', value);
+    // throw 1;
+    // return 2;
+    return Promise.resolve(3); // Promise.resolve() Promise函数对象有resolve()方法
+}, reason => {
+    console.log('onRejected()1:', reason);
+}).then(value => {
+    console.log('onFulfilled()2:', value);
+}, reason => {
+    console.log('onRejected()2:', reason);
+});
+
+// onFulfilled()1: 1
+// onFulfilled()2: 3
+```
+
+​		c. 如果返回的是另一个promise，此promise的结果就会成为新promise的结果
+

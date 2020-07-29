@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="71f26902-c539-4bed-9d64-95ec4f685632" name="Default Changelist" comment="" />
+    <list default="true" id="71f26902-c539-4bed-9d64-95ec4f685632" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/前端/git开发.md" beforeDir="false" afterPath="$PROJECT_DIR$/前端/git开发.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/前端/js手写实现.md" beforeDir="false" afterPath="$PROJECT_DIR$/前端/js手写实现.md" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -38,10 +42,7 @@
       <recent name="$PROJECT_DIR$/js/design_patterns/manualJS" />
     </key>
   </component>
-  <component name="RunManager" selected="Node.js.07Promise_test.js">
-    <configuration name="05deepClone.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/js/design_patterns/manualJS/05deepClone.js" working-dir="$PROJECT_DIR$/js/design_patterns/manualJS">
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Node.js.09promise.js">
     <configuration name="06InstanceOf.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/js/design_patterns/manualJS/06InstanceOf.js" working-dir="$PROJECT_DIR$/js/design_patterns/manualJS">
       <method v="2" />
     </configuration>
@@ -54,13 +55,16 @@
     <configuration name="08arrFlat.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/js/design_patterns/manualJS/08arrFlat.js" working-dir="$PROJECT_DIR$/js/design_patterns/manualJS">
       <method v="2" />
     </configuration>
+    <configuration name="09promise.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/js/design_patterns/manualJS/09promise.js" working-dir="$PROJECT_DIR$/js/design_patterns/manualJS">
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Node.js.09promise.js" />
         <item itemvalue="Node.js.07Promise_test.js" />
         <item itemvalue="Node.js.07Promise.js" />
         <item itemvalue="Node.js.08arrFlat.js" />
         <item itemvalue="Node.js.06InstanceOf.js" />
-        <item itemvalue="Node.js.05deepClone.js" />
       </list>
     </recent_temporary>
   </component>
@@ -74,7 +78,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1594821338256</updated>
-      <workItem from="1594821340789" duration="33160000" />
+      <workItem from="1594821340789" duration="35334000" />
     </task>
     <servers />
   </component>
@@ -86,22 +90,22 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="184" y="112" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1440.900@0.0.1440.900" timestamp="1594911996100" />
-    <state width="1419" height="349" key="GridCell.Tab.0.bottom" timestamp="1595776420402">
+    <state width="1419" height="178" key="GridCell.Tab.0.bottom" timestamp="1596036621538">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1419" height="349" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1595776420402" />
-    <state width="1419" height="349" key="GridCell.Tab.0.center" timestamp="1595776420401">
+    <state width="1419" height="178" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1596036621538" />
+    <state width="1419" height="178" key="GridCell.Tab.0.center" timestamp="1596036621537">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1419" height="349" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1595776420401" />
-    <state width="1419" height="349" key="GridCell.Tab.0.left" timestamp="1595776420400">
+    <state width="1419" height="178" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1596036621537" />
+    <state width="1419" height="178" key="GridCell.Tab.0.left" timestamp="1596036621536">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1419" height="349" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1595776420400" />
-    <state width="1419" height="349" key="GridCell.Tab.0.right" timestamp="1595776420401">
+    <state width="1419" height="178" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1596036621536" />
+    <state width="1419" height="178" key="GridCell.Tab.0.right" timestamp="1596036621538">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1419" height="349" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1595776420401" />
+    <state width="1419" height="178" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1596036621538" />
     <state width="1419" height="91" key="GridCell.Tab.1.bottom" timestamp="1595774150163">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
