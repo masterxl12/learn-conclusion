@@ -1150,9 +1150,9 @@ setTimeout(()=>{
 
 ##### 14.3.1 如何改变promise状态？
 
-(1) resolve(value): 如果当前是pending就会变为resolved
+(1) resolve(value): 如果==当前是pending就会变为resolved==
 
-(2) reject(reason): 如果当前是pending就会变为rejectd
+(2) reject(reason): 如果==当前是pending就会变为rejectd==
 
 (3) **抛出异常：如果当前是pending就会变为rejected**
 
@@ -1290,4 +1290,139 @@ new Promise(((resolve, reject) => {
 ```
 
 ​		c. 如果返回的是另一个promise，此promise的结果就会成为新promise的结果
+
+##### 14.3.5 promise如何串联多个操作任务？
+
+(1)	promise的then()返回一个新的promise，可以看成then()的链式调用
+
+(2)	通过then的==链式调用串联多个同步/异步任务==
+
+​	同步操作  直接return
+
+​	<font color=red>一旦是异步操作，使用promsie包装返回(promise执行异步操作)</font>
+
+```js
+new Promise(((resolve, reject) => {
+    setTimeout(() => {
+        console.log("执行任务1(异步)")
+        resolve(1);
+    }, 1000)
+})).then(value => {
+    console.log('任务1的结果:', value);
+    // 同步操作  直接return
+    console.log('执行任务2(同步)');
+    return 2;
+}).then(value => {
+    console.log('任务2的结果:', value);
+    // 异步操作  return 一个新的promise
+    return new Promise(((resolve, reject) => {
+        setTimeout(() => {
+            // 执行新的异步操作
+            console.log('执行任务3(异步)');
+            resolve(3)
+        }, 1000)
+    }))
+}).then(value => {
+    console.log('任务3的结果:', value);
+});
+
+// 执行任务1(异步)
+// 任务1的结果: 1
+// 执行任务2(同步)
+// 任务2的结果: 2
+// 执行任务3(异步)
+// 任务3的结果: 3
+```
+
+##### 14.3.6 promise.then返回是失败的两种写法
+
+(1) 抛出异常						`throw reason`
+
+(2) 返回失败的promise 	`return Promise().reject(reason)`
+
+##### 14.3.7 promise异常穿透
+
+- 当使用promise的then链式调用时，可以在最后指定失败的回调
+- 前面任何操作出了异常，都会传到最后失败的回调中处理
+
+```js
+new Promise((resolve, reject) => {
+    // resolve(1);
+    reject(1);
+}).then(value => {
+    console.log('value1', value);
+    return 2
+}).then(value => {
+    console.log('value2', value);
+}).catch(reason => {
+    console.log('reason1', reason);
+})
+```
+
+promise异常穿透，相当于执行以下代码
+
+```js
+new Promise((resolve, reject) => {
+    // resolve(1);
+    reject(1);
+})
+    .then(value => {
+            console.log('value1', value);
+            return 2
+        },
+        reason => {
+            throw reason;  // 抛出错误
+        })
+    .then(
+        value => {
+            console.log('value2', value)
+        },
+        reason => {
+            return Promise.reject(reason) // 返回失败的promise
+        })
+    .catch(reason => {
+        console.log('reason1', reason);
+    });
+```
+
+##### 14.3.8 中断promise链
+
+当使用promsie的then链式调用时，在中间中断，不再调用后面的回调函数
+
+方法: 在回调函数中返回一个<font color=red>pending状态的promise对象</font>
+
+```js
+new Promise((resolve, reject) => {
+    // resolve(1);
+    reject(1);
+})
+    .then(value => {
+            console.log('value1', value);
+            return 2
+        },
+        reason => {
+            throw reason;  // 抛出错误
+        })
+    .then(
+        value => {
+            console.log('value2', value)
+        },
+        reason => {
+            return Promise.reject(reason) // 返回失败的promise
+        })
+    .catch(reason => {
+        console.log('reason1', reason);
+    })
+    .then(value => {
+        // 返回一个  pending状态的promise  中断promise链
+        return new Promise(
+            () => {
+            }
+        )
+    })
+    .then(value => {
+            console.log('value', value)
+        }
+    );
+```
 
