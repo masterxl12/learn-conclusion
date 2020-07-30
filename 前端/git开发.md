@@ -54,3 +54,15 @@ The key's randomart image is:
 
 ![1595989814941](C:\Users\ADMINI~1\AppData\Local\Temp\1595989814941.png)
 
+#### 1.1.3 配置邮箱和密码
+
+默认不设置邮箱和密码，只能clone仓库到本地，不能同步提交和更新代码
+
+Git是分布式版本控制系统，所以，每个机器都必须自报家门：your名字和Email地址。 
+
+```nginx 
+git config --global user.email 'leixiao565566@163.com'
+git config --global user.name  'master'  // 其他用户名也可
+```
+
+配置邮箱和密码后即可提交和更新代码
