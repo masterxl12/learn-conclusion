@@ -7,42 +7,49 @@
    * excutor 执行器函数(同步执行)
    * @param {*} excutor 
    */
-  function Promise(excutor) {
-    this.status = 'pending'; // 指定状态
-    this.data = undefined;   // 存储结果数据的属性
-    this.callbacks = [];     // 每个元素的结构 {onFulfilled(){},onRejected(){}}
+  function Promise(executor) {
+    let self = this;
+    self.status = 'pending'; // 指定状态
+    self.data = undefined;   // 存储结果数据的属性
+    // 缓存异步回调函数队列
+    self.callbacks = [];     // 每个元素的结构 {onFulfilled(){},onRejected(){}}
     function resolve(value) {
       // 如果当前状态不是pending，直接返回
-      if (this.status !== 'pending') return;
+      if (self.status !== 'pending') return;
       // 状态改为resolved
-      this.status = 'resolved';
+      self.status = 'resolved';
       // 保存value数据
-      this.data = value;
+      self.data = value;
       // 如果有待执行的callback函数，立即异步执行回调函数onFulfilled
-      setTimeout(() => { // 放入队列中执行所有成功的回调
-        this.callbacks.forEach(callbacksObj => {
-          callbacksObj.onFulfilled(value)
+      if (self.callbacks.length) {
+        setTimeout(() => { // 放入队列中执行所有成功的回调
+          self.callbacks.forEach(callbacksObj => {
+            callbacksObj.onFulfilled(value)
+          });
         });
-      });
+      }
+
     }
 
     function reject(reason) {
-      if (this.status !== 'pending') return;
+      if (self.status !== 'pending') return;
       // 状态改为resolved
-      this.status = 'rejected';
+      self.status = 'rejected';
       // 保存value数据
-      this.data = reason;
+      self.data = reason;
       // 如果有待执行的callback函数，立即异步执行回调函数onRejected
-      setTimeout(() => {
-        this.callbacks.forEach(callbacksObj => {
-          callbacksObj.onRejected(reason)
+      if (self.callbacks.length) {
+        setTimeout(() => {
+          self.callbacks.forEach(callbacksObj => {
+            callbacksObj.onRejected(reason)
+          });
         });
-      });
+      }
     }
 
     // 立即同步执行excutor
     try {
-      excutor(resolve, reject)
+      executor(resolve, reject)
     } catch (error) {
       // 如果执行器抛出异常，promise对象状态变为rejected
       reject(error)
@@ -55,6 +62,11 @@
    * 返回一个新的Promise对象
    */
   Promise.prototype.then = function (onFulfilled, onRejected) {
+    const self = this;
+    self.callbacks.push({
+      onFulfilled,
+      onRejected
+    })
 
   }
 
@@ -104,5 +116,5 @@
 
 
   // 向外暴露Promise函数
-  window.Promise = Promise
-})(window)
+  window.MyPromise = Promise
+})(window);
