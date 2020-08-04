@@ -1297,9 +1297,11 @@ new Promise(((resolve, reject) => {
 
 (2)	通过then的==链式调用串联多个同步/异步任务==
 
-​	同步操作  直接return
+​	同步操作   直接return
 
-​	<font color=red>一旦是异步操作，使用promsie包装返回(promise执行异步操作)</font>
+​	异步操作   返回一个新的promise
+
+​	<font color=red>一旦是异步操作，使用Promise包装返回(promise执行异步操作)</font>
 
 ```js
 new Promise(((resolve, reject) => {
@@ -1323,7 +1325,7 @@ new Promise(((resolve, reject) => {
         }, 1000)
     }))
 }).then(value => {
-    console.log('任务3的结果:', value);
+    conso       le.log('任务3的结果:', value);
 });
 
 // 执行任务1(异步)
