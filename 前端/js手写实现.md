@@ -156,7 +156,7 @@ console.log(Student.prototype.__proto__ === Professional.prototype);  // true
 
 **Object.getPrototypeOf()**` 方法返回指定对象的原型（内部`[[Prototype]]`属性的值）。
 
-#### 4.构造函数、原型对象和实例之间的关系(ES5)
+#### 4.构造函数、原型对象、实例对象(ES5)
 
 ##### 4.1 ES5的继承
 
@@ -354,6 +354,11 @@ console.log(Object.prototype.toString.call(Object));
 // [object Function]
 // [object Function]
 ```
+
+##### 5.4 补充知识
+
+- 需要注意的是，对于 `typeof`, 可以正确判断除了`null`之外的所有基本类型，而对于引用类型，==除了函数外其他==都会被判断为`object`。
+- 对于`instanceof`, 无法判断基本类型，但可以正确判断引用类型
 
 #### 6.call/apply/bind实现
 
@@ -1066,7 +1071,151 @@ function flatten(arr) {
 }
 ```
 
-#### 13.数组去重的实现
+#### 13.数组常用方法的实现
+
+##### 13.1 map方法
+
+```js
+/**
+ * 原型上添加方法
+ * 传一个函数和this
+ * call方法的参数和封装好的map方法参数一致
+ * @param callback
+ * @param context
+ * @param callback
+ * @param context
+ * @returns {Array} 映射 返回一个新数组 数组中的元素为原始数组元素调用函数的处理后的结果
+ */
+Array.prototype.fakeMap = function (callback, context) {
+    let arr = this;
+    let newArr = [];
+    if (Object.prototype.toString.call(callback) !== '[object Function]') {
+        throw new TypeError(callback + 'is not a function');
+    }
+    for (let i = 0; i < arr.length; i++) {
+        let result = callback.call(context, this[i], i, arr);
+        if (result) newArr.push(result);
+    }
+    return newArr;
+};
+```
+
+##### 13.2 forEach方法
+
+```js
+/**
+ * forEach方法
+ * @param callback
+ * @param context
+ */
+Array.prototype.for_each = function (callback, context) {
+    // context = arguments[1];
+    if (typeof callback !== 'function') {
+        throw new TypeError(callback + 'is not a function');
+    }
+    for (let i = 0; i < this.length; i++) {
+        callback.call(context, this[i], i, this);
+    }
+};
+```
+
+##### 13.3 reduce方法
+
+```js
+// arr.reduce(callbcack(accumulator,currentValue[,index[,array]])[,initialValue)
+/**
+ * 归并函数 对数组的每一个元素执行给定的回调函数，将结果汇总为单个值
+ * @param callback
+ * @param sourceValue
+ * @returns {*}
+ */
+Array.prototype.fakeReduce = function (callback, sourceValue) {
+    if (Object.prototype.toString.call(callback) !== '[object Function]') {
+        throw new TypeError(callback + 'is not a function');
+    }
+    let initialArr = this;
+    let arr = initialArr.concat();
+    if (sourceValue) {
+        if (Array.isArray(sourceValue)) {
+            arr.unshift(...sourceValue)
+        } else {
+            arr.unshift(sourceValue)
+        }
+    }
+    let index, newValue;
+    while (arr.length > 1) {
+        index = initialArr.length - arr.length + 1;
+        newValue = callback.call(null, arr[0], arr[1], initialArr);
+        arr.splice(0, 2, newValue);
+    }
+    return arr[0];
+};
+```
+
+##### 13.4 find方法
+
+```js
+/**
+ * @param callback
+ * @param context
+ * @returns {*} 对原始数组根据条件测试，返回通过测试的第一个元素
+ */
+Array.prototype.fakeFind = function (callback, context) {
+    let arr = this;
+    if (Object.prototype.toString.call(callback) !== '[object Function]') {
+        throw new TypeError(callback + 'is not a function');
+    }
+    for (let i = 0; i < arr.length; i++) {
+        if (callback.call(context, arr[i], i, arr)) {
+            return arr[i];
+        }
+    }
+};
+```
+
+##### 13.5 filter方法
+
+```js
+/**
+ * @param callback
+ * @param context
+ * @returns {Array} 对原始数组根据条件进行过滤，筛选出符合条件的元素组成新数组
+ */
+Array.prototype.fakeFilter = function (callback, context) {
+    let newArr = [], arr = this;
+    if (Object.prototype.toString.call(callback) !== '[object Function]') {
+        throw new TypeError(callback + 'callback is not a function');
+    }
+    for (let i = 0; i < arr.length; i++) {
+        if (callback.call(context, arr[i], i, arr)) {
+            newArr.push(arr[i]);
+        }
+    }
+    return newArr;
+};
+```
+
+##### 13.6 some方法
+
+```js
+/**
+ * @param callback
+ * @param context
+ * @returns {boolean} 依次执行数组的每个元素 如果有一个元素满足条件 则表达式返回true,剩余的元素不会再执行检测
+ * 如果没有满足条件的元素 则返回false
+ */
+Array.prototype.fakeSome = function (callback, context) {
+    if (Object.prototype.toString.call(callback) !== '[object Function]') {
+        throw new TypeError(callback + "is not a function");
+    }
+    for (let i = 0; i < this.length; i++) {
+        if (callback.call(context, this[i], i, this)) {
+            return true;
+        }
+    }
+    return false;
+};
+```
 
 #### 14. Promise手写
 
@@ -1112,7 +1261,7 @@ console.log('setTimeOut()之后');
 
 `RanageError` 		数值变量或参数超出其有效范围
 
-#### 14.2 promise解决的问题
+##### 14.2 promise解决的问题
 
 (1) 指定回调函数的方式更加灵活
 
@@ -1146,9 +1295,9 @@ setTimeout(()=>{
 
 缺点：代码水平向右扩展，不便阅读维护
 
-#### 14.3 promise几个关键问题
+##### 14.3 promise几个关键问题
 
-##### 14.3.1 如何改变promise状态？
+###### 14.3.1 如何改变promise状态？
 
 (1) resolve(value): 如果==当前是pending就会变为resolved==
 
@@ -1169,7 +1318,7 @@ p.then(value => {
 // reason Error: 出错了...
 ```
 
-##### 14.3.2 一个promise指定多个成功/失败回调函数，都会调用吗？
+###### 14.3.2 一个promise指定多个成功/失败回调函数，都会调用吗？
 
 ==当promise**改变为对应状态时**都会调用==
 
@@ -1194,7 +1343,7 @@ p1.then(value => {
 // reason2 3
 ```
 
-14.3.3 改变promise状态和指定回调函数谁先谁后？
+###### 14.3.3 改变promise状态和指定回调函数谁先谁后？
 
 (1) 都有可能，正常情况下是先指定回调再改变状态，但也可以先改变状态再指定回调
 
@@ -1259,7 +1408,7 @@ setTimeout(() => {
 - 如果先指定的回调，那当状态发生改变时，回调函数就会调用，得到数据
 - 如果先改变的状态，那当指定回调时，回调函数就会调用，得到数据
 
-##### 14.3.4 promise.then() 返回的新promise的结果状态由什么决定？
+###### 14.3.4 promise.then() 返回的新promise的结果状态由什么决定？
 
 (1)	简单表达：由then()指定的回调函数执行的结果决定
 
@@ -1291,7 +1440,7 @@ new Promise(((resolve, reject) => {
 
 ​		c. 如果返回的是另一个promise，此promise的结果就会成为新promise的结果
 
-##### 14.3.5 promise如何串联多个操作任务？
+###### 14.3.5 promise如何串联多个操作任务？
 
 (1)	promise的then()返回一个新的promise，可以看成then()的链式调用
 
@@ -1336,13 +1485,13 @@ new Promise(((resolve, reject) => {
 // 任务3的结果: 3
 ```
 
-##### 14.3.6 promise.then返回是失败的两种写法
+###### 14.3.6 promise.then返回是失败的两种写法
 
 (1) 抛出异常						`throw reason`
 
 (2) 返回失败的promise 	`return Promise().reject(reason)`
 
-##### 14.3.7 promise异常穿透
+###### 14.3.7 promise异常穿透
 
 - 当使用promise的then链式调用时，可以在最后指定失败的回调
 - 前面任何操作出了异常，都会传到最后失败的回调中处理
@@ -1387,9 +1536,9 @@ new Promise((resolve, reject) => {
     });
 ```
 
-##### 14.3.8 中断promise链
+###### 14.3.8 中断promise链
 
-当使用promsie的then链式调用时，在中间中断，不再调用后面的回调函数
+当使用promise的then链式调用时，在中间中断，不再调用后面的回调函数
 
 方法: 在回调函数中返回一个<font color=red>pending状态的promise对象</font>
 
@@ -1427,4 +1576,447 @@ new Promise((resolve, reject) => {
         }
     );
 ```
+
+##### 14.4 Promise手写实现
+
+###### 14.4.1 构造函数executor
+
+```js
+    const PENDING = 'pending';
+    const RESOLVED = 'resolved';
+    const REJECTED = 'rejected';
+	// 构造函数同步执行
+    function Promise(excutor) {
+        // 将当前promise对象保存起来
+        let self = this;
+        self.status = PENDING;
+        self.data = '';
+        self.callbacks = [];
+
+        function resolve(value) {
+            if (self.status !== PENDING) return;
+            self.status = RESOLVED;
+            self.data = value;
+            // 先指定异步回调并保存 在改变状态后 执行异步回调中的代码
+            // self.callbacks -> [{onFulfilled(),onRejected()},{onFulfilled(),onRejected()}...]
+            if (self.callbacks.length) {
+                setTimeout(() => {
+                    self.callbacks.forEach(callbacksObj => { // element -> {onFulfilled(),onRejected()}
+                        callbacksObj.onFulfilled(value);
+                    });
+                });
+            }
+        }
+
+        function reject(reason) {
+            if (self.status !== PENDING) return;
+            self.status = REJECTED;
+            self.data = reason;
+            if (self.callbacks.length) {
+                setTimeout(() => {
+                    self.callbacks.forEach(callbacksObj => {
+                        callbacksObj.onRejected(reason);
+                    });
+                });
+            }
+        }
+
+        try {
+            excutor(resolve, reject)
+        } catch (error) { // 如果执行器抛出异常 直接改变promise状态
+            reject(error)
+        }
+```
+
+###### 14.4.2 实例对象方法
+
+###### 1. Promise.prototype.then()
+
+```text
+ * then函数中完成的内容：
+ * （1）返回一个新的promise
+ * （2）处理回调函数（有可能缓存，有可能调用）
+ * （3）回调函数的结果，将影响到返回新的promise状态
+ * （4）指定回调函数的默认值(回调函数没有定义的情形下)
+ 
+// 执行回调函数返回的结果
+   返回promise的结果由onResolved/onRejected执行结果决定 
+// 针对的是回调函数onFulfilled/onRjected(self.data)结果
+     1. 抛出异常，返回promise的结果为失败，reason为异常
+     2. 返回的是promise，返回的promise的结果就是这个结果
+     3. 返回的非promise，返回promise为成功，value就是返回值
+```
+```js
+ //实例对象调用
+    /**
+     * 原型对象的then()
+     * 指定成功和失败的回调函数
+     * 返回一个新的promise对象
+     * 返回promise的结果由onResolved/onRejected执行结果决定
+     */
+    Promise.prototype.then = function (onFulfilled, onRejected) {
+        const self = this;
+        // 如果回调函数不为function 需要指定回调函数的默认值 
+        onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : value => value;
+        onRejected = typeof onRejected === 'function' ? onRejected : reason => {
+            throw reason
+        };
+        // 执行回调函数后，将返回一个新的promsie
+        /**
+         * 
+         * 1. 抛出异常
+         * 2. 返回的是一个promsie对象
+         * 3. 返回一个非promise对象
+         */
+
+        // 1 返回一个新的promise对象
+        return new Promise((resolve, reject) => {
+            /**
+             * 执行指定的回调函数
+             * 根据执行的结果改变return的promise的状态/数据
+             */
+            function handle(callback) {
+                try {
+                    const result = callback(self.data);
+                    // 2. 返回的是promise，返回的promise的结果就是这个结果
+                    if (result instanceof Promise) { 
+                        // result.then(
+                        //     value => resolve(value),
+                        //     reason => reject(reason)
+                        // )
+                        result.then(resolve, reject);
+                    } else { // 3. 返回的非promise，返回promise为成功，value就是返回值
+                        resolve(result)
+                    }
+                } catch (error) { // 1. 抛出异常，返回promise的结果为失败，reason为异常
+                    reject(error)
+                }
+            }
+            // 1.1 当前promise状态是resolved
+            if (self.status === RESOLVED) {
+                // 立即异步执行成功的回调函数
+                setTimeout(() => {
+                    handle(onFulfilled);
+                });
+            } else if (self.status === REJECTED) { // 1.2 当前promise状态是rejected
+                // 立即执行失败的回调函数
+                setTimeout(() => {
+                    handle(onRejected);
+                });
+            } else { // 1.3 当前promise状态是pending
+                // 将成功和失败的回调函数保存callbacks容器中缓存起来
+                self.callbacks.push({
+                    // 根据执行结果 改变返回的promise状态
+                    onFulfilled(value) {
+                        handle(onFulfilled)
+                    },
+                    onRejected(reason) {
+                        handle(onRejected)
+                    }
+                })
+            }
+        })
+    }
+```
+
+###### 2.Promise.prototype.catch()
+
+```js
+    // 实例对象调用
+    Promise.prototype.catch = function (onRejected) {
+        return this.then(undefined, onRejected);
+    }
+```
+
+###### 14.4.3 函数对象方法
+
+###### 1. resolve方法
+
+     * 0. 返回值：一个解析过的Promise对象
+     * 1. 参数类型
+     * 1.1 如果参数是一个promise实例对象，Promise.resolve将不做任何修改，原封不动的返回这个Promise对象
+     * 1.2 参数是原始值，后者是不具有then方法的对象，则Promise.resolve方法返回一个包装后的promise对象
+```js
+Promise.resolve = function (value) {
+        // 返回一个成功或者失败的promise对象
+        return new Promise((resolve, reject) => {
+            // value是promise
+            if (value instanceof Promise) { // 根据value的结果作为当前promise的结果
+                value.then(resolve, reject)
+            } else {
+                resolve(value)
+            }
+        })
+    }
+
+```
+
+###### 2. reject方法
+
+```js
+    /**
+     * 方法返回一个带有拒因的promise对象
+     * 参数：表示被拒绝的原因
+     */
+```
+
+```js
+    Promise.reject = function (reason) {
+        return new Promise((resolve, reject) => {
+            reject(reason);
+        })
+    }
+```
+
+###### 3. all方法
+
+```js
+/*
+	返回值: 返回一个新的promise对象
+	参数：promise对象的数组。如果是基本类型值(函数内部通过Promise.resolve(data)包装成promise对象)
+	返回的结果情形：
+	1. iterable参数对象(数组对象)里所有的promise对象都成功的时候才会触发成功，
+	2. 一旦有任何一个iterable里面的promise对象失败则立即触发该promise对象的失败
+*/
+```
+
+具体实现: 
+
+```js
+    Promise.all = function (promises) {
+        const pAll = new Array(promises.length);
+        let resolvedCount = 0; // 定义一个计数器，判断resolve的promsie数量
+        return new Promise((resolve, reject) => {
+            promises.forEach((pItem, index) => {
+                // 将不是promise的对象包装为Promise对象
+                Promise.resolve(pItem).then(
+                    value => {
+                        resolvedCount++;
+                        pAll[index] = value;
+                        if (resolvedCount === promises.length) {
+                            resolve(pAll);
+                        }
+                    },
+                    // 只要有个失败 return的promise就失败
+                    reason => reject(reason))
+            })
+        })
+    }
+```
+
+###### 4. race方法
+
+```js
+/*
+	参数: promise对象的数组。如果是基本类型值(函数内部通过Promise.resolve(data)包装成promise对象)
+	一旦迭代器中的某个promise解决或拒绝，返回的promise就会resolve或reject
+*/
+```
+
+```js
+    Promise.race = function (promises) {
+        return new Promise((resolve, reject) => {
+            // 一旦有成功，将return变为成功，一旦有失败， 状态即为失败
+            // 将不是promise的对象包装为Promise对象
+            promises.forEach(currentPromise => {
+                Promise.resolve(currentPromise).then(resolve, reject)
+            })
+        })
+    }
+```
+
+###### 5. resolveDelay/rejectDelay
+
+```js
+    /**
+       该方法为自定义方法
+     * 返回一个promise对象，在指定的时间后才确定结果resolve/reject
+     */
+    Promise.resolveDelay = function (value, time) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                if (value instanceof Promise) {
+                    value.then(resolve, reject)
+                } else {
+                    resolve(value)
+                }
+            }, time)
+        })
+    }
+
+    Promise.rejectDelay = function (reason, time) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => reject(reason), time)
+        })
+    }
+```
+
+##### 14.4.4 完整代码
+
+使用ES5导出函数对象
+
+```js
+(function (window) {
+    const PENDING = 'pending';
+    const RESOLVED = 'resolved';
+    const REJECTED = 'rejected';
+
+    function Promise(executor) {
+        let self = this;
+        self.status = PENDING;
+        self.data = undefined;
+        self.callbacks = [];
+
+        function resolve(value) {
+            if (self.status !== PENDING) return;
+            self.data = value;
+            self.status = RESOLVED;
+            if (self.callbacks.length) {
+                setTimeout(() => {
+                    self.callbacks.forEach(callbackObj => {
+                        callbackObj.onFulfilled(value)
+                    });
+                });
+            }
+        }
+
+
+        function reject(reason) {
+            if (self.status !== PENDING) return;
+            self.data = reason;
+            self.status = REJECTED;
+            if (self.callbacks.length) {
+                setTimeout(() => {
+                    self.callbacks.forEach(callbackObj => {
+                        callbackObj.onRejected(reason)
+                    });
+                });
+            }
+        }
+
+
+        try {
+            executor(resolve, reject)
+        } catch (error) {
+            reject(error)
+        }
+    }
+
+
+    Promise.prototype.then = function (onFulfilled, onRejected) {
+        const self = this;
+        onFulfilled = typeof onFulfilled === 'function' ? onFulfilled : value => value;
+        onRejected = typeof onRejected === 'function' ? onRejected : reason => {
+            throw reason
+        };
+
+        return new Promise((resolve, reject) => {
+            function handle(callback) {
+                try {
+                    const result = callback(self.data);
+                    if (result instanceof Promise) {
+                        result.then(resolve, reject)
+                    } else {
+                        resolve(result)
+                    }
+                } catch (error) {
+                    reject(error)
+                }
+            }
+
+            if (self.status === RESOLVED) {
+                setTimeout(() => {
+                    handle(onFulfilled)
+                });
+            } else if (self.status === REJECTED) {
+                setTimeout(() => {
+                    handle(onRejected)
+                });
+            } else {
+                self.callbacks.push({
+                    onFulfilled() {
+                        handle(onFulfilled)
+                    },
+                    onRejected() {
+                        handle(onRejected)
+                    }
+                })
+            }
+        })
+
+    }
+
+
+    Promise.prototype.catch = function (onRejected) {
+        return this.then(undefined, onRejected);
+    }
+
+    Promise.resolve = function (value) {
+        return new Promise((resolve, reject) => {
+            if (value instanceof Promise) {
+                value.then(resolve, reject)
+            } else {
+                resolve(value)
+            }
+        })
+    }
+
+
+    Promise.reject = function (reason) {
+        return new Promise((resolve, reject) => {
+            reject(reason);
+        })
+
+    }
+
+    Promise.all = function (promises) {
+        let len = promises.length;
+        let resolvedCount = 0;
+        let pAll = new Array(len);
+        return new Promise((resolve, reject) => {
+            promises.forEach((p, index) => {
+                Promise.resolve(p).then(
+                    value => {
+                        resolvedCount++;
+                        pAll[index] = value;
+                        if (resolvedCount === len) {
+                            resolve(pAll);
+                        }
+                    },
+                    reason => reject(reason))
+            })
+        })
+    }
+
+    Promise.race = function (promises) {
+        return new Promise((resolve, reject) => {
+            promises.forEach(p => {
+                Promise.resolve(p).then(resolve, reject);
+            })
+        })
+    }
+    
+    Promise.resolveDelay = function (value, time) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                if (value instanceof Promise) {
+                    value.then(resolve, reject)
+                } else {
+                    resolve(value)
+                }
+            }, time)
+        })
+    }
+
+    Promise.rejectDelay = function (reason, time) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => reject(reason), time)
+        })
+    }
+
+    window.myPromise = Promise;
+})(window)
+```
+
+15 
 
