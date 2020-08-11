@@ -1,0 +1,11 @@
+{
+  "name": "commonjs-browserify",
+  "version": "1.0.0",
+  "dependencies": {
+    "browserify": "^16.5.2",
+    "g": "^2.0.1"
+  },
+  "devDependencies": {
+    "uniq": "^1.0.1"
+  }
+}

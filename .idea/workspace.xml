@@ -2,8 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="71f26902-c539-4bed-9d64-95ec4f685632" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/module/commonjs-browserify/src/app.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/module/commonjs-browserify/src/module1.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/module/commonjs-browserify/src/module2.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/module/commonjs-browserify/src/module3.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/design_patterns/manualJS/lib/Promise.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/lib/Promise.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/design_patterns/manualJS/12myPromise.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/12myPromise.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/design_patterns/manualJS/html/08Promise.html" beforeDir="false" afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/html/08Promise.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,23 +37,21 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="js.last.introduce.type" value="LET" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/js/design_patterns/manualJS/module/commonjs-browserify/src" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/js/design_patterns/manualJS/module/commonjs-browserify/src" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/js/design_patterns/manualJS/module/common-js/modules" />
       <recent name="$PROJECT_DIR$/js/design_patterns/manualJS" />
     </key>
   </component>
-  <component name="RunManager" selected="Node.js.10promise.js">
-    <configuration name="07Promise.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/js/design_patterns/manualJS/07Promise.js" working-dir="$PROJECT_DIR$/js/design_patterns/manualJS">
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Node.js.app.js (1)">
     <configuration name="07Promise_test.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/js/design_patterns/manualJS/07Promise_test.js" working-dir="$PROJECT_DIR$/js/design_patterns/manualJS">
-      <method v="2" />
-    </configuration>
-    <configuration name="08arrFlat.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/js/design_patterns/manualJS/08arrFlat.js" working-dir="$PROJECT_DIR$/js/design_patterns/manualJS">
       <method v="2" />
     </configuration>
     <configuration name="09promise.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/js/design_patterns/manualJS/09promise.js" working-dir="$PROJECT_DIR$/js/design_patterns/manualJS">
@@ -57,13 +60,19 @@
     <configuration name="10promise.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/js/design_patterns/manualJS/10promise.js" working-dir="$PROJECT_DIR$/js/design_patterns/manualJS">
       <method v="2" />
     </configuration>
+    <configuration name="app.js (1)" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/js/design_patterns/manualJS/module/commonjs-browserify/src/app.js" working-dir="$PROJECT_DIR$/js/design_patterns/manualJS/module/commonjs-browserify/src">
+      <method v="2" />
+    </configuration>
+    <configuration name="app.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/js/design_patterns/manualJS/module/common-js/app.js" working-dir="$PROJECT_DIR$/js/design_patterns/manualJS/module/common-js">
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Node.js.app.js (1)" />
+        <item itemvalue="Node.js.app.js" />
         <item itemvalue="Node.js.10promise.js" />
         <item itemvalue="Node.js.09promise.js" />
         <item itemvalue="Node.js.07Promise_test.js" />
-        <item itemvalue="Node.js.07Promise.js" />
-        <item itemvalue="Node.js.08arrFlat.js" />
       </list>
     </recent_temporary>
   </component>
@@ -79,6 +88,13 @@
       <updated>1594821338256</updated>
       <workItem from="1594821340789" duration="37599000" />
       <workItem from="1596549016179" duration="742000" />
+      <workItem from="1597149401287" duration="127000" />
+      <workItem from="1597149543031" duration="30000" />
+      <workItem from="1597149583055" duration="32000" />
+      <workItem from="1597149624516" duration="53000" />
+      <workItem from="1597149687123" duration="30000" />
+      <workItem from="1597149726539" duration="79000" />
+      <workItem from="1597149824321" duration="4027000" />
     </task>
     <servers />
   </component>
@@ -90,22 +106,26 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="184" y="112" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1440.900@0.0.1440.900" timestamp="1594911996100" />
-    <state width="1419" height="91" key="GridCell.Tab.0.bottom" timestamp="1596465486457">
+    <state x="473" y="326" key="#com.intellij.ide.actions.ChooseComponentsToExportDialog" timestamp="1597149811721">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1419" height="91" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1596465486457" />
-    <state width="1419" height="91" key="GridCell.Tab.0.center" timestamp="1596465486456">
+    <state x="473" y="326" key="#com.intellij.ide.actions.ChooseComponentsToExportDialog/0.0.1440.900@0.0.1440.900" timestamp="1597149811721" />
+    <state width="1419" height="209" key="GridCell.Tab.0.bottom" timestamp="1597155332726">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1419" height="91" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1596465486456" />
-    <state width="1419" height="91" key="GridCell.Tab.0.left" timestamp="1596465486454">
+    <state width="1419" height="209" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1597155332726" />
+    <state width="1419" height="209" key="GridCell.Tab.0.center" timestamp="1597155332724">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1419" height="91" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1596465486454" />
-    <state width="1419" height="91" key="GridCell.Tab.0.right" timestamp="1596465486457">
+    <state width="1419" height="209" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1597155332724" />
+    <state width="1419" height="209" key="GridCell.Tab.0.left" timestamp="1597155332724">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1419" height="91" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1596465486457" />
+    <state width="1419" height="209" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1597155332724" />
+    <state width="1419" height="209" key="GridCell.Tab.0.right" timestamp="1597155332725">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state width="1419" height="209" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1597155332725" />
     <state width="1419" height="91" key="GridCell.Tab.1.bottom" timestamp="1596465486460">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
@@ -154,9 +174,13 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state width="1419" height="91" key="GridCell.Tab.3.right/0.0.1440.900@0.0.1440.900" timestamp="1596465486466" />
-    <state x="229" y="89" key="SettingsEditor" timestamp="1595771960469">
+    <state x="94" y="45" key="SettingsEditor" timestamp="1597150374231">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="229" y="89" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1595771960469" />
+    <state x="94" y="45" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1597150374231" />
+    <state x="533" y="4" width="794" height="732" key="org.intellij.images.editor.actions.BackgroundImageDialog" timestamp="1597150290279">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="533" y="4" width="794" height="732" key="org.intellij.images.editor.actions.BackgroundImageDialog/0.0.1440.900@0.0.1440.900" timestamp="1597150290279" />
   </component>
 </project>
