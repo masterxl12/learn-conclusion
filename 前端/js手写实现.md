@@ -1,16 +1,14 @@
-
-
 #### 1.手动实现new方法(ES5)
 
 new 操作符创建对象执行的过程：
 
 - 创建一个空对象
-- 将该对象链接到原型（执行`[[Prototype]]`（也就是`__proto__`））
-- 生成的新对象会绑定到函数调用的this（通过`new`创建的每个对象将最终被`[[Prototype]]`链接到这个函数的`prototype`对象上。）
+- 将该对象链接到原型（执行`[[Prototype]]`（也就是`__proto__`）） // 将构造函数的作用域赋给新的对象; 
+- 生成的新对象会绑定到函数调用的this（通过`new`创建的每个对象将最终被`[[Prototype]]`链接到这个函数的`prototype`对象上。）     // 执行构造函数的代码 绑定this
 - 将新对象返回
 
 ```js
-function Create(){
+function FakeNew(){
   // 1. 创建空对象
   let obj = new Object();
   // 1.1. 获取构造函数(因为构造函数是第一个参数，arguments里面的其余的参数就是构造函数的参数)
@@ -36,7 +34,7 @@ function Person(name) {
 let person1 = new Person("kobe");
 console.log(person1); //Person { name: 'kobe' }
 
-let person2 = Create(Person, "jordan");
+let person2 = FakeNew(Person, "jordan");
 console.log(person2); // Person { name: 'jordan' }
 ```
 
@@ -1108,7 +1106,7 @@ Array.prototype.fakeMap = function (callback, context) {
  * @param callback
  * @param context
  */
-Array.prototype.for_each = function (callback, context) {
+Array.prototype.fakeEach = function (callback, context) {
     // context = arguments[1];
     if (typeof callback !== 'function') {
         throw new TypeError(callback + 'is not a function');
@@ -1540,7 +1538,7 @@ new Promise((resolve, reject) => {
 
 当使用promise的then链式调用时，在中间中断，不再调用后面的回调函数
 
-方法: 在回调函数中返回一个<font color=red>pending状态的promise对象</font>
+方法: 在回调函数中返回一个<font color=red>==pending状态的promise对象==</font>
 
 ```js
 new Promise((resolve, reject) => {
@@ -1567,8 +1565,7 @@ new Promise((resolve, reject) => {
     .then(value => {
         // 返回一个  pending状态的promise  中断promise链
         return new Promise(
-            () => {
-            }
+            () => {}
         )
     })
     .then(value => {
