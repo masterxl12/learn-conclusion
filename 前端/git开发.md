@@ -66,3 +66,36 @@ git config --global user.name  'master'  // 其他用户名也可
 ```
 
 配置邮箱和密码后即可提交和更新代码
+
+
+
+### 1.2  git开发日志
+
+##### 1.2.1 上传忽略指定文件
+
+```nginx
+// 创建.gitignore文件
+touch .gitignore
+// 编辑.gitignore文件
+vim .gitignore
+// 指定忽略上传的文件
+node_modules
+
+```
+
+##### 1.2.2  提交代码时发生错误
+
+错误原因： `warning: LF will be replaced by CRLF in .gitignore.`
+
+![1597324638660](C:\Users\ADMINI~1\AppData\Local\Temp\1597324638660.png)
+
+错误原因
+
+> git在windows下，默认是CRLF作为换行符，git add 提交时，检查文本中有LF 换行符（linux系统里面的），则会告警。所以让git忽略该检查即可 
+
+解决方案
+
+```nginx
+git config --global core.autocrlf false
+```
+
