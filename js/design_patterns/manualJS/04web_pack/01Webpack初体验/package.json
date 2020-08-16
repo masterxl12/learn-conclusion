@@ -1,0 +1,8 @@
+{
+  "name": "webpack-experence",
+  "version": "1.0.0",
+  "devDependencies": {
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
+  }
+}
