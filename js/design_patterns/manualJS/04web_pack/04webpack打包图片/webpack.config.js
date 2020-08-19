@@ -12,7 +12,8 @@ module.exports = {
     },
     // loader 
     module: {
-        rules: [{
+        rules: [
+            {
                 test: /\.less$/,
                 // use 使用 多个loader 处理要使用use
                 use: ['style-loader', 'css-loader', 'less-loader']
@@ -32,7 +33,7 @@ module.exports = {
                     // 问题：因为url-loader默认使用es6模块化解析，而html-loader引入图片是commonjs
                     // 解析时会出问题：[object Module]
                     // 解决：关闭url-loader的es6模块化，使用commonjs解析
-                    esModule: false,
+
                     // 给图片进行重命名
                     // [hash:10]取图片的hash的前10位
                     // [ext]取文件原来扩展名
