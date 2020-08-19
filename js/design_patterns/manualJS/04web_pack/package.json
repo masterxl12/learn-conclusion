@@ -1,7 +1,6 @@
 {
   "name": "webpack-code",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,10 +9,17 @@
   "license": "ISC",
   "devDependencies": {
     "css-loader": "^4.2.1",
+    "file-loader": "^6.0.0",
+    "html-loader": "^1.2.0",
     "html-webpack-plugin": "^4.3.0",
     "less-loader": "^6.2.0",
     "style-loader": "^1.2.1",
+    "url-loader": "^4.1.0",
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12"
+  },
+  "description": "",
+  "dependencies": {
+    "vue-json-editor": "^1.4.2"
   }
 }
