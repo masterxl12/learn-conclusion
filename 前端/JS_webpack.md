@@ -312,3 +312,66 @@ module.exports = {
 
 
 
+#### 3.5  dev-server
+
+开发服务器 devServer: 用来自动化(==自动编译，自动打开浏览器，自动刷新浏览器==)
+
+
+
+安装本地服务器
+
+```nginx
+npm i webpack-dev-server -D
+// 运行命令
+npx web-pack-dev-server
+```
+
+webpack.config.js
+
+```js
+const {
+    resolve
+} = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+module.exports = {
+    entry: './src/index.js',
+    output: {
+        filename: 'built.js',
+        path: resolve(__dirname, 'build')
+    },
+    module: {
+        rules: [{
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader']
+            },
+            {
+                exclude: /\.(js|html|css)$/,
+                loader: 'file-loader',
+                options: {
+                    name: '[hash:10].[ext]'
+                }
+            }
+        ]
+    },
+    plugins: [new HtmlWebpackPlugin({
+        template: './src/index.html'
+    })],
+    mode: 'development',
+    // 启动devServer指令为：webpack-dev-server
+    // npm i webpack-dev-server
+    // npx webpack-dev-server  本地安装
+    devServer: {
+        // 监听构建后的路径
+        contentBase: resolve(__dirname, 'build'),
+        // 启动gzip压缩
+        compress: true,
+        port: 3000,
+        // 自动打开默认浏览器
+        open:true
+    }
+}
+```
+
+
+
