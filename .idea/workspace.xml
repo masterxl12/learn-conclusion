@@ -3,12 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="71f26902-c539-4bed-9d64-95ec4f685632" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/04webpack打包图片/build/built.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/04webpack打包图片/build/built.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/04webpack打包图片/build/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/04webpack打包图片/build/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/04webpack打包图片/src/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/04webpack打包图片/src/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/04webpack打包图片/src/index.less" beforeDir="false" afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/04webpack打包图片/src/index.less" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/04webpack打包图片/webpack.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/04webpack打包图片/webpack.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/07开发环境配置/src/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/07开发环境配置/src/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/07开发环境配置/src/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/07开发环境配置/src/js/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/07开发环境配置/webpack.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/07开发环境配置/webpack.config.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/前端/JS_webpack.md" beforeDir="false" afterPath="$PROJECT_DIR$/前端/JS_webpack.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -20,9 +19,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="package.json" />
-        <option value="CSS File" />
         <option value="Less File" />
         <option value="HTML File" />
+        <option value="CSS File" />
         <option value="JavaScript File" />
       </list>
     </option>
@@ -42,20 +41,24 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="js.last.introduce.type" value="LET" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/js/design_patterns/manualJS/module/commonjs-browserify/src" />
-    <property name="list.type.of.created.stylesheet" value="Less" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack" />
+    <property name="list.type.of.created.stylesheet" value="CSS" />
+    <property name="nodejs_package_manager_path" value="npm" />
     <property name="restartRequiresConfirmation" value="false" />
     <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Color Scheme Font" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/14生产环境基本配置/src/js" />
       <recent name="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/02Webpack打包样式/src" />
       <recent name="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/01Webpack初体验" />
       <recent name="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/01Webpack初体验/src" />
       <recent name="$PROJECT_DIR$/js/design_patterns/manualJS/module/common-js/modules" />
-      <recent name="$PROJECT_DIR$/js/design_patterns/manualJS" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack" />
+      <recent name="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/07开发环境配置/src/images" />
+      <recent name="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/07开发环境配置/src/css" />
       <recent name="$PROJECT_DIR$/js/design_patterns/manualJS/module/commonjs-browserify/src" />
     </key>
   </component>
@@ -105,7 +108,8 @@
       <workItem from="1597149726539" duration="79000" />
       <workItem from="1597149824321" duration="4027000" />
       <workItem from="1597483735424" duration="5564000" />
-      <workItem from="1597761267896" duration="3550000" />
+      <workItem from="1597761267896" duration="6072000" />
+      <workItem from="1598084586006" duration="9050000" />
     </task>
     <servers />
   </component>
@@ -117,26 +121,30 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="184" y="112" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1440.900@0.0.1440.900" timestamp="1594911996100" />
+    <state x="434" y="260" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1598077789661">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="434" y="260" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1440.900@0.0.1440.900" timestamp="1598077789661" />
     <state x="473" y="326" key="#com.intellij.ide.actions.ChooseComponentsToExportDialog" timestamp="1597149811721">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="473" y="326" key="#com.intellij.ide.actions.ChooseComponentsToExportDialog/0.0.1440.900@0.0.1440.900" timestamp="1597149811721" />
-    <state width="1419" height="191" key="GridCell.Tab.0.bottom" timestamp="1597847594200">
+    <state width="1419" height="191" key="GridCell.Tab.0.bottom" timestamp="1598084552436">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1419" height="191" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1597847594200" />
-    <state width="1419" height="191" key="GridCell.Tab.0.center" timestamp="1597847594199">
+    <state width="1419" height="191" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1598084552436" />
+    <state width="1419" height="191" key="GridCell.Tab.0.center" timestamp="1598084552435">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1419" height="191" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1597847594199" />
-    <state width="1419" height="191" key="GridCell.Tab.0.left" timestamp="1597847594198">
+    <state width="1419" height="191" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1598084552435" />
+    <state width="1419" height="191" key="GridCell.Tab.0.left" timestamp="1598084552434">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1419" height="191" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1597847594198" />
-    <state width="1419" height="191" key="GridCell.Tab.0.right" timestamp="1597847594199">
+    <state width="1419" height="191" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1598084552434" />
+    <state width="1419" height="191" key="GridCell.Tab.0.right" timestamp="1598084552436">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1419" height="191" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1597847594199" />
+    <state width="1419" height="191" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1598084552436" />
     <state width="1419" height="91" key="GridCell.Tab.1.bottom" timestamp="1596465486460">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
@@ -197,9 +205,9 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="533" y="4" width="794" height="732" key="org.intellij.images.editor.actions.BackgroundImageDialog/0.0.1440.900@0.0.1440.900" timestamp="1597150290279" />
-    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup" timestamp="1597491911368">
+    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup" timestamp="1598180596377">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1597491911368" />
+    <state x="385" y="196" width="670" height="676" key="search.everywhere.popup/0.0.1440.900@0.0.1440.900" timestamp="1598180596377" />
   </component>
 </project>

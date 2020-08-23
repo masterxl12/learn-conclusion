@@ -1,3 +1,5 @@
+
+
 Webpack是一种前端资源构建工具，一个静态模块打包器。在Webpack看来，前端的所有资源文件(js/json/css/img/less/...)都会作为模块处理。它将根据模块的依赖关系进行静态分析，打包生成对应的静态资源(bundle).
 
 > 根据入口文件的依赖关系，将不同前端资源引进，引进之后形成chunk(代码块)，根据chunk按照不同模块进行处理,处理过程即为打包，打包之后输出的文件称为bundle。
@@ -373,5 +375,730 @@ module.exports = {
 }
 ```
 
+#### 3.6 开发环境配置
 
+webpack.config.js
+
+```js
+const {
+    resolve
+} = require('path');
+
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+module.exports = {
+    entry: './src/js/index',
+    output: {
+        filename: 'js/built.js',   // 指定js文件的输出目录
+        path: resolve(__dirname, 'build')
+    },
+    module: {
+        // loader config
+        rules: [
+            // less loader
+            {
+                test: /\.less$/,
+                use: [
+                    'style-loader',
+                    'css-loader',
+                    'less-loader'
+                ]
+            },
+            // css loader      css文件打包后和js文件融合一起
+            {
+                test: /\.css$/,
+                use: [
+                    'style-loader',
+                    'css-loader'
+                ]
+            },
+            // img-loader
+            {
+                test: /\.(jpg|png|gif)$/,
+                loader: 'url-loader',
+                options: {
+                    limit: 8 * 1024,
+                    // 关闭es6模块化
+                    esModule: false,
+                    name: '[hash:10].[ext]',
+                    outputPath:'images'  // 指定图片资源的输出目录
+                }
+            },
+            // html-loader 处理html中的图片资源
+            {
+                test: /\.html$/,
+                loader: 'html-loader',
+            },
+            // 打包其他资源 如字体图标
+            {
+                exclude: /\.(js|html|css|less|jpg|png|gif)$/,
+                loader: 'file-loader',
+                options: {
+                    name: '[hash:10].[ext]',
+                    outputPath: 'media' // 指定其他资源的输出目录
+                }
+            }
+        ]
+    },
+    // 插件配置
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: './src/index.html'
+        })
+    ],
+    // 本地开发服务器
+    devServer: {
+        contentBase: resolve(__dirname, 'build'),
+        compress: true,
+        open: true,
+        port: 3000
+    },
+    mode: 'development'
+};
+```
+
+#### 3.7 提取css文件到单独文件
+
+使用到的插件 `mini-css-extract-plugin`
+
+```nginx
+npm i mini-css-extract-plugin -D
+```
+
+webpack.config.js
+
+```js
+const { resolve } = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+
+// 设置nodejs环境变量  默认是 production
+// process.env.NODE_ENV = 'development'
+
+module.exports = {
+  entry: './src/js/index.js',
+  output: {
+    filename: 'js/built.js',
+    path: resolve(__dirname, 'build')
+  },
+  module: {
+    rules: [
+      // 处理css
+      {
+        test: /\.css$/,
+        use: [
+          // 创建style标签，将样式放入
+          // 'style-loader',
+          // 这个loader取代style-loader。作用：提取js中的css成单独文件
+          MiniCssExtractPlugin.loader,
+          // 将css文件整合到js文件中
+          'css-loader',
+          /*
+            css兼容性处理：postcss --> postcss-loader postcss-preset-env
+            帮postcss找到package.json中browserslist里面的配置，通过配置加载指定的css兼容性样式
+            "browserslist": {
+              // 开发环境 --> 设置node环境变量：process.env.NODE_ENV = development
+              "development": [
+                "last 1 chrome version", // 兼容最近的一个版本
+                "last 1 firefox version",
+                "last 1 safari version"
+              ],
+              // 生产环境：默认是看生产环境
+              "production": [
+                ">0.2%",
+                "not dead",
+                "not op_mini all"
+              ]
+            }
+          */
+          // 使用loader的默认配置
+          // 'postcss-loader',
+          // 修改loader的配置
+          {
+            loader: 'postcss-loader',
+            options: {
+              ident: 'postcss',
+              plugins: () => [
+                // postcss的插件
+                require('postcss-preset-env')()
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: './src/index.html'
+    }),
+    new MiniCssExtractPlugin({
+      // 对输出的css文件进行重命名 不配置默认为main.css
+      filename: 'css/built.css'
+    })
+  ],
+  mode: 'development'
+}
+```
+
+#### 3.8 css做兼容性处理
+
+```
+// 设置nodejs环境变量  默认是 production
+// process.env.NODE_ENV = 'development'
+```
+
+使用到的插件
+
+```nginx
+npm i postcss-loader postcss-preset-env -D
+```
+
+作用
+
+>     postcss-loader 
+>     		css兼容性处理：postcss --> postcss-loader 
+>     postcss-preset-env
+>         帮postcss找到package.json中browserslist里面的配置，通过配置加载指定的css兼容性样式
+
+
+
+**browserslist配置能够分享目标浏览器和nodejs版本在不同的前端工具。**
+
+<font color=red>主要是为了表示当前项目的浏览器兼容情况。</font>
+==官方默认配置:==
+
+```json
+"browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8",
+    "safari >= 7"
+  ]
+
+```
+
+webpack.config.js
+
+```js
+const { resolve } = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+
+// 设置nodejs环境变量  默认是 production
+// process.env.NODE_ENV = 'development'
+
+module.exports = {
+  entry: './src/js/index.js',
+  output: {
+    filename: 'js/built.js',
+    path: resolve(__dirname, 'build')
+  },
+  module: {
+    rules: [
+      // 处理css
+      {
+        test: /\.css$/,
+        use: [
+          // 创建style标签，将样式放入
+          // 'style-loader',
+          // 这个loader取代style-loader。作用：提取js中的css成单独文件
+          MiniCssExtractPlugin.loader,
+          // 将css文件整合到js文件中
+          'css-loader',
+          /*
+            css兼容性处理：postcss --> postcss-loader postcss-preset-env
+            帮postcss找到package.json中browserslist里面的配置，通过配置加载指定的css兼容性样式
+            "browserslist": {
+              // 开发环境 --> 设置node环境变量：process.env.NODE_ENV = development
+              "development": [
+                "last 1 chrome version", // 兼容最近的一个版本
+                "last 1 firefox version",
+                "last 1 safari version"
+              ],
+              // 生产环境：默认是看生产环境
+              "production": [
+                ">0.2%",
+                "not dead",
+                "not op_mini all"
+              ]
+            }
+          */
+          // 使用loader的默认配置
+          // 'postcss-loader',
+          // 修改loader的配置
+          {
+            loader: 'postcss-loader',
+            options: {
+              ident: 'postcss',
+              plugins: () => [
+                // postcss的插件
+                require('postcss-preset-env')()
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: './src/index.html'
+    }),
+    new MiniCssExtractPlugin({
+      // 对输出的css文件进行重命名 不配置默认为main.css
+      filename: 'css/built.css'
+    })
+  ],
+  mode: 'development'
+}
+```
+
+打包前
+
+```css
+.box1 {
+    width: 100px;
+    height: 100px;
+    background-color: pink;
+    display: flex;
+    backface-visibility: hidden;
+}
+```
+
+使用post-loader打包后
+
+```css
+.box1 {
+    width: 100px;
+    height: 100px;
+    background-color: pink;
+    display: flex;
+    -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+}
+.box2{
+    width: 200px;
+    height: 200px;
+    background-color: deeppink;
+}
+
+```
+
+#### 3.9 压缩css
+
+使用插件`optimize-css-assets-webpack-plugin`
+
+```nginx
+npm i optimize-css-assets-webpack-plugin -D
+```
+
+核心代码
+
+
+
+```js
+const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin')
+
+    plugins: [
+        new OptimizeCssAssetsWebpackPlugin()
+    ],
+
+```
+
+Webpack.config.js
+
+```js
+const {resolve} = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin')
+
+// 设置nodejs环境变量  默认是 production
+// process.env.NODE_ENV = 'development'
+
+module.exports = {
+    entry: './src/js/index.js',
+    output: {
+        filename: 'js/built.js',
+        path: resolve(__dirname, 'build')
+    },
+    module: {
+        rules: [
+            // 处理css
+            {
+                test: /\.css$/,
+                use: [
+                    // 创建style标签，将样式放入
+                    // 'style-loader',
+                    // 这个loader取代style-loader。作用：提取js中的css成单独文件
+                    MiniCssExtractPlugin.loader,
+                    // 将css文件整合到js文件中
+                    'css-loader',
+                    /*
+                      css兼容性处理：postcss --> postcss-loader postcss-preset-env
+                      帮postcss找到package.json中browserslist里面的配置，通过配置加载指定的css兼容性样式
+                      "browserslist": {
+                        // 开发环境 --> 设置node环境变量：process.env.NODE_ENV = development
+                        "development": [
+                          "last 1 chrome version", // 兼容最近的一个版本
+                          "last 1 firefox version",
+                          "last 1 safari version"
+                        ],
+                        // 生产环境：默认是看生产环境
+                        "production": [
+                          ">0.2%",
+                          "not dead",
+                          "not op_mini all"
+                        ]
+                      }
+                    */
+                    // 使用loader的默认配置
+                    // 'postcss-loader',
+                    // 修改loader的配置
+                    {
+                        loader: 'postcss-loader',
+                        options: {
+                            ident: 'postcss',
+                            plugins: () => [
+                                // postcss的插件
+                                require('postcss-preset-env')()
+                            ]
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: './src/index.html'
+        }),
+        new MiniCssExtractPlugin({
+            // 对输出的css文件进行重命名 不配置默认为main.css
+            filename: 'css/built.css'
+        }),
+        new OptimizeCssAssetsWebpackPlugin()
+    ],
+    mode: 'development'
+}
+```
+
+#### 3.10 es-lint语法检查
+
+安装插件
+
+```nginx
+npm i eslint-loader eslint eslint-config-airbnb-base eslint-plugin-import
+```
+
+`es-lint-loader` `es-lint`
+
+`airbnb`  --> `eslint-config-airbnb-base` `eslint-plugin-import` `eslint`
+
+```js
+语法检查： eslint-loader  eslint
+          设置检查规则：
+            package.json中eslintConfig中设置~
+              "eslintConfig": {
+                "extends": "airbnb-base"
+              }
+需要下载  airbnb --> eslint-config-airbnb-base  eslint-plugin-import eslint        
+```
+
+【注意】注意：只检查自己写的源代码，第三方的库是不用检查的
+
+Webpack.config.js
+
+```js
+const {resolve} = require('path');
+const HtmlWebpackConfig = require('html-webpack-plugin');
+
+module.exports = {
+    entry: './src/index.js',
+    output: {
+        filename: 'built.js',
+        path: resolve(__dirname, 'build')
+    },
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: 'eslint-loader',
+                options: {
+                    // 自动修复eslint的错误
+                    fix: true
+                }
+            }
+        ]
+    },
+    plugins: [
+        new HtmlWebpackConfig({
+            template: './src/index.html'
+        })
+    ],
+    mode: 'development'
+};
+```
+
+#### 3.11 js-babel-core 兼容性
+
+`babel`     将es6+ 语法转换为es5 浏览器可识别
+
+`core-js` 按需加载
+
+```nginx
+npm i babel-loader @babel/core @babel/preset-env @babel/polyfill core-js -D
+/*
+js兼容性处理：babel-loader @babel/core
+1. 基本js兼容性处理 --> @babel/preset-env
+    问题：只能转换基本语法，如promise高级语法不能转换
+2. 全部js兼容性处理 --> @babel/polyfill
+    问题：我只要解决部分兼容性问题，但是将所有兼容性代码全部引入，体积太大了~
+3. 需要做兼容性处理的就做：
+    按需加载  --> core-js           
+*/      
+```
+
+
+
+webpack.config.js
+
+```js
+const {resolve} = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+module.exports = {
+    entry: './src/index.js',
+    output: {
+        filename: 'built.js',
+        path: resolve(__dirname, 'build')
+    },
+    module: {
+        rules: [
+            {
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: 'babel-loader',
+                options: {
+                    // 预设 --> 指示babel做怎样的兼容性处理
+                    presets: [
+                        [
+                            '@babel/preset-env',
+                            {
+                                // 按需加载
+                                useBuiltIns: 'usage',
+                                // 指定core-js版本
+                                corejs: {
+                                    version: 3
+                                },
+                                // 指定兼容性做到哪个版本浏览器
+                                targets: {
+                                    chrome: '60',
+                                    firefox: '60',
+                                    ie: '9',
+                                    safari: '10',
+                                    edge: '17'
+                                }
+                            }
+                        ]
+                    ]
+                }
+            }
+        ]
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: './src/index.html'
+        })
+    ],
+    mode: 'development'
+};
+```
+
+#### 3.12 压缩js、html文件
+
+js        生成环境下自动压缩  `mode:'production'`
+
+html  需要在`HtmlWebpackPlugin`插件添加配置
+
+Webpack-config.js
+
+```js
+const {resolve} = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+
+module.exports = {
+    entry: './src/js/index.js',
+    output: {
+        filename: 'js/built.js',
+        path: resolve(__dirname, 'build')
+    },
+    module: {
+        rules: [
+            // 处理css
+        ]
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: './src/index.html',
+            // 压缩html代码
+            minify: {
+                // 移除空格
+                collapseWhitespace: true,
+              	// 移除注释 
+                removeComments: true
+            }
+        })
+    ],
+    mode: 'production'
+}
+```
+
+### 4 生产环境配置
+
+```js
+const {resolve} = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+// 复用loader
+const commonCssLoader = [
+    // 还需要在package.json中定义browserslist
+    MiniCssExtractPlugin.loader,
+    'css-loader',
+    {
+        loader: 'postcss-loader',
+        plugins: () => [
+            require('postcss-preset-env')()
+        ]
+    }
+];
+
+module.exports = {
+    entry: './src/js/index.js',
+    output: {
+        filename: 'built.js',
+        path: resolve(__dirname, 'build')
+    },
+    module: {
+        rules: [
+            // css-loader 提取css文件为单独文件 兼容性
+            {
+                test: /\.css$/,
+                use: [
+                    ...commonCssLoader
+                ]
+            },
+            {
+                test: /\.less$/,
+                use: [
+                    ...commonCssLoader,
+                    'less-loader',
+                ]
+            },
+            /*
+              正常来讲，一个文件只能被一个loader处理。
+              当一个文件要被多个loader处理，那么一定要指定loader执行的先后顺序：
+                先执行eslint 在执行babel
+            */
+            // js-loader eslint
+            {
+                test: /\.js$/,
+                loader: 'eslint-loader',
+                exclude: /node_modules/,
+                // 优先执行
+                enforce: 'pre',
+                options: {
+                    // 自动修复eslint的错误
+                    fix: true
+                }
+            },
+            // js-loader babel
+            {
+                test: /\.js$/,
+                loader: 'babel-loader',
+                exclude: /node_modules/,
+                options: {
+                    // 预设 --> 指示babel做怎样的兼容性处理
+                    presets: [
+                        [
+                            '@babel/preset-env',
+                            {
+                                // 按需加载
+                                useBuiltIns: 'usage',
+                                // 指定core-js版本
+                                corejs: {
+                                    version: 3
+                                },
+                                // 指定兼容性做到哪个版本浏览器
+                                targets: {
+                                    chrome: '60',
+                                    firefox: '60',
+                                    ie: '9',
+                                    safari: '10',
+                                    edge: '17'
+                                }
+                            }
+                        ]
+                    ]
+                }
+            },
+            // 处理image
+            {
+                test: /\.(jpg|png|gif)$/,
+
+                loader: 'url-loader',
+                options: {
+                    // 小于 8kb，使用base64处理
+                    limit: 8 * 1024,
+                    outputPath: 'images',
+                    // 关闭es6模块化
+                    esModule: false,
+                    name: '[hash:10].[ext]'
+                }
+            },
+            // 处理html中img资源
+            {
+                test: /\.html$/,
+                loader: 'html-loader',
+            },
+            // 处理其他资源 字体图标
+            {
+                test: /\.(js|css|less|html|jpg|png|gif)$/,
+                loader: 'file-loader',
+                options: {
+                    name: '[hash:10].[ext]',
+                    outputPath: 'assets'
+                }
+            }
+        ]
+
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: './src/index.html',
+            // html文件压缩
+            minify: {
+                collapseWhitespace: true,
+                removeComments: true
+            }
+        }),
+        // css 代码抽取
+        new MiniCssExtractPlugin({
+            // 对输出的css文件进行重命名 不配置默认为main.css
+            filename: 'css/built.css'
+        }),
+        // 压缩css文件
+        new OptimizeCssAssetsWebpackPlugin()
+    ],
+    // 生产环境，js文件会自动压缩
+    mode: 'production'
+};
+```
+
+
+
+### 5 webpack 优化配置
 
