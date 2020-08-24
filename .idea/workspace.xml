@@ -3,11 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="71f26902-c539-4bed-9d64-95ec4f685632" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/07开发环境配置/src/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/07开发环境配置/src/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/07开发环境配置/src/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/07开发环境配置/src/js/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/07开发环境配置/webpack.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/07开发环境配置/webpack.config.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/前端/JS_webpack.md" beforeDir="false" afterPath="$PROJECT_DIR$/前端/JS_webpack.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -109,7 +105,7 @@
       <workItem from="1597149824321" duration="4027000" />
       <workItem from="1597483735424" duration="5564000" />
       <workItem from="1597761267896" duration="6072000" />
-      <workItem from="1598084586006" duration="9050000" />
+      <workItem from="1598084586006" duration="11727000" />
     </task>
     <servers />
   </component>
