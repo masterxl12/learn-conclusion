@@ -50,5 +50,6 @@
   },
   "eslintConfig": {
     "extends": "airbnb-base"
-  }
+  },
+  "sideEffets":false
 }

@@ -1630,3 +1630,102 @@ module.exports = {
 
 
 
+####  5.5 tree shaking
+
+  `tree shaking`：去除无用代码
+    前提：
+
+1. 必须使用ES6模块化 
+
+ 2. 开启production环境
+
+​    作用: 减少代码体积
+
+```js
+/*
+  tree shaking：去除无用代码
+    前提：1. 必须使用ES6模块化  2. 开启production环境
+    作用: 减少代码体积
+    在package.json中配置
+      "sideEffects": false 所有代码都没有副作用（都可以进行tree shaking）
+        问题：可能会把css / @babel/polyfill （副作用）文件干掉
+      "sideEffects": ["*.css", "*.less"]
+*/
+```
+
+#### 5.6 split chunks 代码分割
+
+​    1. 可以将node_modules中代码单独打包一个chunk最终输出
+
+​    2. 自动分析多入口chunk中，有没有公共的文件。如果有会打包成单独一个chunk
+
+index.js
+
+```js
+function sum (...args) {
+    return args.reduce((p, c) => p + c, 0);
+}
+  
+  // eslint-disable-next-line
+  console.log(sum(1, 2, 3, 4, 5, 6))
+  
+  /*
+    通过js代码，让某个文件被单独打包成一个chunk
+    import动态导入语法：能将某个文件单独打包
+  */
+  import(/* webpackChunkName: 'test' */'./test') // 指定打包的文件名称
+    .then(({ mul, add }) => {
+    // 文件加载成功~
+      // eslint-disable-next-line
+      console.log(mul(2, 5));
+  }).catch(() => {
+    // eslint-disable-next-line
+    console.log('文件加载失败~');
+    });
+```
+
+
+
+webpack.config.js
+
+```js
+const {
+    resolve
+} = require('path');
+
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+
+module.exports = {
+    // 单入口
+    entry: './src/index.js',
+    output: {
+        filename: 'js/[name].[contenthash:10].js',
+        path: resolve(__dirname, 'build')
+    },
+    module: {
+
+    },
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: "./src/index.html",
+            minify:{
+                collapseWhitespace: true,
+                removeComments: true
+            }
+        })
+    ],
+    /*
+    1. 可以将node_modules中代码单独打包一个chunk最终输出
+    2. 自动分析多入口chunk中，有没有公共的文件。如果有会打包成单独一个chunk
+    */
+    optimization: {
+        splitChunks: {
+            chunks: "all"
+        }
+    },
+    mode: 'development'
+}
+```
+
+
+
