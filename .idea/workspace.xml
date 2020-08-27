@@ -3,6 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="71f26902-c539-4bed-9d64-95ec4f685632" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/前端/JS_webpack.md" beforeDir="false" afterPath="$PROJECT_DIR$/前端/JS_webpack.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -15,9 +17,9 @@
       <list>
         <option value="package.json" />
         <option value="Less File" />
-        <option value="HTML File" />
         <option value="CSS File" />
         <option value="JavaScript File" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -44,11 +46,11 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/22WPA/src" />
       <recent name="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/14生产环境基本配置/src/js" />
       <recent name="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/02Webpack打包样式/src" />
       <recent name="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/01Webpack初体验" />
       <recent name="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/01Webpack初体验/src" />
-      <recent name="$PROJECT_DIR$/js/design_patterns/manualJS/module/common-js/modules" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack" />
@@ -104,7 +106,7 @@
       <workItem from="1597149824321" duration="4027000" />
       <workItem from="1597483735424" duration="5564000" />
       <workItem from="1597761267896" duration="6072000" />
-      <workItem from="1598084586006" duration="15365000" />
+      <workItem from="1598084586006" duration="17349000" />
     </task>
     <servers />
   </component>

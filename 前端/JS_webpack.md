@@ -1779,3 +1779,11 @@ export function add(x, y) {
 }
 ```
 
+#### 5.8 PWA
+
+安装插件
+
+```nginx
+npm i workbox-webpack-plugin -D
+```
+
