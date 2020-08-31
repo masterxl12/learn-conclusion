@@ -3,19 +3,22 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin')
 const WorkboxWebpackPlugin = require('workbox-webpack-plugin')
+
 /*
-PWA: 渐进式网络开发应用程序(离线可访问)
-workbox --> workbox-webpack-plugin
+  PWA: 渐进式网络开发应用程序(离线可访问)
+    workbox --> workbox-webpack-plugin
 */
+
 // 定义nodejs环境变量：决定使用browserslist的哪个环境
 process.env.NODE_ENV = 'production'
+
 // 复用loader
 const commonCssLoader = [
     MiniCssExtractPlugin.loader,
     'css-loader',
-// css 兼容性处理
+    // css 兼容性处理
     {
-// 还需要在package.json中定义browserslist
+        // 还需要在package.json中定义browserslist
         loader: 'postcss-loader',
         options: {
             ident: 'postcss',
@@ -23,6 +26,7 @@ const commonCssLoader = [
         }
     }
 ]
+
 module.exports = {
     entry: './src/js/index.js',
     output: {
@@ -31,22 +35,22 @@ module.exports = {
     },
     module: {
         rules: [
-// js 处理 语法检查
+            // js 处理 语法检查
             {
-// 在package.json中eslintConfig --> airbnb
+                // 在package.json中eslintConfig --> airbnb
                 test: /\.js$/,
                 exclude: /node_modules/,
-// 优先执行
+                // 优先执行
                 enforce: 'pre',
                 loader: 'eslint-loader',
                 options: {
-// 自动修复eslint的错误
+                    // 自动修复eslint的错误
                     fix: true
                 }
             },
             {
-// 以下loader只会匹配一个
-// 注意：不能有两个配置处理同一种类型文件
+                // 以下loader只会匹配一个
+                // 注意：不能有两个配置处理同一种类型文件
                 oneOf: [
                     {
                         test: /\.css$/,
@@ -57,41 +61,56 @@ module.exports = {
                         use: [...commonCssLoader, 'less-loader']
                     },
                     /*
-                    正常来讲，一个文件只能被一个loader处理。
-                    当一个文件要被多个loader处理，那么一定要指定loader执行的先后顺序：
-                    先执行eslint 在执行babel
+                      正常来讲，一个文件只能被一个loader处理。
+                      当一个文件要被多个loader处理，那么一定要指定loader执行的先后顺序：
+                        先执行eslint 在执行babel
                     */
                     {
                         test: /\.js$/,
                         exclude: /node_modules/,
-                        loader: 'babel-loader',
-                        options: {
-// 预设：指示babel做怎么样的兼容性处理
-                            presets: [
-                                [
-                                    '@babel/preset-env',
-                                    {
-// 按需加载
-                                        useBuiltIns: 'usage',
-// 指定core-js版本
-                                        corejs: {
-                                            version: 3
-                                        },
-// 指定兼容性做到哪个版本浏览器
-                                        targets: {
-                                            chrome: '60',
-                                            firefox: '60',
-                                            ie: '9',
-                                            safari: '10',
-                                            edge: '17'
-                                        }
-                                    }
-                                ]
-                            ],
-                            // 开启babel缓存
-                            // 第二次构建时，会读取之前的缓存
-                            cacheDirectory: true
-                        }
+                        use: [
+                            /*
+                              开启多进程打包。
+                              进程启动大概为600ms，进程通信也有开销。
+                              只有工作消耗时间比较长，才需要多进程打包
+                            */
+                            {
+                                loader: 'thread-loader',
+                                options: {
+                                    workers: 2 // 进程2个
+                                }
+                            },
+                            {
+                                loader: 'babel-loader',
+                                options: {
+                                    // 预设：指示babel做怎么样的兼容性处理
+                                    presets: [
+                                        [
+                                            '@babel/preset-env',
+                                            {
+                                                // 按需加载
+                                                useBuiltIns: 'usage',
+                                                // 指定core-js版本
+                                                corejs: {
+                                                    version: 3
+                                                },
+                                                // 指定兼容性做到哪个版本浏览器
+                                                targets: {
+                                                    chrome: '60',
+                                                    firefox: '60',
+                                                    ie: '9',
+                                                    safari: '10',
+                                                    edge: '17'
+                                                }
+                                            }
+                                        ]
+                                    ],
+                                    // 开启babel缓存
+                                    // 第二次构建时，会读取之前的缓存
+                                    cacheDirectory: true
+                                }
+                            }
+                        ]
                     },
                     // 处理image
                     {
@@ -142,15 +161,15 @@ module.exports = {
         new OptimizeCssAssetsWebpackPlugin(),
         new WorkboxWebpackPlugin.GenerateSW({
             /*
-            1. 帮助serviceworker快速启动
-            2. 删除旧的 serviceworker
-            生成一个 serviceworker.js 配置文件~
+              1. 帮助serviceworker快速启动
+              2. 删除旧的 serviceworker
+              生成一个 serviceworker 配置文件~
             */
             clientsClaim: true,
             skipWaiting: true
         })
     ],
-// 生产环境下会自动压缩js代码
+    // 生产环境下会自动压缩js代码
     mode: 'production',
     devtool: 'source-map'
 }
