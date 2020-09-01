@@ -2133,3 +2133,130 @@ module.exports = {
 };
 ```
 
+
+
+#### 5.11 dll
+
+ 为了极大减少构建时间，进行分离打包.
+
+[参考链接](https://www.cnblogs.com/tugenhua0707/p/9520780.html )
+
+安装包
+
+```nginx
+npm i add-asset-html-webpack-plugin -D
+```
+
+##### 5.11.1 **DLLPlugin**
+
+ 这个插件是在一个额外独立的`webpack`设置中创建一个只有`dll`的`bundle`，也就是说我们在项目根目录下除了有`webpack.config.js`，还会新建一个`webpack.dll.config.js`文件。
+
+`webpack.dll.config.js`作用是把所有的第三方库依赖打包到一个==`bundle`的`dll`文件里面==，还会生成一个名为 `manifest.json`文件。 
+
+==该`manifest.json`的作用是用来让` DllReferencePlugin` 映射到相关的依赖上去的==。 
+
+`webpack.dll.config.js`
+
+```js
+/*
+  使用dll技术，对某些库（第三方库：jquery、react、vue...）进行单独打包
+    当你运行 webpack 时，默认查找 webpack.config.js 配置文件
+    需求：需要运行 webpack.dll.js 文件
+      --> webpack --config webpack.dll.js
+*/
+const {
+    resolve
+} = require('path')
+const webpack = require('webpack')
+module.exports = {
+    entry: {
+        // 最终打包生成的[name] --> jquery
+        // ['jquery'] --> 要打包的库是jquery
+        jquery: ['jquery'],
+        echarts: ['echarts']
+    },
+    output: {
+        filename: '[name].dll.js',
+        path: resolve(__dirname, 'dll'),
+        library: '_dll_[name]_[hash]' // 打包的库里面向外暴露出去的内容叫什么名字
+    },
+    plugins: [
+        // 打包生成一个 manifest.json --> 提供和jquery映射
+        new webpack.DllPlugin({
+            name: '_dll_[name]_[hash]', // 映射库的暴露的内容名称
+            /* 生成manifest文件输出的位置和文件名称 */
+            path: resolve(__dirname, 'dll/[name].manifest.json')
+        })
+    ],
+    mode: 'production'
+}
+```
+
+执行命令: `webpack --config webpack.dll.config.js`
+
+生成的文件:
+
+​	 `vendor.dll.js` : 包含所有的第三方库文件 
+
+​	`vendor-manifest.json ` : 包含所有库代码的一个索引 (==可以理解为第三方库的一个映射==)
+
+##### 5.11.2 **DllReferencePlugin**
+
+​	这个插件是在 webpack k==主配置文件中==设置, 把只有 `dll` 的 `bundle`引用到需要的预编译的依赖。
+
+​	当在使用`webpack.config.js`文件打包`DllReferencePlugin`插件的时候，会使用该`DllReferencePlugin`插件读取`vendor-manifest.json`文件，==看看是否有该第三方库== 。
+
+> 第一次使用 `webpack.dll.config.js` 文件会对第三方库打包，打包完成后就不会再打包它了，
+>
+> 然后每次运行 `webpack.config.js`文件的时候，都会打包项目中本身的文件代码，
+>
+> 当需要使用第三方依赖的时候，会使用 `DllReferencePlugin`插件去读取第三方依赖库。所以说它的打包速度会得到一个很大的提升。 
+
+webpack.config.js
+
+```js
+const {
+    resolve
+} = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const webpack = require('webpack');
+const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
+console.log("========", resolve(__dirname, 'dll/jquery.js'));
+module.exports = {
+    entry: './src/js/index.js',
+    output: {
+        filename: 'js/built.js',
+        path: resolve(__dirname, 'build')
+    },
+    // loader的配置
+    module: {
+        rules: []
+    },
+    // plugins的配置
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: './src/index.html'
+        }),
+        // 告诉webpack哪些库不参与打包，同时使用时的名称也得变~
+        // 告诉webpack使用了哪些第三方库代码
+        new webpack.DllReferencePlugin({
+            // jquery 映射到json文件上去
+            context: resolve(__dirname, '..'), // 这行需要加上 不加报错
+            manifest: resolve(__dirname,'dll/jquery.manifest.json')
+        }),
+        new webpack.DllReferencePlugin({
+            // echarts 映射到json文件上去
+            context: resolve(__dirname, '..'), // 这行需要加上 不加报错
+            manifest: resolve(__dirname,'dll/echarts.manifest.json')
+        }),
+        // 将某个文件打包输出去，并在html中自动引入该资源
+        new AddAssetHtmlPlugin({
+            filepath: resolve(__dirname, 'dll/jquery.js')
+        })
+    ],
+    // 模式
+    mode: 'production', // 生产模式
+}
+```
+
+执行命令: `webpack`
