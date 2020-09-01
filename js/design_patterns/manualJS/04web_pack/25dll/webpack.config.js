@@ -25,17 +25,20 @@ module.exports = {
         new webpack.DllReferencePlugin({
             // jquery 映射到json文件上去
             context: resolve(__dirname, '..'), // 这行需要加上 不加报错
-            manifest: resolve(__dirname,'dll/jquery.manifest.json')
+            manifest: resolve(__dirname, 'dll/jquery.manifest.json')
         }),
         new webpack.DllReferencePlugin({
             // echarts 映射到json文件上去
             context: resolve(__dirname, '..'), // 这行需要加上 不加报错
-            manifest: resolve(__dirname,'dll/echarts.manifest.json')
+            manifest: resolve(__dirname, 'dll/echarts.manifest.json')
         }),
         // 将某个文件打包输出去，并在html中自动引入该资源
-        new AddAssetHtmlPlugin({
-            filepath: resolve(__dirname, 'dll/jquery.js')
-        })
+        new AddAssetHtmlPlugin(
+            [
+                {filepath: require.resolve("./dll/jquery.dll.js")},
+                {filepath: require.resolve("./dll/echarts.dll.js")},
+            ]
+        )
     ],
     // 模式
     mode: 'production', // 生产模式
