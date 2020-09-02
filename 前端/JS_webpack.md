@@ -1729,7 +1729,7 @@ module.exports = {
 
 #### 5.7 懒加载/预加载
 
-懒加载：当文件需要使用时才加载~
+懒加载：当文件需要使用时才加载~(常用)
 
 预加载prefetch：会在使用之前，提前准备好文件(多为js文件)
 
@@ -2192,7 +2192,9 @@ module.exports = {
 }
 ```
 
-执行命令: `webpack --config webpack.dll.config.js`
+<font color=red>执行命令:</font>
+
+ `webpack --config webpack.dll.config.js`
 
 生成的文件:
 
@@ -2221,7 +2223,6 @@ const {
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const webpack = require('webpack');
 const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin');
-console.log("========", resolve(__dirname, 'dll/jquery.js'));
 module.exports = {
     entry: './src/js/index.js',
     output: {
@@ -2242,21 +2243,191 @@ module.exports = {
         new webpack.DllReferencePlugin({
             // jquery 映射到json文件上去
             context: resolve(__dirname, '..'), // 这行需要加上 不加报错
-            manifest: resolve(__dirname,'dll/jquery.manifest.json')
+            manifest: resolve(__dirname, 'dll/jquery.manifest.json')
         }),
         new webpack.DllReferencePlugin({
             // echarts 映射到json文件上去
             context: resolve(__dirname, '..'), // 这行需要加上 不加报错
-            manifest: resolve(__dirname,'dll/echarts.manifest.json')
+            manifest: resolve(__dirname, 'dll/echarts.manifest.json')
         }),
         // 将某个文件打包输出去，并在html中自动引入该资源
-        new AddAssetHtmlPlugin({
-            filepath: resolve(__dirname, 'dll/jquery.js')
-        })
+        new AddAssetHtmlPlugin(
+            [
+                {filepath: require.resolve("./dll/jquery.dll.js")},
+                {filepath: require.resolve("./dll/echarts.dll.js")},
+            ]
+        )
     ],
     // 模式
     mode: 'production', // 生产模式
 }
 ```
 
-执行命令: `webpack`
+<font color=red>执行命令:</font>
+
+ `webpack`
+
+打包后的`index.html`文件
+
+```html
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Title</title></head>
+<body>
+    <h1>hello dll~</h1>
+    <script src="jquery.dll.js"></script>
+    <script src="echarts.dll.js"></script>
+    <script src="js/built.js"></script>
+</body>
+</html>
+```
+
+
+
+### 6. 配置详解
+
+#### 6.1 entry
+
+​	入口起点有三种方式
+
+```js
+entry: 入口起点
+    1. string --> './src/index.js'
+      单入口
+      打包形成一个chunk。 输出一个bundle文件。
+      此时chunk的名称默认是 main
+    2. array  --> ['./src/index.js', './src/add.js']
+      多入口
+      所有入口文件最终只会形成一个chunk, 输出出去只有一个bundle文件。
+        --> 只有在HMR功能中让html热更新生效~
+    3. object
+      多入口
+      有几个入口文件就形成几个chunk，输出几个bundle文件
+      此时chunk的名称是 key
+      --> 特殊用法
+        {
+          // 所有入口文件最终只会形成一个chunk, 输出出去只有一个bundle文件。 DLL中优化使用
+          index: ['./src/index.js', './src/count.js'],
+          // 形成一个chunk，输出一个bundle文件。
+          add: './src/add.js'
+        }
+```
+
+
+
+webpack.config.js
+
+```js
+const {resolve} = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+module.exports = {
+    entry: {
+        index: ['./src/index.js', './src/sum.js'],
+        multi: './src/multi.js'
+    },
+    output: {
+        filename: '[name].js',
+        path: resolve(__dirname, 'build')
+    },
+    module: {},
+    plugins: [
+        new HtmlWebpackPlugin()
+    ],
+    mode: 'development'
+};
+```
+
+
+
+#### 6.2 output
+
+`publicPath` : ==用于生产环境，部署时引入路径'/'==
+
+`chunkFilename`:  非入口chunk的名称  （1.使用import导入的文件 2. 使用options将node_modules文件分割）
+
+`library`: 整个库向外暴露的变量名,通常结合dll使用 将某个库单独打包,供外部调用
+
+`libraryTarget` : 变量名添加到哪个平台
+
+
+
+webpack.config.js
+
+```js
+const {resolve} = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+module.exports = {
+    // 指定单入口文件
+    entry: './src/index.js',
+    output: {
+        // 文件名称（指定名称+目录）
+        filename: 'js/index.js',
+        // 输出文件目录 （将来所有资源输出的公共目录）
+        path: resolve(__dirname, 'build'),
+        // 用于生产环境，部署时引入路径'/'
+        publicPath: '/',
+        // 非入口chunk的名称  （1.使用import导入的文件 2. node_modules文件）
+        chunkFilename: 'js/[name]_chunk.js',
+        // 整个库向外暴露的变量名,通常结合dll使用 将某个库单独打包,供外部调用
+        library: '[name]',
+        // libraryTarget: 'window', // 变量名添加到哪个平台，browser
+        libraryTarget: 'global',    // 变量名添加到哪个平台，node
+
+    },
+    module: {},
+    plugins: [
+        new HtmlWebpackPlugin()
+    ],
+    mode: 'development'
+};
+```
+
+#### 6.3 module
+
+webpack.config.js
+
+```js
+const {resolve} = require('path');
+
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+module.exports = {
+    entry: './src/index.js',
+    output: {
+        filename: 'built.js',
+        path: resolve(__dirname, 'build')
+    },
+    module: {
+        rules: [
+            // css-loader
+            {
+                test: /\.css$/,
+                // 多个loader用use
+                use: [
+                    'style-loader',
+                    'css-loader'
+                ]
+            },
+            // eslint-loader
+            {
+                test: /\.js$/,
+                use: 'eslint-loader',
+                enforce: 'pre',
+                // enforce:'post',
+                // 排除node_modules下的js文件
+                exclude: /node_modules/,
+                // 只检测src下的js文件
+                include: resolve(__dirname, 'src'),
+                options: {}
+            },
+            {
+                // 以下配置，针对一种文件类型只会匹配一个loader，一旦匹配成功，后面的loader不做处理
+                oneOf: []
+            }
+        ]
+    }
+}
+```
+

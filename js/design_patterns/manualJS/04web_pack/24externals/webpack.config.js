@@ -1,5 +1,5 @@
 const {resolve} = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')；
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 // 使用dll技术，对某些库单独打包，对代码单独打包
 
