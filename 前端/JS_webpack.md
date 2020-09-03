@@ -2384,7 +2384,21 @@ module.exports = {
 };
 ```
 
-#### 6.3 module
+#### 6.3 module 
+
+`module` 配置如何处理模块。
+
+`loader` 模块转换器(模块识别器)，**用于将模块的原内容按照需求转换成新的内容** 
+
+==配置 Loader==
+
+ rules  配置模块的读取和解析规则，通常用来配置 Loader。
+
+其类型是一个数组，数组里每一项都描述了如何去处理部分文件。 配置一项 `rules` 时大致通过以下方式：
+
+1. 条件匹配：通过  test 、 include 、 exclude  三个配置项来命中 Loader 要应用规则的文件。
+2. 应用规则：对选中后的文件通过 `use` 配置项来应用 Loader，可以只应用一个 Loader 或者按照从后往前的顺序应用一组 Loader，同时还可以分别给 Loader 传入参数。
+3. 重置顺序：一组 Loader 的执行顺序默认是从右到左执行，通过 `enforce` 选项可以让其中一个 Loader 的执行顺序放到最前或者最后。
 
 webpack.config.js
 
@@ -2427,6 +2441,117 @@ module.exports = {
                 oneOf: []
             }
         ]
+    }
+}
+```
+
+
+
+#### 6.4 resolve
+
+> webpack在启动后会从配置的入口模块触发找出所有依赖的模块，==Resolve==配置webpack如何寻找模块对应的文件。
+>
+> webpack内置JavaScript模块化语法解析功能，默认会采用模块化标准里约定好的规则去寻找，但你可以根据自己的需要修改默认的规则.
+
+```js
+const {
+    resolve
+} = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+module.exports = {
+    entry: './src/js/index.js',
+    output: {
+        filename: 'built.js',
+        path: resolve(__dirname, 'build')
+    },
+    module: {
+        rules: [
+            // css-loader
+            {
+                test: /\.css$/,
+                // 多个loader用use
+                use: [
+                    'style-loader',
+                    'css-loader'
+                ]
+            }
+        ]
+    },
+    plugins: [
+        new HtmlWebpackPlugin()
+    ],
+    mode: 'development',
+    resolve: {
+        alias: {
+            // 配置模块路径解析别名，优点简写路径，缺点路径没有提示
+            $css: resolve(__dirname, 'src/css'),
+        },
+        // 配置省略文件后缀名的规则
+        extensions: ['.js', '.json', '.jsx'],
+        // 指定webpack解析模块寻找的文件路径
+        modules: [resolve(__dirname, '../node_modules'), 'node_modules']
+    }
+}
+```
+
+
+
+#### 6.5 devServer
+
+```js
+const {
+    resolve
+} = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+module.exports = {
+    entry: './src/index.js',
+    output: {
+        filename: 'built.js',
+        path: resolve(__dirname, 'build')
+    },
+    module: {
+
+    },
+    plugins: [
+        new HtmlWebpackPlugin()
+    ],
+    mode: 'development',
+    devServer: {
+        // 运行代码的目录
+        contentBase: resolve(__dirname, 'build'),
+        // 监视 contentBase 目录下的所有文件，一旦变化就reload
+        watchContentBase: true,
+        watchOptions: {
+            // 忽略监视的文件
+            ignored: /node_modules/
+        },
+        // 启动gzip压缩
+        compress: true,
+        port: 5000,
+        host: 'localhost',
+        // 自动打开浏览器
+        open: true,
+        // 开启HMR功能
+        hot: true,
+        // 不显示启动服务器日志信息
+        clientLogLevel: 'none',
+        // 除了一些基本信息以外，其他内容都不要显示
+        quiet: true,
+        proxy: {
+            // 一旦服务器接受到api/xxx的请求，就会把请求转发到另一台服务器(3000)
+            '/api': {
+                target: 'http://localhost:3000',
+                // changeOrigin默认是false：请求头中host仍然是浏览器发送过来的host
+                // 如果设置成true -> 发送请求头中host会设置成 http://localhost:3000
+                changeOrigin: true,
+                // 发送请求时，请求路径重写：将 /api/user  ---> user(去掉/api)
+                pathRewrite: {
+                    '^/api': ''
+                }
+            }
+        }
     }
 }
 ```
