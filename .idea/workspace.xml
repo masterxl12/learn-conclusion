@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="71f26902-c539-4bed-9d64-95ec4f685632" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/watcherTasks.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/24externals/webpack.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/24externals/webpack.config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/前端/JS_webpack.md" beforeDir="false" afterPath="$PROJECT_DIR$/前端/JS_webpack.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,8 +15,8 @@
         <option value="package.json" />
         <option value="Less File" />
         <option value="CSS File" />
-        <option value="HTML File" />
         <option value="JavaScript File" />
+        <option value="HTML File" />
       </list>
     </option>
   </component>
@@ -110,7 +106,7 @@
       <workItem from="1597483735424" duration="5564000" />
       <workItem from="1597761267896" duration="6072000" />
       <workItem from="1598084586006" duration="20864000" />
-      <workItem from="1599056404183" duration="3891000" />
+      <workItem from="1599056404183" duration="7487000" />
     </task>
     <servers />
   </component>
