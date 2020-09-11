@@ -155,6 +155,58 @@
         }
     }
 
+    /**
+     * 移除一个节点
+     */
+    BinarySearchTree.prototype.remove = function (key) {
+        return removeNode(this.root, key);
+    };
+
+    function removeNode(node, key) {
+        if (node === null) return false;
+        if (key < node.key) {
+            node.left = removeNode(node.left, key);
+            return node;
+        } else if (key > node.key) {
+            node.right = removeNode(node.right, key);
+            return node;
+        } else {
+            // 进入这里 说明查找的元素存在于树结构中 分情况讨论判断
+            // 1. 当前元素节点是叶子节点
+            if (node.left === null && node.right === null) {
+                node = null;
+                return node;
+            }
+
+            // 2. 当前元素只有一个子节点
+            if (node.left === null) {
+                node = node.right;
+                return node;
+            } else if (node.right === null) {
+                node = node.left;
+                return node;
+            }
+
+            /*  3.0 当前元素有左右两个子节点
+                3.1 找出当前节点的继承者 在右侧子树中查找最小元素节点minChildNode
+                3.2 更新当前节点的key为minChildNode的key(改变当前节点的键，意为移除)
+                3.3 将右侧子树minChildNode的最小节点移除(避免树中拥有两个相同键的节点)
+                3.4 向它的父节点返回更新后节点的引用
+            */
+            let minNode = findMinNode(node.right);
+            node.key = minNode.key;
+            node.right = removeNode(node.right, node.key);
+            return node;
+        }
+    }
+
+    function findMinNode(node) {
+        while (node && node.left) {
+            node = node.left;
+        }
+        return node;
+    }
+
     let tree = new BinarySearchTree();
     tree.insert(11);
     tree.insert(7);
@@ -188,6 +240,12 @@
 
     console.log(tree.search(25));
     console.log(tree.search(100));
+
+    tree.remove(5);
+    const inOrderList2 = [];
+    tree.inOrderTraverse(value => inOrderList2.push(value));
+    console.log(inOrderList2);
+
 
 </script>
 </body>

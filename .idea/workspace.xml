@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="71f26902-c539-4bed-9d64-95ec4f685632" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/06算法/01-BST.html" beforeDir="false" afterPath="$PROJECT_DIR$/js/06算法/01-BST.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,7 +107,8 @@
       <workItem from="1597483735424" duration="5564000" />
       <workItem from="1597761267896" duration="6072000" />
       <workItem from="1598084586006" duration="20864000" />
-      <workItem from="1599056404183" duration="7487000" />
+      <workItem from="1599056404183" duration="7637000" />
+      <workItem from="1599752031010" duration="3221000" />
     </task>
     <servers />
   </component>
