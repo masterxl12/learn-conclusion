@@ -512,6 +512,138 @@ startTimeChange(val){
 2. 父组件有`scoped`属性，子组件无，父组件也无法设置子组件样式，因为父组件的所有标签都会带有`data-v-469af010`唯一标志，但子组件不会带有这个唯一标志属性，与1同理，虽然我们可以在全局中通过该类标签的标签选择器设置样式，但会影响到其他组件。**==如在vue项目中使用element-ui组件库,当前vue组件为父组件，引入的element-ui(如el-tree、el-table等)为子组件，在父组件中修改子组件样式不起效果。==**
 3. 父子组建都有，同理也无法设置样式，更改起来增加代码量
 
+### 11 文件上传
+
+​	清楚默认样式(未选择任何文件)
+
+```vue
+<template>
+	<el-button 
+            type='primary' 
+            size='mini' 
+            @click='triggerHandler' 
+            icon='el-icon-upload'>
+    </el-button>
+<input 
+       		type='file'
+          	id='uploadFile'
+       		@change='uploadFile($event)'
+       		class='uploadFile'
+       		style='opacity:0'
+       />
+</template>
+
+
+<script>
+    export default {
+        methods:{
+            triggerHandler(){
+                let dom = document.getElementById('uploadFile');
+                dom.click();// DOM默认事件
+            },
+            uploadFile(event){
+                let dom = document.getElementById('uploadFile');
+                this.$nextTick(()=>{
+                    const { files } = event.target;
+                    if(files.length){
+                        let fileName = files[0].name;
+                        let num = fileName.lastIndexOf(".");
+                        // 获取文件类型 这里用的是properties文件类型
+                        let str = fileName.substring(num+1,fileName.length);
+                        if(str === 'properties'){
+                            const formData = new FormData();
+                            formData.append('file',files[0]);
+                            formData.append('fileName',fileName.substring(0,num));
+                            // 使用封装好的post请求 表单提交
+                            api.post(formData).then(res=>{
+                                if(res.status === 'ok'){
+                                    // ...
+                                }
+                            })
+                        } else {
+                            // ...
+                        }
+                        dom.value = ''; // 清楚内容
+                    }
+                })
+            }
+        }
+    }
+</script>
+```
+
+### 12. 使用postMessage跨域通信
+
+父组件
+
+```vue
+<template>
+	<div>
+        <iframe
+                src="XXX.html"
+                scrolling='yes'
+                id='serverId'
+                class='iframeShow'
+                ref='iframe'
+                >
+            
+    	</iframe>
+    </div>
+</template>
+
+<script>
+    export default{
+        data(){
+            return {
+                toChild:'parentMsg',
+                fromChild:''
+            }  
+        },
+        mounted:{
+           let iframe = this.$refs.iframe;
+            let self = this;
+            iframe.onload = function(){
+            	// 父组件向子组件传值 
+            	iframe.contentWindow.postMessage(self.toChild,'*');//父组件发送 'parentMsg'
+            	// 父组件接收子组件的传值
+                window.addEventListener('message',(e) => { // 父组件接收： tile-server
+                    slef.fromChild = e.data;
+                })
+        	}
+        }
+    }
+</script>
+```
+
+子组件
+
+```html
+<body>
+    <div>
+        <select class='form-control' onchange='selectChange()'>
+            <option value='tile-server' selected>tile-server</option>
+            <option value='msc-server'></option>msc-server</option>
+            <option value='config-server'>config-server</option>
+        </select>
+    </div>
+</body>
+<script>
+    function selectChange(){
+        var options = $('.form-control option:selected'); // 子组件发送:  tile-server
+        var value = options.text();
+        // 子组件向父组传值
+        window.parent.postMessage(value,'*');
+    }
+    (function(){
+        window.addEventListener('message',(e)=>{
+            console.log(e.data) // 子组件接收: 'parentMsg'
+        })
+    })()
+</script>
+```
+
+
+
 ## 二、elementUI开发
 
 ### 1. el-tree

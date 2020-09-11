@@ -2,6 +2,10 @@ Mac 安装软件
 
 
 
+<font color=red>123</font>
+
+<font color=blue>22</font>
+
 ### 一、终端相关
 
 #### 1.  安装iTerm2 
@@ -12,7 +16,7 @@ Mac 安装软件
 
 解决背景字体颜色没有生效问题：
 
-打开Iterm2的Preferences之后，找到Text，由于上述答案中找“Draw bold text in bright colors”，但是当前版本中，并无该选项。
+打开Iterm2的==Preferences==之后，找到Text，由于上述答案中找“Draw bold text in bright colors”，但是当前版本中，并无该选项。
 
 <img src="/Users/masterxl/Library/Application Support/typora-user-images/image-20200320120109091.png" alt="image-20200320120109091" style="zoom:40%;" />
 
