@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>sort-test</title>
+</head>
+<body>
+<script src="../randomSort.js"></script>
+<script src="./01BubbleSort.js"></script>
+<script src="./02SelectionSort.js"></script>
+<script src="03InsertSort.js"></script>
+<script src="04ShellSort.js"></script>
+<script src="05QuickSort.js"></script>
+<script>
+    const arr = [...new Array(13)].map((_, index) => index + 1);
+    const testArr = RandomSort(arr);
+    // console.log(SelectionSort(testArr));
+    // console.log(InsertSort(testArr));
+    console.log("希尔排序结果: ", ShellSort(testArr));
+</script>
+</body>
+</html>
