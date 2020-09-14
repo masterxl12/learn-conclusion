@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="71f26902-c539-4bed-9d64-95ec4f685632" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/js/06算法/.~算法理解.pptx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/06算法/02sort/05QuickSort.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/06算法/02sort/05QuickSort.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,7 +59,10 @@
       <recent name="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/01Webpack初体验/src" />
     </key>
   </component>
-  <component name="RunManager" selected="Node.js.05QuickSort.js">
+  <component name="RunManager" selected="Node.js.01fibonacci.js">
+    <configuration name="01fibonacci.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/js/06算法/04递归/01fibonacci.js" working-dir="$PROJECT_DIR$/js/06算法/04递归">
+      <method v="2" />
+    </configuration>
     <configuration name="05QuickSort.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/js/06算法/02sort/05QuickSort.js" working-dir="$PROJECT_DIR$/js/06算法/02sort">
       <method v="2" />
     </configuration>
@@ -72,16 +75,13 @@
     <configuration name="randomSort.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/js/06算法/randomSort.js" working-dir="$PROJECT_DIR$/js/06算法">
       <method v="2" />
     </configuration>
-    <configuration name="webpack.config.js" type="NodeJSConfigurationType" temporary="true" nameIsGenerated="true" path-to-js-file="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/02Webpack打包样式/webpack.config.js" working-dir="$PROJECT_DIR$/js/design_patterns/manualJS/04web_pack/02Webpack打包样式">
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Node.js.01fibonacci.js" />
         <item itemvalue="Node.js.05QuickSort.js" />
         <item itemvalue="Node.js.randomSort.js" />
         <item itemvalue="Node.js.index.js" />
         <item itemvalue="Node.js.13set.js" />
-        <item itemvalue="Node.js.webpack.config.js" />
       </list>
     </recent_temporary>
   </component>
@@ -108,7 +108,7 @@
       <workItem from="1597761267896" duration="6072000" />
       <workItem from="1598084586006" duration="20864000" />
       <workItem from="1599056404183" duration="7637000" />
-      <workItem from="1599752031010" duration="10120000" />
+      <workItem from="1599752031010" duration="13018000" />
     </task>
     <servers />
   </component>
@@ -144,22 +144,22 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="239" y="191" width="692" height="653" key="EditFileWatcherDialog/0.0.1440.900@0.0.1440.900" timestamp="1599057294212" />
-    <state width="1419" height="103" key="GridCell.Tab.0.bottom" timestamp="1600008424786">
+    <state width="1419" height="196" key="GridCell.Tab.0.bottom" timestamp="1600092457843">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1419" height="103" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1600008424786" />
-    <state width="1419" height="103" key="GridCell.Tab.0.center" timestamp="1600008424785">
+    <state width="1419" height="196" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1600092457843" />
+    <state width="1419" height="196" key="GridCell.Tab.0.center" timestamp="1600092457842">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1419" height="103" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1600008424785" />
-    <state width="1419" height="103" key="GridCell.Tab.0.left" timestamp="1600008424785">
+    <state width="1419" height="196" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1600092457842" />
+    <state width="1419" height="196" key="GridCell.Tab.0.left" timestamp="1600092457841">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1419" height="103" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1600008424785" />
-    <state width="1419" height="103" key="GridCell.Tab.0.right" timestamp="1600008424786">
+    <state width="1419" height="196" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1600092457841" />
+    <state width="1419" height="196" key="GridCell.Tab.0.right" timestamp="1600092457843">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state width="1419" height="103" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1600008424786" />
+    <state width="1419" height="196" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1600092457843" />
     <state width="1419" height="91" key="GridCell.Tab.1.bottom" timestamp="1596465486460">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
