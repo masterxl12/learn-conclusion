@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="71f26902-c539-4bed-9d64-95ec4f685632" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -23,6 +24,12 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="JsFlowSettings">
+    <service-enabled>true</service-enabled>
+    <exe-path />
+    <other-services-enabled>true</other-services-enabled>
+    <auto-save>true</auto-save>
+  </component>
   <component name="ProjectId" id="1ej3n3mtuCfFUnHZwLQ2U59xTB2" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -41,7 +48,7 @@
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="watcher.settings" />
+    <property name="settings.editor.selected.configurable" value="Settings.JavaScript" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -107,7 +114,8 @@
       <workItem from="1597761267896" duration="6072000" />
       <workItem from="1598084586006" duration="20864000" />
       <workItem from="1599056404183" duration="7637000" />
-      <workItem from="1599752031010" duration="32893000" />
+      <workItem from="1599752031010" duration="32998000" />
+      <workItem from="1603202901320" duration="2560000" />
     </task>
     <servers />
   </component>
@@ -135,6 +143,10 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="473" y="326" key="#com.intellij.ide.actions.ChooseComponentsToExportDialog/0.0.1440.900@0.0.1440.900" timestamp="1597149811721" />
+    <state x="323" y="193" key="#com.intellij.ide.scriptingContext.ui.PerFileMappingsDialogWrapper" timestamp="1603206667847">
+      <screen x="0" y="0" width="1440" height="900" />
+    </state>
+    <state x="323" y="193" key="#com.intellij.ide.scriptingContext.ui.PerFileMappingsDialogWrapper/0.0.1440.900@0.0.1440.900" timestamp="1603206667847" />
     <state x="458" y="204" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1598455594812">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
@@ -143,22 +155,26 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="239" y="191" width="692" height="653" key="EditFileWatcherDialog/0.0.1440.900@0.0.1440.900" timestamp="1599057294212" />
-    <state width="1419" height="267" key="GridCell.Tab.0.bottom" timestamp="1600597689623">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state width="1419" height="267" key="GridCell.Tab.0.bottom" timestamp="1601969843340">
+      <screen x="0" y="23" width="1440" height="797" />
     </state>
     <state width="1419" height="267" key="GridCell.Tab.0.bottom/0.0.1440.900@0.0.1440.900" timestamp="1600597689623" />
-    <state width="1419" height="267" key="GridCell.Tab.0.center" timestamp="1600597689621">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state width="1419" height="267" key="GridCell.Tab.0.bottom/0.23.1440.797@0.23.1440.797" timestamp="1601969843340" />
+    <state width="1419" height="267" key="GridCell.Tab.0.center" timestamp="1601969843337">
+      <screen x="0" y="23" width="1440" height="797" />
     </state>
     <state width="1419" height="267" key="GridCell.Tab.0.center/0.0.1440.900@0.0.1440.900" timestamp="1600597689621" />
-    <state width="1419" height="267" key="GridCell.Tab.0.left" timestamp="1600597689621">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state width="1419" height="267" key="GridCell.Tab.0.center/0.23.1440.797@0.23.1440.797" timestamp="1601969843337" />
+    <state width="1419" height="267" key="GridCell.Tab.0.left" timestamp="1601969843336">
+      <screen x="0" y="23" width="1440" height="797" />
     </state>
     <state width="1419" height="267" key="GridCell.Tab.0.left/0.0.1440.900@0.0.1440.900" timestamp="1600597689621" />
-    <state width="1419" height="267" key="GridCell.Tab.0.right" timestamp="1600597689622">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state width="1419" height="267" key="GridCell.Tab.0.left/0.23.1440.797@0.23.1440.797" timestamp="1601969843336" />
+    <state width="1419" height="267" key="GridCell.Tab.0.right" timestamp="1601969843338">
+      <screen x="0" y="23" width="1440" height="797" />
     </state>
     <state width="1419" height="267" key="GridCell.Tab.0.right/0.0.1440.900@0.0.1440.900" timestamp="1600597689622" />
+    <state width="1419" height="267" key="GridCell.Tab.0.right/0.23.1440.797@0.23.1440.797" timestamp="1601969843338" />
     <state width="1419" height="91" key="GridCell.Tab.1.bottom" timestamp="1596465486460">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
@@ -207,10 +223,10 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state width="1419" height="91" key="GridCell.Tab.3.right/0.0.1440.900@0.0.1440.900" timestamp="1596465486466" />
-    <state x="94" y="45" key="SettingsEditor" timestamp="1599057296352">
+    <state x="94" y="45" key="SettingsEditor" timestamp="1603206725958">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
-    <state x="94" y="45" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1599057296352" />
+    <state x="94" y="45" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1603206725958" />
     <state x="419" y="314" width="816" height="550" key="find.popup" timestamp="1600596720412">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
