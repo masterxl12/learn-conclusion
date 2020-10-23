@@ -1,42 +1,34 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM, { render } from 'react-dom';
 import './index.css';
 import App from './App';
 
-
 // JSX 语法
-// let app = <App />;  <App /> -> 普通对象
-let app = <h1>hello world!</h1>;
-//
+let a = Math.random(0, 1) - 0.5;
 
-// 函数式组件
-function clock() {
-    let element = (
-        <div>
-            <h1>当前时间: {new Date().toLocaleTimeString()}</h1>
-        </div>
-    );
-    let root = document.querySelector('#root');
-    ReactDOM.render(element, root);
+// ! 使用className
+let classArr = ['bgc', 'bt'].join(" ");
+
+// ! 使用style
+let imageStyle = {
+    backgroundColor: "rgba(255, 0, 0, .5)"
 }
 
-// setInterval(clock, 1000);
+// ! 使用src
+let src = 'https://www.baidu.com/img/PCfb_5bf082d29588c07f842ccde3f97243ea.png';
 
+let element = (
+    <div>
+        {/** 使用类名 */}
 
-function Clock(props) {
-    return (
-        <div>
-            <h1>{props.date.toLocaleTimeString()}</h1>
-            <p>函数式组件开发</p>
-        </div>
-    )
-}
+        <h1 className={'abc ' + classArr} >今天天气: {a > 0 ? 'sunshine' : 'rain'}</h1>
+        <h2>{Math.random(0, 1) - 0.5 > 0 ? <button>出去嗨皮~</button> : '居家玩耍'}</h2>
+        <img src={src} style={imageStyle} />
+        <img src={src} style={{ backgroundColor: 'green', border: '3px solid yellow' }} />
+    </div>
+)
 
-function run() {
-    let root = document.querySelector('#root');
-    ReactDOM.render(<Clock date={new Date()}/>, root)
-}
+ReactDOM.render(element, document.querySelector('#root'));
 
-setInterval(run,1000);
 
 

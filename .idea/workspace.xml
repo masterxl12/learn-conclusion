@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="71f26902-c539-4bed-9d64-95ec4f685632" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -31,6 +30,7 @@
     <auto-save>true</auto-save>
   </component>
   <component name="ProjectId" id="1ej3n3mtuCfFUnHZwLQ2U59xTB2" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showExcludedFiles" value="true" />
@@ -115,7 +115,8 @@
       <workItem from="1598084586006" duration="20864000" />
       <workItem from="1599056404183" duration="7637000" />
       <workItem from="1599752031010" duration="32998000" />
-      <workItem from="1603202901320" duration="2560000" />
+      <workItem from="1603202901320" duration="2916000" />
+      <workItem from="1603457581574" duration="5000" />
     </task>
     <servers />
   </component>
