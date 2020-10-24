@@ -3,28 +3,22 @@ import ReactDOM, { render } from 'react-dom';
 import './index.css';
 import App from './App';
 
-// JSX 语法
-let a = Math.random(0, 1) - 0.5;
+// JSX_Style 
 
-// ! 使用className
-let classArr = ['bgc', 'bt'].join(" ");
+let classStr = ['a', 'b'].join(' ')
 
-// ! 使用style
-let imageStyle = {
-    backgroundColor: "rgba(255, 0, 0, .5)"
+let exampleStyle = {
+    width: '100px',
+    height: '100px',
+    backgroundColor: 'rgba(255,0,0,.5)',
+    backgroundImage: 'url(https://store-cdn.lizhi.io/pic/thumb/img/d8X4Bbsabe2cFck4LczbIaw7M6j9A1w2N6T8Iaw4L2z4I3wdMfjdA7w5N5TeIew3MDMxMTQwNDMxLnBuZwO0O0OO0O0O)'
 }
-
-// ! 使用src
-let src = 'https://www.baidu.com/img/PCfb_5bf082d29588c07f842ccde3f97243ea.png';
 
 let element = (
     <div>
-        {/** 使用类名 */}
-
-        <h1 className={'abc ' + classArr} >今天天气: {a > 0 ? 'sunshine' : 'rain'}</h1>
-        <h2>{Math.random(0, 1) - 0.5 > 0 ? <button>出去嗨皮~</button> : '居家玩耍'}</h2>
-        <img src={src} style={imageStyle} />
-        <img src={src} style={{ backgroundColor: 'green', border: '3px solid yellow' }} />
+        {/** 注释内容部分 */}
+        <h2 className={'str ' + classStr}>react-class属性</h2>
+        <div style={exampleStyle}>react-style</div>
     </div>
 )
 
