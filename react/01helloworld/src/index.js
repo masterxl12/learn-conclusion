@@ -3,26 +3,33 @@ import ReactDOM, { render } from 'react-dom';
 import './index.css';
 import App from './App';
 
-// JSX_Style 
+// 函数组件与类组件
 
-let classStr = ['a', 'b'].join(' ')
-
-let exampleStyle = {
-    width: '100px',
-    height: '100px',
-    backgroundColor: 'rgba(255,0,0,.5)',
-    backgroundImage: 'url(https://store-cdn.lizhi.io/pic/thumb/img/d8X4Bbsabe2cFck4LczbIaw7M6j9A1w2N6T8Iaw4L2z4I3wdMfjdA7w5N5TeIew3MDMxMTQwNDMxLnBuZwO0O0OO0O0O)'
+// 类组件
+class HelloWorld extends React.Component {
+    render() {
+        console.log(this)
+        return (
+            <div>
+                <h1>类组件: {this.props.name}</h1>
+                <Weather weather={this.props.weather} />
+            </div>
+        );
+    }
 }
 
-let element = (
-    <div>
-        {/** 注释内容部分 */}
-        <h2 className={'str ' + classStr}>react-class属性</h2>
-        <div style={exampleStyle}>react-style</div>
-    </div>
-)
+// 函数组件
+function Weather(props) {
+    console.log('函数组件: ', props);
+    return (
+        <div>
+            <h1>今天是否出门: {props.weather == '下雨' ? '宅家' : '出门'}</h1>
+        </div>
+    )
+}
 
-ReactDOM.render(element, document.querySelector('#root'));
+// ReactDOM.render(<Weather weather='下雨' />, document.querySelector('#root'));
+ReactDOM.render(<HelloWorld name='helloWorld!' weather='sunshine' />, document.querySelector('#root'));
 
 
 
