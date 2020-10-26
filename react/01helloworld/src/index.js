@@ -1,35 +1,52 @@
-import React from 'react';
-import ReactDOM, { render } from 'react-dom';
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import './statics/css/tab.css'
+
+
+const c1 = 'content active';
+const c2 = 'content';
 
 // 函数组件与类组件
+class Tab extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      c1,
+      c2
+    };
+    this.clickHandler = this.clickHandler.bind(this);
+  }
 
-// 类组件
-class HelloWorld extends React.Component {
-    render() {
-        console.log(this)
-        return (
-            <div>
-                <h1>类组件: {this.props.name}</h1>
-                <Weather weather={this.props.weather} />
-            </div>
-        );
+  clickHandler(e) {
+    if (e.target.tabIndex === 1) {
+      this.setState({
+        c1: c1,
+        c2: c2
+      })
+    } else {
+      this.setState({
+        c1: c2,
+        c2: c1
+      })
     }
-}
+  }
 
-// 函数组件
-function Weather(props) {
-    console.log('函数组件: ', props);
+  render() {
     return (
-        <div>
-            <h1>今天是否出门: {props.weather == '下雨' ? '宅家' : '出门'}</h1>
-        </div>
-    )
+      <div>
+        <button tabIndex='1' onClick={this.clickHandler}>按钮一</button>
+        <button tabIndex='2' onClick={this.clickHandler}>内容二</button>
+        <div className={this.state.c1}>内容一</div>
+        <div className={this.state.c2}>内容二</div>
+      </div>
+    );
+  }
 }
 
-// ReactDOM.render(<Weather weather='下雨' />, document.querySelector('#root'));
-ReactDOM.render(<HelloWorld name='helloWorld!' weather='sunshine' />, document.querySelector('#root'));
+ReactDOM.render(<Tab />, document.querySelector("#root"))
+
+export default Tab;
 
 
 
