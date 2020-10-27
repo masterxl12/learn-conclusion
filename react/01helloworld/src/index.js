@@ -1,35 +1,26 @@
 import React from 'react';
-import ReactDOM, { render } from 'react-dom';
+import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
 
-// 函数组件与类组件
+// 状态 state
 
-// 类组件
-class HelloWorld extends React.Component {
+class Clock extends React.Component {
+    constructor(props, context) {
+        super(props, context);
+        this.state = {
+            date: new Date()
+        }
+    }
+
     render() {
-        console.log(this)
         return (
             <div>
-                <h1>类组件: {this.props.name}</h1>
-                <Weather weather={this.props.weather} />
+                <h1>当前时间: {this.state.date.toLocaleTimeString()}</h1>
             </div>
         );
     }
+
 }
 
-// 函数组件
-function Weather(props) {
-    console.log('函数组件: ', props);
-    return (
-        <div>
-            <h1>今天是否出门: {props.weather == '下雨' ? '宅家' : '出门'}</h1>
-        </div>
-    )
-}
-
-// ReactDOM.render(<Weather weather='下雨' />, document.querySelector('#root'));
-ReactDOM.render(<HelloWorld name='helloWorld!' weather='sunshine' />, document.querySelector('#root'));
-
-
-
+ReactDOM.render(<Clock />, document.querySelector('#root'));
+export default Clock;
