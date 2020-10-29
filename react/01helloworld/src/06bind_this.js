@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+
+import './statics/css/tab.css'
 
 
 // const STR = "被调用，this指向";
