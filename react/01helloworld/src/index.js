@@ -1,62 +1,65 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
-// ! 子组件向父组件传值  找到父子组件通信的桥梁  此处是toParent 
+// ! react中的事件  阻止默认事件  e.preventDefault()
 
-// ! 然后在子组件中通过props调用父组件的方法 this.props.toParent 等同于父组件中调用this.sendData
+// ! 获取input输入框的内容
 
-class ParentCom extends Component {
+// ! 对于数组中的state 如果数据中有数组 第一次操作数组push，shift等操作时，原始数组已不再是数组而是一串字符串
+
+// ! 不能直接修改原始数据
+
+class EventCompent extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      receiveMsg: ''
+      msg: '',
+      data: ['javascript', 'c++', 'java'],
+      skills: ''
     }
   }
 
-  sendData = (data) => {
-    this.setState(state => (
-      {
-        receiveMsg: data
-      }
-    ))
+  handleSubmit = () => {
+    console.log(this.refs.input.value)    // 方法一
+    console.log(this.inputdata.value)     // 方法二
+
+    this.setState({
+      msg: this.inputdata.value
+    })
   }
 
-
-  render() {
-    return (
-      <div>
-        <h1>父组件接收子组件数据: {this.state.receiveMsg}</h1>
-        <ChildCom toParent={this.sendData} />
-      </div>
-    );
-  }
-}
-
-
-class ChildCom extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      msg: "Data from Child"
-    }
-  }
-
-  postData = () => {
-    this.props.toParent(this.state.msg)
+  handler = (value, e) => {
+    e.preventDefault();
+    const { data } = this.state;
+    data.push(value);
+    this.setState({
+      data,
+      skills: data.join('*')
+    })
   }
 
   render() {
     return (
       <div>
-        <h2>来自子元素数据: {this.state.msg}</h2>
-        <button onClick={this.postData}>子传父一</button>
-        <button onClick={() => this.props.toParent('abcdefg')}>子传父二</button>
-      </div>
-    );
+        {/* 方式一 */}
+        <input type='text' ref='input' defaultValue="Hello" />
+        <button type='submit' onClick={this.handleSubmit}>Submit</button>
+
+        {/* 方式二 */}
+        <input type='text' ref={(val) => this.inputdata = val} defaultValue="Hello" />
+        <p>{this.state.msg}</p>
+
+        <form action="http://wwww.baidu.com">
+
+          <button onClick={(e) => { this.handler('python', e) }}>获取事件</button>
+          <h2>{this.state.skills}</h2>
+        </form>
+
+      </div >
+    )
   }
 }
 
-ReactDOM.render(<ParentCom />, document.querySelector('#root'))
+ReactDOM.render(<EventCompent />, document.querySelector('#root'))
 
-
-export default ParentCom;
+export default EventCompent;

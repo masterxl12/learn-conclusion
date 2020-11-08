@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <h1>响应式原理</h1>
+  <div id="app"></div>
+
+  <script>
+    let state = { count: 0, a: 1 }
+    let active;
+    // 变成响应式数据
+    function defineReactive(obj) {
+      for (const key in obj) {
+        // 每一个属性对应一个dep(发布者)
+        let value = obj[key];  // 对象定义的值
+        let dep = [];
+        Object.defineProperty(obj, key, {
+          get() {
+            if (active) {
+              dep.push(active); // 依赖收集
+            }
+            return value;
+          },
+          set(newValue) {  // 触发更新
+            value = newValue;
+            dep.forEach(watcher => watcher())
+          }
+        })
+      }
+    }
+
+    defineReactive(state);
+
+    // 定义订阅者
+    const watcher = (fn) => {
+      active = fn;
+      fn();          // 调用函数
+      active = null; // 后续不再watcher中取值 不触发更新
+    }
+
+    watcher(() => {
+      app.innerHTML = state.count;
+    })
+
+    watcher(() => {
+      console.log('订阅者: ', state.count);
+    })
+  </script>
+</body>
+
+</html>

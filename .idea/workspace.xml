@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="71f26902-c539-4bed-9d64-95ec4f685632" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/react/01helloworld/src/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/react/01helloworld/src/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,7 +49,7 @@
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="restartRequiresConfirmation" value="false" />
-    <property name="settings.editor.selected.configurable" value="Settings.JavaScript" />
+    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -117,6 +118,8 @@
       <workItem from="1599752031010" duration="32998000" />
       <workItem from="1603202901320" duration="2916000" />
       <workItem from="1603457581574" duration="5000" />
+      <workItem from="1604330624346" duration="139000" />
+      <workItem from="1604743960387" duration="409000" />
     </task>
     <servers />
   </component>
@@ -132,10 +135,6 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state x="320" y="115" key="#Notifications/0.0.1440.900@0.0.1440.900" timestamp="1599056584597" />
-    <state x="184" y="112" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1594911996100">
-      <screen x="0" y="0" width="1440" height="900" />
-    </state>
-    <state x="184" y="112" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1440.900@0.0.1440.900" timestamp="1594911996100" />
     <state x="434" y="260" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1598077789661">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
@@ -224,10 +223,11 @@
       <screen x="0" y="0" width="1440" height="900" />
     </state>
     <state width="1419" height="91" key="GridCell.Tab.3.right/0.0.1440.900@0.0.1440.900" timestamp="1596465486466" />
-    <state x="94" y="45" key="SettingsEditor" timestamp="1603206725958">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state x="614" y="250" key="SettingsEditor" timestamp="1604744089553">
+      <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="94" y="45" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1603206725958" />
+    <state x="614" y="250" key="SettingsEditor/0.0.1920.1080@0.0.1920.1080" timestamp="1604744089553" />
     <state x="419" y="314" width="816" height="550" key="find.popup" timestamp="1600596720412">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
