@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>03-模板编译原理</title>
+</head>
+
+<body>
+  <script src="./node_modules/vue-template-compiler/browser.js"></script>
+
+  <script>
+
+    //  template => ast => codegen => with + function 实现生成render方法
+    const { ast, render } = VueTemplateCompiler.compile(`<div>abcd</div>`);
+    console.log(ast, render);
+
+    // 模板引擎的实现原理 with + new Function
+    console.log(new Function(render).toString());
+    /*
+    function anonymous() {
+      with(this){return _c('div',[_v("abcd")])}
+      }
+    */
+    // render 方法执行完毕后生成的是虚拟DOM
+    // "with(this){return _c('div',[_v("abcd")])}"
+    // 代码生成 codegen 
+  </script>
+</body>
+
+</html>

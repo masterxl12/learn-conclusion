@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script>
+    let state = [1, 2, 3]; // 变成响应式的数据
+
+    let originalArray = Array.prototype; // 数组原来的方法
+    let arrayMethods = Object.create(originalArray);
+    // arrayMethods.__proto__ === originalArray;
+
+    // defineReactive 定义响应式函数
+    function defineReactive(obj) {
+      // 函数劫持 可以在重写方法中添加自己的功能
+      arrayMethods.push = function (...args) {
+        originalArray.push.apply(this, args);
+        // 重写方法中添加自己的功能
+        render(); // 更新视图
+      }
+      obj.__proto__ = arrayMethods; // JS原型链
+    }
+
+    defineReactive(state); // 使用响应函数的数组，才是响应式的数组
+
+    function render(params) {
+      app.innerHTML = state;
+    }
+
+    render();
+    setTimeout(() => {
+      state.push(4, 5);
+    }, 1000);
+  </script>
+</body>
+
+</html>
