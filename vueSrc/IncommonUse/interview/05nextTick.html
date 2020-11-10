@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>05-nextTick</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script>
+    let cbs = [];
+    let pendings = false; // 制作队列
+
+    function flushCallbacks() {
+      console.log(cbs);
+      cbs.forEach(fn => fn());
+      pendings = false;
+    }
+
+    function nextTick(fn) {
+      cbs.push(fn);
+      if (!pendings) {
+        pendings = true; // 延迟批处理
+        Promise.resolve().then(flushCallbacks)
+      }
+    }
+
+    function render() {
+      console.log("render...");
+    }
+
+    nextTick(render);
+    nextTick(render);
+    nextTick(render);
+
+    console.log('state changed...');
+
+  </script>
+</body>
+
+</html>
