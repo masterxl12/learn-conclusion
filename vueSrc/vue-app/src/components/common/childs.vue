@@ -9,6 +9,11 @@ export default {
     name: "",
     age: "",
   },
+  created() {
+    const data = () => ({
+      a: 1
+    });
+  }
 };
 </script>
 
