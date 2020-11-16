@@ -20,17 +20,18 @@
  */
 var getKthFromEnd = function (head, k) {
 
-    let stack = [];
-    let length = 0;
-    while (head) {
-        stack.push(head.val);
-        length++;
-        head = head.next;
+    let slow = head;
+    let quick = head;
+
+    while (k > 0) { 
+        quick = quick.next;
+        k--;
     }
 
-    // while (k > 0) {
-    //     stack.pop();
-    //     k--;
-    // }
-    return stack[length - k];
+    while (quick) { 
+        quick = quick.next;
+        slow = slow.next;
+    }
+
+    return slow.val;
 };
