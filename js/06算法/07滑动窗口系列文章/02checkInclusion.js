@@ -6,11 +6,20 @@
    换句话说，第一个字符串的排列之一是第二个字符串的子串。
  * 
  * @param {string} s1   'ab'
- * @param {string} s2    'ddfdfdkab'
+ * @param {string} s2    'ddfadfdkab'
  * @return {boolean}
  */
 var checkInclusion = function (s1, s2) {
     let left = 0, right = 0;
+    /*****
+     *   'dd f adf d k ab'
+     *  * need = {a:1,b:1}    window {a:1}
+     *  * right   3 4 5 6  7  8  9  left:3 4 5 6 7     valid  2 
+     * 
+     *  *   'c c c c a a a abbbb'      'abc'
+     *  * need = {a:1,b:1,c:1}    window {c:0,a:3}
+     *  * right:  7  left: 4  valid  1
+     */
     
     let need = new Map();
     let temp = new Map();
