@@ -1,5 +1,8 @@
 <template>
-<div class="child">child:---------name:{{ name }}-----age:{{ age }}</div>
+<div class="child">
+  <p>child:---------name:{{ name }}-----age:{{ age }}</p>
+  <p>传来的值: {{type}}</p>
+</div>
 </template>
 
 <script>
@@ -8,6 +11,10 @@ export default {
   props: {
     name: "",
     age: "",
+    type: {
+      type: String,
+      default: 'primary'
+    }
   },
   created() {
     const data = () => ({
