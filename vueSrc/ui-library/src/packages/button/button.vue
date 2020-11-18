@@ -1,10 +1,10 @@
 <template>
-  <div>
-    <button></button>
-  </div>
+  <button :class="classes"></button>
 </template>
 
 <script>
+import { computed, ref } from "vue";
+
 export default {
   name: "UiButton",
   props: {
@@ -13,7 +13,7 @@ export default {
       default: "primary",
       validator(type) {
         if (
-          ["warning", "danger", "info", "success", "primary"].includes(type)
+          !["warning", "danger", "info", "success", "primary"].includes(type)
         ) {
           throw new TypeError(
             `传入类型错误，应包含` +
@@ -24,8 +24,12 @@ export default {
       },
     },
   },
+  setup(props) {
+    const classes = computed(() => ["ui-button", `ui-button-${props.type}`]);
+    return {
+      classes,
+    };
+  },
 };
 </script>
 
-<style>
-</style>
