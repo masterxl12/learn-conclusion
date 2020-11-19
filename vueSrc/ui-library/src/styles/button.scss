@@ -1,0 +1,57 @@
+@import "./common/_var.scss";
+@import "./mixins/mixins.scss";
+
+$color-list: (
+        primary:$primary,
+        success:$success,
+        warning:$warning,
+        danger:$danger,
+        info:$info
+);
+
+$color-active-list: (
+        primary:$primary-active,
+        success:$success-active,
+        warning:$warning-active,
+        danger:$danger-active,
+        info:$info-active
+);
+
+@include blockquote(button) {
+  @include status($color-list);
+  display: inline-flex;
+  font-size: $font-size;
+  border-radius: $border-radius;
+  padding: 0px 20px;
+  margin: 10px;
+  border: none;
+  outline: none;
+  min-width: 80px;
+  height: 40px;
+  line-height: 40px;
+  box-shadow: 2px 2px #ccc;
+  color: #fff;
+  align-items: center;
+  justify-content: center;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+
+  @keyframes rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .loading {
+    animation: rotate 1s linear infinite;
+  }
+
+  &:active {
+    @include status($color-active-list)
+  }
+}

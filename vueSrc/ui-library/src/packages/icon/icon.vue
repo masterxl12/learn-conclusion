@@ -1,11 +1,18 @@
 <template>
-  <div>icon</div>
+    <svg class="ui-icon" aria-hidden="true">
+        <use :xlink:href="`#icon-${icon}`"></use>
+    </svg>
 </template>
 
 <script>
-export default {
-  name: "UiIcon",
-};
+    import "./iconfont"
+
+    export default {
+        name: "UiIcon",
+        props: {
+            icon: String
+        }
+    };
 </script>
 
 <style>
