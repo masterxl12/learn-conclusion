@@ -1,19 +1,23 @@
 <template>
-<div class="child">child:---------name:{{ name }}-----age:{{ age }}</div>
+  <div class="child">
+    <p>child:---------name:{{ $attrs.obj.name }}-----age:{{ $attrs.obj.age }}</p>
+    <grandson v-bind="$attrs" />
+  </div>
 </template>
 
 <script>
+import grandson from "./grandson";
+
 export default {
   name: "childs",
-  props: {
-    name: "",
-    age: "",
+  props: [],
+  components: {
+    grandson,
   },
+
   created() {
-    const data = () => ({
-      a: 1
-    });
-  }
+    console.log("child:", this.$attrs);
+  },
 };
 </script>
 
