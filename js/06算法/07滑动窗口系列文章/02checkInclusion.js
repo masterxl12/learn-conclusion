@@ -9,6 +9,17 @@
  * @param {string} s2    'ddfadfdkab'
  * @return {boolean}
  */
+
+
+/******
+ *  输入: s1 = "ab" s2 = "eidbaooo"
+    输出: True
+    解释: s2 包含 s1 的排列之一 ("ba").
+
+    输入: s1= "ab" s2 = "eidboaoo"
+    输出: False
+ * 
+ */
 var checkInclusion = function (s1, s2) {
     let left = 0, right = 0;
     /*****

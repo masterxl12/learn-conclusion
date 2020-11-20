@@ -8,6 +8,10 @@
  * 
  *  * 输入：s = "ADOBECODEBANC", t = "ABC"
  *  * 输出："BANC"
+ * 
+ * 
+ *  * 输入：s = "a", t = "a"
+ *  * 输出："a"
  * @param {string} s
  * @param {string} t
  * @return {string}
