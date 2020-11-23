@@ -3,17 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="71f26902-c539-4bed-9d64-95ec4f685632" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vueSrc/ui-library/src/App.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vueSrc/ui-library/src/App.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vueSrc/ui-library/src/examples/button.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vueSrc/ui-library/src/examples/button.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vueSrc/ui-library/src/packages/button/button.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vueSrc/ui-library/src/packages/button/button.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vueSrc/ui-library/src/packages/button/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/vueSrc/ui-library/src/packages/button/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vueSrc/ui-library/src/packages/icon/icon.vue" beforeDir="false" afterPath="$PROJECT_DIR$/vueSrc/ui-library/src/packages/icon/icon.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vueSrc/ui-library/src/packages/icon/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/vueSrc/ui-library/src/packages/icon/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/vueSrc/ui-library/src/style/button-group.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vueSrc/ui-library/src/style/button.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vueSrc/ui-library/src/style/common/_var.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vueSrc/ui-library/src/style/icon.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/vueSrc/ui-library/src/style/mixins/mixins.scss" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/vueSrc/ui-library/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/vueSrc/ui-library/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vueSrc/ui-library/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/vueSrc/ui-library/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vueSrc/ui-library/vue.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/vueSrc/ui-library/vue.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -133,7 +125,7 @@
       <workItem from="1604743960387" duration="409000" />
       <workItem from="1605103261787" duration="168000" />
       <workItem from="1605103543592" duration="2050000" />
-      <workItem from="1605795557496" duration="5068000" />
+      <workItem from="1605795557496" duration="10199000" />
     </task>
     <servers />
   </component>
@@ -193,10 +185,11 @@
     <state x="94" y="45" key="SettingsEditor/0.0.1440.900@0.0.1440.900" timestamp="1603206725958" />
     <state x="614" y="250" key="SettingsEditor/0.0.1920.1080@0.0.1920.1080" timestamp="1604744089553" />
     <state x="602" y="164" key="SettingsEditor/0.23.1920.1057@0.23.1920.1057" timestamp="1605796705741" />
-    <state x="419" y="314" width="816" height="550" key="find.popup" timestamp="1600596720412">
-      <screen x="0" y="0" width="1440" height="900" />
+    <state x="560" y="393" width="1088" height="646" key="find.popup" timestamp="1606142314870">
+      <screen x="0" y="23" width="1920" height="1057" />
     </state>
     <state x="419" y="314" width="816" height="550" key="find.popup/0.0.1440.900@0.0.1440.900" timestamp="1600596720412" />
+    <state x="560" y="393" width="1088" height="646" key="find.popup/0.23.1920.1057@0.23.1920.1057" timestamp="1606142314870" />
     <state x="385" y="196" width="670" height="676" key="search.everywhere.popup" timestamp="1599992827503">
       <screen x="0" y="0" width="1440" height="900" />
     </state>
