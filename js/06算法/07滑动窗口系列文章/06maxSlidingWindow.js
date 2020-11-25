@@ -1,4 +1,4 @@
-// ! leetcode 239. 滑动窗口最大值
+// ! leetcode 239. 滑动窗口最大值  参考08双端队列01maxSlidingWindow.js
 /**
  * @description
  * 给定一个数组 nums，有一个大小为 k 的滑动窗口从数组的最左侧移动到数组的最右侧。

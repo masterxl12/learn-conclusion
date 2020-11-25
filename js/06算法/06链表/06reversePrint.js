@@ -27,9 +27,6 @@ var reverseList = function (head) {
         temp = curr.next;
         curr.next = prev;
         prev = curr;
-
-
-        
         curr = temp
     }
 

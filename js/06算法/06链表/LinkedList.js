@@ -3,6 +3,7 @@ let Node = function (element) {
     this.next = null;
 }
 
+// * 单向链表
 function LinkedList() {
     this.head = null;
     this.length = 0;
