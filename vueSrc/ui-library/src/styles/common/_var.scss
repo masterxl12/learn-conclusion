@@ -16,3 +16,40 @@ html, body {
   padding: 0;
   margin: 0;
 }
+
+.carousel-enter-active, .carousel-leave-active {
+  transition: all 0.5s linear;
+}
+
+.carousel-enter-active {
+  transform: translateX(100%);
+}
+
+.carousel-enter-to {
+  transform: translateX(0);
+}
+
+.carousel-leave-active {
+  transform: translateX(0);
+}
+
+.carousel-leave-to {
+  transform: translateX(-100%);
+}
+
+// 反向走动画
+.carousel-enter-active.reverse {
+  transform: translateX(-100%);
+}
+
+.carousel-enter-to.reverse {
+  transform: translateX(0);
+}
+
+.carousel-leave-active.reverse {
+  transform: translateX(0);
+}
+
+.carousel-leave-to.reverse {
+  transform: translateX(100%);
+}

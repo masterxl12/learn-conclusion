@@ -5,7 +5,8 @@ import ButtonGroup from './button-group';
 import Icon from './icon';
 import Carousel from "./carousel";
 import CarouselItem from "./carousel-item";
-
+import Message from "./message";
+import Tree from "./tree"
 
 // ! 几个组件一起打包
 
@@ -14,7 +15,8 @@ const plugins = [
     ButtonGroup,
     Icon,
     Carousel,
-    CarouselItem
+    CarouselItem,
+    Tree
 ];
 
 const install = (app) => {
@@ -23,5 +25,12 @@ const install = (app) => {
 
 export default {
     install,
+}
+
+export {
+    Icon,
+    Button,
+    ButtonGroup,
+    Message
 }
 

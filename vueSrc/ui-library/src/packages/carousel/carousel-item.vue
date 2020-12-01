@@ -1,7 +1,10 @@
 <template>
-    <div class="ui-carousel-item" v-if="isVisible">
-        <slot></slot>
-    </div>
+    <transition name="carousel">
+        <div class="ui-carousel-item" v-if="isVisible" :class="isReverse">
+            <slot></slot>
+        </div>
+    </transition>
+
 </template>
 
 <script>
@@ -17,9 +20,12 @@
                 return state.currentSelected === currentIndex;
             });
 
+            const isReverse = computed(() => [state.reverse ? 'reverse' : '']);
+
             changeIndex();
             return {
-                isVisible
+                isVisible,
+                isReverse
             }
         }
     }

@@ -1,0 +1,11 @@
+@import "./common/_var.scss";
+@import "./mixins/mixins.scss";
+
+@include blockquote(tree) {
+  .ui-tree-label {
+    padding-left: 24px;
+  }
+  .ui-tree-list {
+    padding-left: 34px;
+  }
+}
