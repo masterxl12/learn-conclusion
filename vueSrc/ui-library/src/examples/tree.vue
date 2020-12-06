@@ -1,13 +1,16 @@
 <template>
-    <ui-tree :data="treeData"></ui-tree>
+    <ui-tree :data="treeData" ref="tree"></ui-tree>
+
+    <ui-button @click="getCheckNodes">获取选中内容</ui-button>
 </template>
 
 <script>
-    import {reactive, toRefs} from 'vue'
+    import {reactive, toRefs, ref} from 'vue'
 
     export default {
         name: "tree",
         setup(props) {
+            const tree = ref(null);
 
             const state = reactive({
                 treeData: [
@@ -45,8 +48,16 @@
                 ]
             });
 
+            function getCheckNodes() {
+                // 外层组件中获取当前组件的方法
+                console.log(tree.value.getCheckNodes());  // 获取当前组件的实例
+            }
+
+
             return {
-                ...toRefs(state)
+                ...toRefs(state),
+                tree,
+                getCheckNodes
             }
 
         }

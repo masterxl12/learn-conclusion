@@ -8,4 +8,10 @@
   .ui-tree-list {
     padding-left: 34px;
   }
+
+  .ui-tree-node-expand {
+    .ui-icon {
+      visibility: hidden;
+    }
+  }
 }
